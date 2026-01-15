@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HomeController {
-
     @GetMapping("/")
     public ResponseEntity<Response> home() {
         Response response = Response.builder()
