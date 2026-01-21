@@ -52,12 +52,12 @@ const CartPage = () => {
             const response = await ApiService.createOrder(orderRequest);
             setMessage(response.message)
 
-            setTimeout(() => {
-                setMessage('')
-            }, 5000);
-
             if (response.status === 200) {
                 dispatch({ type: 'CLEAR_CART' })
+                // Navigate to payment page after 1 second
+                setTimeout(() => {
+                    navigate('/payment', { state: { orderId: response.data.id } })
+                }, 1000);
             }
 
         } catch (error) {
@@ -98,7 +98,7 @@ const CartPage = () => {
                         ))}
                     </ul>
                     <h2>Total: ${totalPrice.toFixed(2)}</h2>
-                    <button className="checkout-button" onClick={handleCheckout}>Checkout</button>
+                    <button className="checkout-button" onClick={handleCheckout}>Đặt Hàng</button>
                 </div>
             )}
         </div>
