@@ -2,6 +2,7 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 
 import com.phegondev.Phegon.Eccormerce.dto.LoginRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
+import com.phegondev.Phegon.Eccormerce.dto.UpdateUserDto;
 import com.phegondev.Phegon.Eccormerce.dto.UserDto;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 import com.phegondev.Phegon.Eccormerce.enums.UserRole;
@@ -114,5 +115,56 @@ public class UserServiceImpl implements UserService {
                 .status(200)
                 .user(userDto)
                 .build();
+    }
+
+    @Override
+    public Response updateUser(UpdateUserDto updateUserDto) {
+        try {
+            User user = getLoginUser();
+            if (updateUserDto.getName() != null && !updateUserDto.getName().trim().isEmpty()) {
+                user.setName(updateUserDto.getName());
+            }
+
+            if (updateUserDto.getEmail() != null && !updateUserDto.getEmail().trim().isEmpty()) {
+
+                if (!user.getEmail().equals(updateUserDto.getEmail()) && 
+                    userRepo.existsByEmail(updateUserDto.getEmail())) {
+                    return Response.builder()
+                            .status(400)
+                            .message("Email này đã được sử dụng")
+                            .build();
+                }
+                user.setEmail(updateUserDto.getEmail());
+            }
+
+            if (updateUserDto.getPhoneNumber() != null && !updateUserDto.getPhoneNumber().trim().isEmpty()) {
+                user.setPhoneNumber(updateUserDto.getPhoneNumber());
+            }
+
+            if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().trim().isEmpty()) {
+                if (updateUserDto.getPassword().length() < 6) {
+                    return Response.builder()
+                            .status(400)
+                            .message("Mật khẩu phải có ít nhất 6 ký tự")
+                            .build();
+                }
+                user.setPassword(passwordEncoder.encode(updateUserDto.getPassword()));
+            }
+
+            userRepo.save(user);
+
+            UserDto userDto = entityDtoMapper.mapUserToDtoBasic(user);
+            return Response.builder()
+                    .status(200)
+                    .message("Cập nhật thông tin người dùng thành công")
+                    .user(userDto)
+                    .build();
+
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi cập nhật thông tin: " + e.getMessage())
+                    .build();
+        }
     }
 }

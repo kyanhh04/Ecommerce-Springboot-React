@@ -24,7 +24,7 @@ public class Address {
     private String state;
     private String zipCode;
     private String country;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

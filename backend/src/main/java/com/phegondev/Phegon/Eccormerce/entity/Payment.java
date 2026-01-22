@@ -1,12 +1,18 @@
 package com.phegondev.Phegon.Eccormerce.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "payments")
@@ -18,8 +24,7 @@ public class Payment {
     private BigDecimal amount;
     private String method;
     private String status;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -42,13 +47,11 @@ public class Payment {
                 Objects.equals(order, payment.order);
     }
 
-    // hashCode method
     @Override
     public int hashCode() {
         return Objects.hash(id, amount, method, status, order);  // Exclude createdAt from hashCode calculation
     }
 
-    // canEqual method
     public boolean canEqual(Object other) {
         return other instanceof Payment;  // Allow comparison only between Payment instances or its subclasses
     }

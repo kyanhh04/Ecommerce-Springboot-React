@@ -19,7 +19,7 @@ public class Order {
 
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItemList;
 
     @Column(name = "created_at")

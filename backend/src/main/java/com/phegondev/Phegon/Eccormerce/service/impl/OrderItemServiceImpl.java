@@ -43,14 +43,10 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public Response placeOrder(OrderRequest orderRequest) {
-
         User user = userService.getLoginUser();
-        //map order request items to order entities
-
         List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
             Product product = productRepo.findById(orderItemRequest.getProductId())
                     .orElseThrow(()-> new NotFoundException("Product Not Found"));
-
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(orderItemRequest.getQuantity());
@@ -58,24 +54,15 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItem.setStatus(OrderStatus.PENDING);
             orderItem.setUser(user);
             return orderItem;
-
         }).collect(Collectors.toList());
-
-        //calculate the total price
         BigDecimal totalPrice = orderRequest.getTotalPrice() != null && orderRequest.getTotalPrice().compareTo(BigDecimal.ZERO) > 0
                 ? orderRequest.getTotalPrice()
                 : orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        //create order entity
         Order order = new Order();
         order.setOrderItemList(orderItems);
         order.setTotalPrice(totalPrice);
-
-        //set the order reference in each orderitem
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
-
         orderRepo.save(order);
-
         return Response.builder()
                 .status(200)
                 .message("Order was successfully placed")

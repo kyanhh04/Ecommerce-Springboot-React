@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 public class EntityDtoMapper {
 
 
-    //user entity to user DTO
-
     public UserDto mapUserToDtoBasic(User user){
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
@@ -23,7 +21,6 @@ public class EntityDtoMapper {
 
     }
 
-    //Address to DTO Basic
     public AddressDto mapAddressToDtoBasic(Address address){
         AddressDto addressDto = new AddressDto();
         addressDto.setId(address.getId());
@@ -118,8 +115,21 @@ public class EntityDtoMapper {
 
     }
 
-
-
-
-
+    // Discount to DTO
+    public DiscountDTO mapDiscountToDiscountDTO(Discount discount) {
+        DiscountDTO discountDTO = new DiscountDTO();
+        discountDTO.setId(discount.getId());
+        discountDTO.setCode(discount.getCode());
+        discountDTO.setDescription(discount.getDescription());
+        discountDTO.setDiscountPercentage(discount.getDiscountPercentage());
+        discountDTO.setUsageLimit(discount.getUsageLimit());
+        discountDTO.setCurrentUsage(discount.getCurrentUsage());
+        discountDTO.setStartDate(discount.getStartDate());
+        discountDTO.setEndDate(discount.getEndDate());
+        discountDTO.setIsActive(discount.getIsActive());
+        discountDTO.setCreatedAt(discount.getCreatedAt());
+        discountDTO.setUpdatedAt(discount.getUpdatedAt());
+        return discountDTO;
+    }
 }
+

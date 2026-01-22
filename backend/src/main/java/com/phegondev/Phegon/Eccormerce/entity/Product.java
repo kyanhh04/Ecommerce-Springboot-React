@@ -21,14 +21,13 @@ public class Product {
     private String imageUrl;
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();  // This field will be excluded from equality and hashCode
 
-    // equals method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,13 +41,11 @@ public class Product {
                 Objects.equals(category, product.category);
     }
 
-    // hashCode method
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, imageUrl, price, category);  // Excluding createdAt from hashCode
     }
 
-    // canEqual method
     public boolean canEqual(Object other) {
         return other instanceof Product;  // Only Product instances or subclasses can be compared
     }

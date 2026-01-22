@@ -12,31 +12,25 @@ import java.util.Objects;
 @Data
 @Table(name = "order_items")
 public class OrderItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private int quantity;
     private BigDecimal price;
+    @Enumerated(EnumType.ORDINAL)
     private OrderStatus status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;
-
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
 
-    // equals method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,6 +53,6 @@ public class OrderItem {
 
     // canEqual method
     public boolean canEqual(Object other) {
-        return other instanceof OrderItem;  // Only OrderItem instances can be compared
+        return other instanceof OrderItem;
     }
 }

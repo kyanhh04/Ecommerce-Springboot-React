@@ -1,15 +1,18 @@
 package com.phegondev.Phegon.Eccormerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.phegondev.Phegon.Eccormerce.enums.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
 
@@ -40,4 +43,7 @@ public class Response {
 
     private OrderDto order;
     private List<OrderDto> orderList;
+
+    private DiscountDTO discount;
+    private List<DiscountDTO> discountList;
 }
