@@ -24,6 +24,10 @@ public class OTP {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private String code;
 
     private Boolean isUsed = false;
@@ -36,6 +40,4 @@ public class OTP {
 
     @Column(name = "used_at")
     private LocalDateTime usedAt;
-
-    private String type; // "PAYMENT", "LOGIN", etc
 }

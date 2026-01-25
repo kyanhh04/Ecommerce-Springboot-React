@@ -3,13 +3,16 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 import com.phegondev.Phegon.Eccormerce.dto.OrderItemDto;
 import com.phegondev.Phegon.Eccormerce.dto.OrderRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
+import com.phegondev.Phegon.Eccormerce.entity.Discount;
 import com.phegondev.Phegon.Eccormerce.entity.Order;
 import com.phegondev.Phegon.Eccormerce.entity.OrderItem;
 import com.phegondev.Phegon.Eccormerce.entity.Product;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 import com.phegondev.Phegon.Eccormerce.enums.OrderStatus;
 import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
+import com.phegondev.Phegon.Eccormerce.exception.OurException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
+import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
 import com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
 import com.phegondev.Phegon.Eccormerce.repository.ProductRepo;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,43 +37,105 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderItemServiceImpl implements OrderItemService {
 
-
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
     private final ProductRepo productRepo;
     private final UserService userService;
     private final EntityDtoMapper entityDtoMapper;
+    private final DiscountRepository discountRepository;
 
 
     @Override
     public Response placeOrder(OrderRequest orderRequest) {
-        User user = userService.getLoginUser();
-        List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
-            Product product = productRepo.findById(orderItemRequest.getProductId())
-                    .orElseThrow(()-> new NotFoundException("Product Not Found"));
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(product);
-            orderItem.setQuantity(orderItemRequest.getQuantity());
-            orderItem.setPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity()))); //set price according to the quantity
-            orderItem.setStatus(OrderStatus.PENDING);
-            orderItem.setUser(user);
-            return orderItem;
-        }).collect(Collectors.toList());
-        BigDecimal totalPrice = orderRequest.getTotalPrice() != null && orderRequest.getTotalPrice().compareTo(BigDecimal.ZERO) > 0
-                ? orderRequest.getTotalPrice()
-                : orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-        Order order = new Order();
-        order.setOrderItemList(orderItems);
-        order.setTotalPrice(totalPrice);
-        orderItems.forEach(orderItem -> orderItem.setOrder(order));
-        orderRepo.save(order);
-        return Response.builder()
-                .status(200)
-                .message("Order was successfully placed")
-                .build();
+        try {
+            User user = userService.getLoginUser();
+            List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
+                Product product = productRepo.findById(orderItemRequest.getProductId())
+                        .orElseThrow(()-> new NotFoundException("Product Not Found"));
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProduct(product);
+                orderItem.setQuantity(orderItemRequest.getQuantity());
+                orderItem.setPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity()))); //set price according to the quantity
+                orderItem.setStatus(OrderStatus.PENDING);
+                orderItem.setUser(user);
+                return orderItem;
+            }).collect(Collectors.toList());
+            
+            BigDecimal totalPrice = orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            BigDecimal discountAmount = BigDecimal.ZERO;
+            if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
+                Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
+                if (discountOpt.isEmpty()) {
+                    throw new OurException("Mã giảm giá không tồn tại");
+                }
+                
+                Discount discount = discountOpt.get();
+                LocalDateTime now = LocalDateTime.now();
+                if (!discount.getIsActive()) {
+                    throw new OurException("Mã giảm giá không còn hoạt động");
+                }
+                if (now.isBefore(discount.getStartDate())) {
+                    throw new OurException("Mã giảm giá chưa bắt đầu");
+                }
+                if (now.isAfter(discount.getEndDate())) {
+                    throw new OurException("Mã giảm giá đã hết hạn");
+                }
+                if (discount.getCurrentUsage() >= discount.getUsageLimit()) {
+                    throw new OurException("Mã giảm giá đã hết lượt sử dụng");
+                }
+                
+                if (discount.getDiscountType().equals(com.phegondev.Phegon.Eccormerce.enums.DiscountType.PERCENTAGE)) {
+                    discountAmount = totalPrice.multiply(discount.getDiscountValue()).divide(BigDecimal.valueOf(100));
+                } else {
+                    discountAmount = discount.getDiscountValue();
+                    if (discountAmount.compareTo(totalPrice) > 0) {
+                        discountAmount = totalPrice;
+                    }
+                }
+            }
+            BigDecimal finalDiscountAmount = discountAmount;
+            if (finalDiscountAmount.compareTo(BigDecimal.ZERO) > 0 && totalPrice.compareTo(BigDecimal.ZERO) > 0) {
+                for (OrderItem item : orderItems) {
+                    BigDecimal itemDiscountAmount = finalDiscountAmount.multiply(item.getPrice()).divide(totalPrice, BigDecimal.ROUND_HALF_UP);
+                    item.setDiscountAmount(itemDiscountAmount);
+                    item.setPrice(item.getPrice().subtract(itemDiscountAmount));
+                }
+            }
+            
+            Order order = new Order();
+            order.setOrderItemList(orderItems);
+            order.setTotalPrice(totalPrice);
+            order.setDiscountAmount(discountAmount);
+            
+            if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
+                Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
+                if (discountOpt.isPresent()) {
+                    order.setDiscount(discountOpt.get());
+                    order.setDiscountCode(discountOpt.get().getCode());
+                }
+            }
+            
+            orderItems.forEach(orderItem -> orderItem.setOrder(order));
+            orderRepo.save(order);
+            
+            return Response.builder()
+                    .status(200)
+                    .message("Order was successfully placed")
+                    .build();
+        } catch (OurException e) {
+            return Response.builder()
+                    .status(400)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi đặt hàng: " + e.getMessage())
+                    .build();
+        }
 
     }
-
     @Override
     public Response updateOrderItemStatus(Long orderItemId, String status) {
         OrderItem orderItem = orderItemRepo.findById(orderItemId)

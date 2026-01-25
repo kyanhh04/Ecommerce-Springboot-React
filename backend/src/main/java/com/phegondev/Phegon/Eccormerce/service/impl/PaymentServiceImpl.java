@@ -7,6 +7,7 @@ import com.phegondev.Phegon.Eccormerce.entity.Payment;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
 import com.phegondev.Phegon.Eccormerce.repository.PaymentRepository;
+import com.phegondev.Phegon.Eccormerce.service.interf.DiscountService;
 import com.phegondev.Phegon.Eccormerce.service.interf.OTPService;
 import com.phegondev.Phegon.Eccormerce.service.interf.PaymentService;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
@@ -23,6 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final OTPService otpService;
     private final UserService userService;
     private final EmailService emailService;
+    private final DiscountService discountService;
 
     @Override
     public Response initializePayment(PaymentRequest paymentRequest) {
@@ -64,7 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             paymentRepository.save(payment);
 
-            otpService.generateOTP(user, "PAYMENT");
+            otpService.generateOTPForOrder(user, orderEntity);
 
             return Response.builder()
                     .status(200)
@@ -83,10 +85,6 @@ public class PaymentServiceImpl implements PaymentService {
                         .message("Vui lòng đăng nhập")
                         .build();
             }
-            Response otpResponse = otpService.verifyOTP(otpCode, user);
-            if (otpResponse.getStatus() != 200) {
-                return otpResponse;
-            }
             var order = orderRepository.findById(orderId);
             if (order.isEmpty()) {
                 return Response.builder()
@@ -99,6 +97,10 @@ public class PaymentServiceImpl implements PaymentService {
                         .status(403)
                         .message("Không có quyền xác nhận thanh toán cho đơn hàng này")
                         .build();
+            }
+            Response otpResponse = otpService.verifyOTPForOrder(otpCode, order.get());
+            if (otpResponse.getStatus() != 200) {
+                return otpResponse;
             }
             var payment = paymentRepository.findByOrderId(orderId);
             if (payment.isPresent()) {
@@ -129,7 +131,6 @@ public class PaymentServiceImpl implements PaymentService {
                         .message("Vui lòng đăng nhập")
                         .build();
             }
-
             var order = orderRepository.findById(orderId);
             if (order.isEmpty()) {
                 return Response.builder()
@@ -137,14 +138,12 @@ public class PaymentServiceImpl implements PaymentService {
                         .message("Đơn hàng không tồn tại")
                         .build();
             }
-
             if (isUserAuthorizedForOrder(user, order.get())) {
                 return Response.builder()
                         .status(403)
                         .message("Không có quyền xử lý thanh toán")
                         .build();
             }
-
             var payment = paymentRepository.findByOrderId(orderId);
             if (payment.isEmpty()) {
                 return Response.builder()
@@ -152,25 +151,41 @@ public class PaymentServiceImpl implements PaymentService {
                         .message("Thanh toán không tồn tại")
                         .build();
             }
-
             Payment paymentEntity = payment.get();
+            
+            // Check if payment is already successful
+            if ("SUCCESS".equals(paymentEntity.getStatus())) {
+                return Response.builder()
+                        .status(400)
+                        .message("Đơn hàng này đã được thanh toán rồi")
+                        .build();
+            }
+            
             if (!"OTP_VERIFIED".equals(paymentEntity.getStatus())) {
                 return Response.builder()
                         .status(400)
                         .message("Vui lòng xác nhận OTP trước khi thanh toán")
                         .build();
             }
-
             boolean paymentSuccess = processPaymentGateway(paymentEntity);
             if (paymentSuccess) {
                 paymentEntity.setStatus("SUCCESS");
                 paymentRepository.save(paymentEntity);
+                Order orderEntity = order.get();
+                if (orderEntity.getDiscountCode() != null && !orderEntity.getDiscountCode().isEmpty()) {
+                    try {
+                        discountService.decreaseDiscountUsage(orderEntity.getDiscountCode());
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi giảm usage limit của mã giảm giá: " + e.getMessage());
+                    }
+                }
                 emailService.sendPaymentConfirmationEmail(user, orderId, "SUCCESS");
                 return Response.builder()
                         .status(200)
                         .message("Thanh toán thành công")
                         .build();
-            } else {
+            }
+            else {
                 paymentEntity.setStatus("FAILED");
                 paymentRepository.save(paymentEntity);
                 emailService.sendPaymentConfirmationEmail(user, orderId, "FAILED");
@@ -186,7 +201,6 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
         }
     }
-
     @Override
     public Response getPaymentStatus(Long orderId) {
         try {

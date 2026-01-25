@@ -12,4 +12,5 @@ public interface DiscountService {
     Response getDiscountByCode(String code);
     Response getActiveDiscounts();
     Response validateAndApplyDiscount(String code, Long orderId);
+    void decreaseDiscountUsage(String code);
 }

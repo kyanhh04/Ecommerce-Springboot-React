@@ -21,4 +21,6 @@ public class OrderDto {
     private BigDecimal totalPrice;
     private LocalDateTime createdAt;
     private List<OrderItemDto> orderItemList;
+    private String discountCode;
+    private BigDecimal discountAmount;
 }

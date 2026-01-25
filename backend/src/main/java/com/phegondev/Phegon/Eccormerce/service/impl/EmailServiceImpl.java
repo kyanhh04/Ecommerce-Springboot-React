@@ -14,22 +14,15 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public void sendOTPEmail(User user, String otp, String type) {
+    public void sendOTPEmail(User user, String otp) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Mã OTP của bạn - Ecommerce");
             
-            String emailBody = "";
-            if ("PAYMENT".equals(type)) {
-                emailBody = "Mã OTP để xác nhận thanh toán của bạn là: " + otp + 
-                           "\n\nMã này có hiệu lực trong 10 phút.\n" +
-                           "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.";
-            } else if ("LOGIN".equals(type)) {
-                emailBody = "Mã OTP để đăng nhập của bạn là: " + otp + 
-                           "\n\nMã này có hiệu lực trong 10 phút.\n" +
-                           "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.";
-            }
+            String emailBody = "Mã OTP xác thực của bạn là: " + otp + 
+                               "\n\nMã này có hiệu lực trong 10 phút.\n" +
+                               "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.";
             
             message.setText(emailBody);
             javaMailSender.send(message);

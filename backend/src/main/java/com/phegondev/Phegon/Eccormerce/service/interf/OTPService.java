@@ -2,9 +2,10 @@ package com.phegondev.Phegon.Eccormerce.service.interf;
 
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.User;
+import com.phegondev.Phegon.Eccormerce.entity.Order;
 
 public interface OTPService {
-    String generateOTP(User user, String type);
-    Response verifyOTP(String code, User user);
-    Response requestOTP(String type);
+    void generateOTPForOrder(User user, Order order);
+    Response verifyOTPForOrder(String code, Order order);
+    Response requestPaymentOTP(Long orderId);
 }

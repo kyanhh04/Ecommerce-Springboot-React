@@ -3,6 +3,7 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 import com.phegondev.Phegon.Eccormerce.dto.DiscountDTO;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.Discount;
+import com.phegondev.Phegon.Eccormerce.enums.DiscountType;
 import com.phegondev.Phegon.Eccormerce.exception.OurException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,9 +33,20 @@ public class DiscountServiceImpl implements DiscountService {
         if (discountRepository.existsByCode(discountDTO.getCode().toUpperCase())) {
             throw new OurException("Mã giảm giá đã tồn tại");
         }
+        if (discountDTO.getDiscountType() == null || discountDTO.getDiscountType().isEmpty()) {
+            throw new OurException("Loại giảm giá không được để trống (PERCENTAGE hoặc FIXED_AMOUNT)");
+        }
+        DiscountType discountType = DiscountType.valueOf(discountDTO.getDiscountType().toUpperCase());
+        BigDecimal discountValue = discountDTO.getDiscountValue();
 
-        if (discountDTO.getDiscountPercentage().doubleValue() <= 0 || discountDTO.getDiscountPercentage().doubleValue() > 100) {
-            throw new OurException("Phần trăm giảm giá phải từ 0 đến 100");
+        if (discountValue == null || discountValue.doubleValue() <= 0) {
+            throw new OurException("Giá trị giảm giá phải lớn hơn 0");
+        }
+
+        if (discountType == DiscountType.PERCENTAGE) {
+            if (discountValue.doubleValue() > 100) {
+                throw new OurException("Phần trăm giảm giá không được vượt quá 100%");
+            }
         }
 
         if (discountDTO.getUsageLimit() <= 0) {
@@ -43,11 +56,11 @@ public class DiscountServiceImpl implements DiscountService {
         if (discountDTO.getStartDate().isAfter(discountDTO.getEndDate())) {
             throw new OurException("Ngày bắt đầu không thể sau ngày kết thúc");
         }
-
         Discount discount = new Discount();
         discount.setCode(discountDTO.getCode().toUpperCase());
         discount.setDescription(discountDTO.getDescription());
-        discount.setDiscountPercentage(discountDTO.getDiscountPercentage());
+        discount.setDiscountType(discountType);
+        discount.setDiscountValue(discountValue);
         discount.setUsageLimit(discountDTO.getUsageLimit());
         discount.setCurrentUsage(0);
         discount.setStartDate(discountDTO.getStartDate());
@@ -55,8 +68,7 @@ public class DiscountServiceImpl implements DiscountService {
         discount.setIsActive(true);
         discount.setCreatedAt(LocalDateTime.now());
         discount.setUpdatedAt(LocalDateTime.now());
-
-        Discount savedDiscount = discountRepository.save(discount);
+        discountRepository.save(discount);
 
         return Response.builder()
                 .status(HttpStatus.CREATED.value())
@@ -69,15 +81,32 @@ public class DiscountServiceImpl implements DiscountService {
         Discount discount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new OurException("Mã giảm giá không tồn tại"));
 
+        if (discountDTO.getCode() != null && !discountDTO.getCode().isEmpty()) {
+            String newCode = discountDTO.getCode().toUpperCase();
+            if (!newCode.equals(discount.getCode()) && discountRepository.existsByCode(newCode)) {
+                throw new OurException("Mã giảm giá này đã tồn tại");
+            }
+            discount.setCode(newCode);
+        }
+
         if (discountDTO.getDescription() != null && !discountDTO.getDescription().isEmpty()) {
             discount.setDescription(discountDTO.getDescription());
         }
 
-        if (discountDTO.getDiscountPercentage() != null) {
-            if (discountDTO.getDiscountPercentage().doubleValue() <= 0 || discountDTO.getDiscountPercentage().doubleValue() > 100) {
-                throw new OurException("Phần trăm giảm giá phải từ 0 đến 100");
+        if (discountDTO.getDiscountType() != null && !discountDTO.getDiscountType().isEmpty()) {
+            DiscountType discountType = DiscountType.valueOf(discountDTO.getDiscountType().toUpperCase());
+            discount.setDiscountType(discountType);
+        }
+
+        if (discountDTO.getDiscountValue() != null) {
+            if (discountDTO.getDiscountValue().doubleValue() <= 0) {
+                throw new OurException("Giá trị giảm giá phải lớn hơn 0");
             }
-            discount.setDiscountPercentage(discountDTO.getDiscountPercentage());
+            if (discount.getDiscountType() == DiscountType.PERCENTAGE && 
+                discountDTO.getDiscountValue().doubleValue() > 100) {
+                throw new OurException("Phần trăm giảm giá không được vượt quá 100%");
+            }
+            discount.setDiscountValue(discountDTO.getDiscountValue());
         }
 
         if (discountDTO.getUsageLimit() != null) {
@@ -202,16 +231,26 @@ public class DiscountServiceImpl implements DiscountService {
             throw new OurException("Mã giảm giá đã hết lượt sử dụng");
         }
 
-        // Increment usage count
-        discount.setCurrentUsage(discount.getCurrentUsage() + 1);
-        discountRepository.save(discount);
+        // Không cộng usage ở đây, chỉ kiểm tra. Usage sẽ được trừ khi thanh toán thành công
 
         DiscountDTO discountDTO = entityDtoMapper.mapDiscountToDiscountDTO(discount);
 
         return Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Áp dụng mã giảm giá thành công")
+                .message("Mã giảm giá hợp lệ")
                 .discount(discountDTO)
                 .build();
+    }
+
+    public void decreaseDiscountUsage(String code) {
+        Discount discount = discountRepository.findByCode(code.toUpperCase())
+                .orElseThrow(() -> new OurException("Mã giảm giá không tồn tại"));
+
+        if (discount.getCurrentUsage() < discount.getUsageLimit()) {
+            discount.setCurrentUsage(discount.getCurrentUsage() + 1);
+            discountRepository.save(discount);
+        } else {
+            throw new OurException("Mã giảm giá đã hết lượt sử dụng");
+        }
     }
 }

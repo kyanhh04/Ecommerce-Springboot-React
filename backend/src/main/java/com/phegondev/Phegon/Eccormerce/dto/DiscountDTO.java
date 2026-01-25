@@ -14,7 +14,8 @@ public class DiscountDTO {
     private Long id;
     private String code;
     private String description;
-    private BigDecimal discountPercentage;
+    private String discountType; // PERCENTAGE hoặc FIXED_AMOUNT
+    private BigDecimal discountValue; // Giá trị giảm
     private Integer usageLimit;
     private Integer currentUsage;
     private LocalDateTime startDate;

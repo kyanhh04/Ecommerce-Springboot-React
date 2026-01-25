@@ -3,7 +3,11 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.OTP;
 import com.phegondev.Phegon.Eccormerce.entity.User;
+import com.phegondev.Phegon.Eccormerce.entity.Order;
 import com.phegondev.Phegon.Eccormerce.repository.OTPRepository;
+import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
+import com.phegondev.Phegon.Eccormerce.repository.PaymentRepository;
+import com.phegondev.Phegon.Eccormerce.repository.UserRepo;
 import com.phegondev.Phegon.Eccormerce.service.interf.OTPService;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
 import com.phegondev.Phegon.Eccormerce.service.interf.EmailService;
@@ -19,57 +23,46 @@ public class OTPServiceImpl implements OTPService {
 
     private final OTPRepository otpRepository;
     private final UserService userService;
+    private final OrderRepo orderRepository;
+    private final PaymentRepository paymentRepository;
     private final EmailService emailService;
 
     @Override
-    public String generateOTP(User user, String type) {
-        // Xóa OTP cũ của người dùng
-        otpRepository.findByUserAndTypeAndIsUsedFalse(user, type).ifPresent(otpRepository::delete);
+    public void generateOTPForOrder(User user, Order order) {
+        otpRepository.findByOrderAndIsUsedFalse(order).ifPresent(otpRepository::delete);
 
-        // Tạo mã OTP 6 chữ số
         String code = String.format("%06d", new Random().nextInt(1000000));
 
-        // Lưu OTP vào database
         OTP otp = OTP.builder()
                 .user(user)
+                .order(order)
                 .code(code)
-                .type(type)
                 .isUsed(false)
                 .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusMinutes(10)) // OTP có hiệu lực 10 phút
+                .expiresAt(LocalDateTime.now().plusMinutes(10))
                 .build();
 
         otpRepository.save(otp);
 
-        // Gửi OTP qua email
-        emailService.sendOTPEmail(user, code, type);
+        emailService.sendOTPEmail(user, code);
 
-        return code;
     }
-
     @Override
-    public Response verifyOTP(String code, User user) {
-        var otp = otpRepository.findByCodeAndUserAndIsUsedFalse(code, user);
-
+    public Response verifyOTPForOrder(String code, Order order) {
+        var otp = otpRepository.findByCodeAndOrderAndIsUsedFalse(code, order);
         if (otp.isEmpty()) {
             return Response.builder()
                     .status(400)
                     .message("OTP không đúng hoặc đã hết hạn")
                     .build();
         }
-
         OTP otpEntity = otp.get();
-
-        // Kiểm tra OTP đã hết hạn chưa
         if (LocalDateTime.now().isAfter(otpEntity.getExpiresAt())) {
-            otpRepository.delete(otpEntity);
             return Response.builder()
                     .status(400)
                     .message("OTP đã hết hạn")
                     .build();
         }
-
-        // Đánh dấu OTP đã sử dụng
         otpEntity.setIsUsed(true);
         otpEntity.setUsedAt(LocalDateTime.now());
         otpRepository.save(otpEntity);
@@ -79,9 +72,8 @@ public class OTPServiceImpl implements OTPService {
                 .message("OTP xác thực thành công")
                 .build();
     }
-
     @Override
-    public Response requestOTP(String type) {
+    public Response requestPaymentOTP(Long orderId) {
         User user = userService.getLoginUser();
         if (user == null) {
             return Response.builder()
@@ -90,8 +82,24 @@ public class OTPServiceImpl implements OTPService {
                     .build();
         }
         try {
-            String otp = generateOTP(user, type);
+            var order = orderRepository.findById(orderId);
+            if (order.isEmpty()) {
+                return Response.builder()
+                        .status(404)
+                        .message("Đơn hàng không tồn tại")
+                        .build();
+            }
+            Order orderEntity = order.get();
 
+            var payment = paymentRepository.findByOrderId(orderId);
+            if (payment.isPresent() && "SUCCESS".equals(payment.get().getStatus())) {
+                return Response.builder()
+                        .status(400)
+                        .message("Đơn hàng này đã được thanh toán rồi")
+                        .build();
+            }
+            
+            generateOTPForOrder(user, orderEntity);
             return Response.builder()
                     .status(200)
                     .message("OTP đã được gửi đến email của bạn: " + user.getEmail())
@@ -103,4 +111,5 @@ public class OTPServiceImpl implements OTPService {
                     .build();
         }
     }
+   
 }

@@ -1,5 +1,6 @@
 package com.phegondev.Phegon.Eccormerce.entity;
 
+import com.phegondev.Phegon.Eccormerce.enums.DiscountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,8 +27,12 @@ public class Discount {
     @Column
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BigDecimal discountPercentage;
+    private DiscountType discountType = DiscountType.PERCENTAGE;
+
+    @Column(nullable = false)
+    private BigDecimal discountValue;
 
     @Column(nullable = false)
     private Integer usageLimit;

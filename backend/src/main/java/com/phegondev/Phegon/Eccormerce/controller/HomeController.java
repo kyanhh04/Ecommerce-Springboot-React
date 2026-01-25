@@ -12,7 +12,7 @@ public class HomeController {
     public ResponseEntity<Response> home() {
         Response response = Response.builder()
                 .status(HttpStatus.OK.value())
-                .message("Welcome to Phegon E-commerce API")
+                .message("Welcome to E-commerce")
                 .build();
         return ResponseEntity.ok(response);
     }

@@ -121,7 +121,8 @@ public class EntityDtoMapper {
         discountDTO.setId(discount.getId());
         discountDTO.setCode(discount.getCode());
         discountDTO.setDescription(discount.getDescription());
-        discountDTO.setDiscountPercentage(discount.getDiscountPercentage());
+        discountDTO.setDiscountType(discount.getDiscountType().name());
+        discountDTO.setDiscountValue(discount.getDiscountValue());
         discountDTO.setUsageLimit(discount.getUsageLimit());
         discountDTO.setCurrentUsage(discount.getCurrentUsage());
         discountDTO.setStartDate(discount.getStartDate());
@@ -131,5 +132,28 @@ public class EntityDtoMapper {
         discountDTO.setUpdatedAt(discount.getUpdatedAt());
         return discountDTO;
     }
-}
 
+    // Order to DTO
+    public OrderDto mapOrderToDtoBasic(Order order) {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(order.getId());
+        orderDto.setTotalPrice(order.getTotalPrice());
+        orderDto.setCreatedAt(order.getCreatedAt());
+        orderDto.setDiscountCode(order.getDiscountCode());
+        orderDto.setDiscountAmount(order.getDiscountAmount());
+        return orderDto;
+    }
+
+    // Order to DTO with order items
+    public OrderDto mapOrderToDtoPlusOrderItems(Order order) {
+        OrderDto orderDto = mapOrderToDtoBasic(order);
+        if (order.getOrderItemList() != null && !order.getOrderItemList().isEmpty()) {
+            orderDto.setOrderItemList(order.getOrderItemList()
+                    .stream()
+                    .map(this::mapOrderItemToDtoPlusProduct)
+                    .collect(Collectors.toList()));
+        }
+        return orderDto;
+    }
+
+}

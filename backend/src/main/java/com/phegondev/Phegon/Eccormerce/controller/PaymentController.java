@@ -19,24 +19,28 @@ public class PaymentController {
     @PostMapping("/initialize")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> initializePayment(@RequestBody PaymentRequest paymentRequest) {
-        return ResponseEntity.ok(paymentService.initializePayment(paymentRequest));
+        Response response = paymentService.initializePayment(paymentRequest);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PostMapping("/verify-otp")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> verifyPaymentOTP(@RequestBody PaymentOTPVerifyRequest request) {
-        return ResponseEntity.ok(paymentService.verifyPaymentOTP(request.getOrderId(), request.getOtpCode()));
+        Response response = paymentService.verifyPaymentOTP(request.getOrderId(), request.getOtpCode());
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    
     @PostMapping("/process/{orderId}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> processPayment(@PathVariable Long orderId) {
-        return ResponseEntity.ok(paymentService.processPayment(orderId));
+        Response response = paymentService.processPayment(orderId);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
-
     @GetMapping("/status/{orderId}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> getPaymentStatus(@PathVariable Long orderId) {
-        return ResponseEntity.ok(paymentService.getPaymentStatus(orderId));
+        Response response = paymentService.getPaymentStatus(orderId);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

@@ -16,13 +16,13 @@ public class DiscountController {
     private final DiscountService discountService;
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> createDiscount(@RequestBody DiscountDTO discountDTO) {
         return ResponseEntity.ok(discountService.createDiscount(discountDTO));
     }
 
     @PutMapping("/update/{discountId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> updateDiscount(
             @PathVariable Long discountId,
             @RequestBody DiscountDTO discountDTO) {
@@ -30,37 +30,37 @@ public class DiscountController {
     }
 
     @DeleteMapping("/delete/{discountId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> deleteDiscount(@PathVariable Long discountId) {
         return ResponseEntity.ok(discountService.deleteDiscount(discountId));
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> getAllDiscounts() {
         return ResponseEntity.ok(discountService.getAllDiscounts());
     }
 
     @GetMapping("/{discountId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> getDiscountById(@PathVariable Long discountId) {
         return ResponseEntity.ok(discountService.getDiscountById(discountId));
     }
 
     @GetMapping("/code/{code}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> getDiscountByCode(@PathVariable String code) {
         return ResponseEntity.ok(discountService.getDiscountByCode(code));
     }
 
     @GetMapping("/active/list")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> getActiveDiscounts() {
         return ResponseEntity.ok(discountService.getActiveDiscounts());
     }
 
     @PostMapping("/validate")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> validateDiscount(
             @RequestParam String code,
             @RequestParam Long orderId) {

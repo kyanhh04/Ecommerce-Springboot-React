@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OTPController {
     private final OTPService otpService;
-    @PostMapping("/request-payment")
+    
+    @PostMapping("/request-payment/{orderId}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
-    public ResponseEntity<Response> requestPaymentOTP() {
-        return ResponseEntity.ok(otpService.requestOTP("PAYMENT"));
+    public ResponseEntity<Response> requestPaymentOTP(@PathVariable Long orderId) {
+        return ResponseEntity.ok(otpService.requestPaymentOTP(orderId));
     }
 }
