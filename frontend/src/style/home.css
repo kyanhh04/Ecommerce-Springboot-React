@@ -1,9 +1,159 @@
-.home{
+.home {
     padding: 20px;
+    background:#f2f2f2;
 }
-.error-message{
+/* ===== COMMON SECTION TITLE ===== */
+.home h2 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: left;
+    color: #222;
+    position: relative;
+}
+
+/* ===== ERROR ===== */
+.error-message {
     text-align: center;
     color: red;
     font-size: 20px;
     margin-top: 20px;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    max-width: 1200px;     /* giới hạn chiều ngang */
+    width: 100%;
+    margin: 0 auto 50px;   /* căn giữa */
+    height: 400px;
+
+    background: url("https://images.unsplash.com/photo-1517336714731-489689fd1ca8")
+        center/cover no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+
+    border-radius: 10px;
+}
+.hero-content h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.hero-content button {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.hero-content button:hover {
+    transform: scale(1.05);
+}
+
+/* ===== BRAND SECTION ===== */
+
+
+
+
+/* ===== BRAND SECTION (Banner style) ===== */
+
+.brand-section {
+text-align: center;
+    margin: 80px auto;
+    max-width: 1200px;
+}
+
+
+
+.brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.brand-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.brand-card img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    transition: 0.4s ease;
+}
+
+.brand-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+}
+
+.brand-overlay h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.brand-overlay p {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ffd700;
+}
+
+.brand-card:hover img {
+    transform: scale(1.1);
+}
+
+/* ===== FEATURED SECTION ===== */
+.featured-section {
+    text-align: center;
+        margin: 80px auto;
+        max-width: 1200px;
+}
+
+
+/* ===== PRODUCT SECTION ===== */
+.product-section {
+    text-align: center;
+        margin: 80px auto;
+        max-width: 1200px;
+}
+
+
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero-section {
+        height: 300px;
+        padding: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 26px;
+    }
+
+    .brand-list {
+        gap: 20px;
+        font-size: 16px;
+    }
 }

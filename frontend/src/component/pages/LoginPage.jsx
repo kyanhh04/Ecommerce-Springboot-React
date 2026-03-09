@@ -29,7 +29,7 @@ const LoginPage = () => {
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('role', response.role);
                 setTimeout(() => {
-                    navigate("/profile")
+                    navigate("/")
                 }, 4000)
             }
         } catch (error) {

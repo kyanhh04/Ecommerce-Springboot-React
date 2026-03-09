@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import { useCart } from "../context/CartContext";
-import '../../style/cart.css'
+import '../../style/cart.css';
 
 const CartPage = () => {
+
     const { cart, dispatch } = useCart();
     const [message, setMessage] = useState(null);
     const [discountCode, setDiscountCode] = useState('');
@@ -12,14 +13,13 @@ const CartPage = () => {
     const [discountError, setDiscountError] = useState('');
     const navigate = useNavigate();
 
-
     const incrementItem = (product) => {
         dispatch({ type: 'INCREMENT_ITEM', payload: product });
-    }
+    };
 
     const decrementItem = (product) => {
-
         const cartItem = cart.find(item => item.id === product.id);
+
         if (cartItem && cartItem.quantity > 1) {
             dispatch({ type: 'DECREMENT_ITEM', payload: product });
         } else {
@@ -68,13 +68,18 @@ const CartPage = () => {
     const finalPrice = totalPrice - discountAmount;
 
 
+    const totalPrice = cart.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+    );
 
     const handleCheckout = async () => {
+
         if (!ApiService.isAuthenticated()) {
-            setMessage("You need to login first before you can place an order");
+            setMessage("Bạn cần đăng nhập trước khi đặt hàng");
             setTimeout(() => {
-                setMessage('')
-                navigate("/login")
+                setMessage('');
+                navigate("/login");
             }, 3000);
             return;
         }
@@ -86,35 +91,40 @@ const CartPage = () => {
 
         const orderRequest = {
             totalPrice,
-            items: orderItems,
-        }
+            items: orderItems
+        };
 
         try {
             const response = await ApiService.createOrder(orderRequest);
-            setMessage(response.message)
+            setMessage(response.message);
 
             if (response.status === 200) {
-                dispatch({ type: 'CLEAR_CART' })
-                // Navigate to payment page after 1 second
+                dispatch({ type: 'CLEAR_CART' });
+
                 setTimeout(() => {
-                    navigate('/payment', { state: { orderId: response.data.id } })
+                    navigate('/payment', {
+                        state: { orderId: response.data.id }
+                    });
                 }, 1000);
             }
 
         } catch (error) {
-            setMessage(error.response?.data?.message || error.message || 'Failed to place an order');
+            setMessage(
+                error.response?.data?.message ||
+                error.message ||
+                'Đặt hàng thất bại'
+            );
+
             setTimeout(() => {
-                setMessage('')
+                setMessage('');
             }, 3000);
-
         }
-
     };
-
 
     return (
         <div className="cart-page">
             <h1>Cart</h1>
+
             {message && <p className="response-message">{message}</p>}
 
             {cart.length === 0 ? (
@@ -124,16 +134,24 @@ const CartPage = () => {
                     <ul>
                         {cart.map(item => (
                             <li key={item.id}>
-                                <img src={item.imageUrl} alt={item.name} />
+                                <img
+                                    src={item.imageUrl}
+                                    alt={item.name}
+                                />
+
                                 <div>
                                     <h2>{item.name}</h2>
                                     <p>{item.description}</p>
+
                                     <div className="quantity-controls">
-                                        <button onClick={()=> decrementItem(item)}>-</button>
+                                        <button onClick={() => decrementItem(item)}>-</button>
                                         <span>{item.quantity}</span>
-                                        <button onClick={()=> incrementItem(item)}>+</button>
+                                        <button onClick={() => incrementItem(item)}>+</button>
                                     </div>
-                                    <span>${item.price.toFixed()}</span>
+
+                                    <span>
+                                        {item.price.toLocaleString()} ₫
+                                    </span>
                                 </div>
                             </li>
                         ))}
@@ -193,7 +211,7 @@ const CartPage = () => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default CartPage;

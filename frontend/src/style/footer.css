@@ -1,29 +1,51 @@
-.footer{
-    position: fixed;
-    border: 0;
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
-    z-index: 1000;
+.footer {
+    background-color: #f5f7fa;
+    color: #2c3e50;
+    padding: 60px 10%;
 }
 
-.footer-links ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 50px;
 }
-.footer-links a {
-    text-decoration: none;
-    color: white;
+
+.footer-logo {
+    font-size: 22px;
     font-weight: bold;
-    margin: 0 15px;
+    color: #2563eb; /* xanh công nghệ */
 }
-.footer-info p {
-    color: white;
-    margin: 0 0;
+
+.footer-col h3 {
+    margin-bottom: 18px;
+    font-size: 16px;
+    font-weight: 600;
 }
+
+.footer-col p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #555;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+    color: #2563eb;
+    padding-left: 5px;
+}
+

@@ -1,10 +1,14 @@
-import React, {useState} from "react";
-import '../../style/navbar.css';
+import React, { useState } from "react";
+import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import logo from "../../asset/logo.png";
 
+import { FaHome, FaUser, FaShoppingCart, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
+import { MdCategory } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
 
-const Navbar = () =>{
+const Navbar = () => {
 
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
@@ -12,49 +16,88 @@ const Navbar = () =>{
     const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
 
-    const handleSearchChange =(e) => {
+    const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
     }
 
-    const handleSearchSubmit = async (e) =>{
+    const handleSearchSubmit = (e) => {
         e.preventDefault();
-        navigate(`/?search=${searchValue}`)
+        navigate(`/?search=${searchValue}`);
+        setSearchValue("");
     }
 
     const handleLogout = () => {
-        const confirm = window.confirm("Are you sure you want to logout? ");
-        if(confirm){
+        const confirm = window.confirm("Are you sure you want to logout?");
+        if (confirm) {
             ApiService.logout();
-            setTimeout(()=>{
-                navigate('/login')
+            setTimeout(() => {
+                navigate("/login");
             }, 500);
         }
     }
 
-    return(
+    return (
         <nav className="navbar">
+
             <div className="navbar-brand">
-                <NavLink to="/" > <img src="./laptop88.jpg" alt="Laptop Mart" /></NavLink>
+                <NavLink to="/">
+                    <img src={logo} alt="Laptop Mart" />
+                </NavLink>
             </div>
+
             <form className="navbar-search" onSubmit={handleSearchSubmit}>
-                <input type="text" 
-                placeholder="Search products" 
-                value={searchValue}
-                onChange={handleSearchChange} />
+                <input
+                    type="text"
+                    placeholder="Search products"
+                    autoComplete="off"
+                    value={searchValue}
+                    onChange={handleSearchChange}
+                />
                 <button type="submit">Search</button>
             </form>
 
             <div className="navbar-link">
-                <NavLink to="/" >Home</NavLink>
-                <NavLink to="/categories" >Categories</NavLink>
-                {isAuthenticated && <NavLink to="/profile" >My Account</NavLink>}
-                {isAdmin && <NavLink to="/admin" >Admin</NavLink>}
-                {!isAuthenticated && <NavLink to="/login" >Login</NavLink>}
-                {isAuthenticated &&<NavLink onClick={handleLogout} >Logout</NavLink>}
-                <NavLink to="/cart">Cart</NavLink>
+
+                <NavLink to="/" title="Home">
+                    <FaHome />
+                </NavLink>
+
+                <NavLink to="/categories" title="Categories">
+                    <MdCategory />
+                </NavLink>
+
+                {isAuthenticated && (
+                    <NavLink to="/profile" title="Profile">
+                        <FaUser />
+                    </NavLink>
+                )}
+
+                {isAdmin && (
+                    <NavLink to="/admin" title="Admin">
+                        <RiAdminFill />
+                    </NavLink>
+                )}
+
+                {!isAuthenticated && (
+                    <NavLink to="/login" title="Login">
+                        <FaSignInAlt />
+                    </NavLink>
+                )}
+
+                {isAuthenticated && (
+                    <NavLink onClick={handleLogout} title="Logout">
+                        <FaSignOutAlt />
+                    </NavLink>
+                )}
+
+                <NavLink to="/cart" title="Cart">
+                    <FaShoppingCart />
+                </NavLink>
+
             </div>
+
         </nav>
     );
-
 };
+
 export default Navbar;
