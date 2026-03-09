@@ -31,25 +31,20 @@ import EditDiscountPage from './component/admin/EditDiscountPage';
 import PaymentPageWrapper from './component/pages/PaymentPageWrapper';
 
 import About from './component/pages/About';
-import Contact from './component/pages/Contact';
 import Privacy from './component/pages/Privacy';
 import Terms from './component/pages/Terms';
 import FAQs from './component/pages/FAQS';
 
+
 function App() {
   return (
     <BrowserRouter>
-    <ScrollToTop />
+      <ScrollToTop />
       <CartProvider>
         <div className="app-container">
-
           <Navbar />
-
-          
-          <Route path='/payment' element={<ProtectedRoute element={<PaymentPageWrapper/>} />} />
           <div className="main-content">
             <Routes>
-              {/* PUBLIC ROUTES */}
               <Route path='/' element={<Home />} />
               <Route path='/product/:productId' element={<ProductDetailsPage />} />
               <Route path='/categories' element={<CategoryListPage />} />
@@ -58,18 +53,15 @@ function App() {
               <Route path='/register' element={<RegisterPage />} />
               <Route path='/login' element={<LoginPage />} />
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/faqs" element={<FAQs />} />
 
-              {/* USER PROTECTED */}
               <Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />} />
               <Route path='/add-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/payment' element={<ProtectedRoute element={<PaymentPageWrapper/>} />} />
 
-              {/* ADMIN ROUTES */}
               <Route path='/admin' element={<AdminRoute element={<AdminPage />} />} />
               <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage />} />} />
               <Route path='/admin/add-category' element={<AdminRoute element={<AddCategory />} />} />
@@ -79,17 +71,14 @@ function App() {
               <Route path='/admin/edit-product/:productId' element={<AdminRoute element={<EditProductPage />} />} />
               <Route path='/admin/orders' element={<AdminRoute element={<AdminOrdersPage />} />} />
               <Route path='/admin/order-details/:itemId' element={<AdminRoute element={<AdminOrderDetailsPage />} />} />
-          <Route path='/admin/discounts' element={<AdminRoute element={<AdminDiscountPage/>} />} />
-          <Route path='/admin/add-discount' element={<AdminRoute element={<AddDiscountPage/>} />} />
-          <Route path='/admin/edit-discount/:discountId' element={<AdminRoute element={<EditDiscountPage/>} />} />
+              <Route path='/admin/discounts' element={<AdminRoute element={<AdminDiscountPage/>} />} />
+              <Route path='/admin/add-discount' element={<AdminRoute element={<AddDiscountPage/>} />} />
+              <Route path='/admin/edit-discount/:discountId' element={<AdminRoute element={<EditDiscountPage/>} />} />
             </Routes>
           </div>
-
           <Footer />
-
-        </Routes>
-      <Footer/>
-    </CartProvider>
+        </div>
+      </CartProvider>
     </BrowserRouter>
   );
 }
