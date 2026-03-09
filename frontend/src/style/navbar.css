@@ -5,10 +5,16 @@ body {
 }
 
 .navbar {
+position: sticky;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #f68b1e;
+    background-color: lightgreen;
     padding: 10px 20px;
     font-size: 20px;
     font-family: 600;
@@ -43,4 +49,7 @@ li {
     margin: 0 10px;
     font-weight: bold;
     list-style: none;
+}
+.navbar-link a:hover {
+  color: black;
 }

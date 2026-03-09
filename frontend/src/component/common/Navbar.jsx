@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import '../../style/navbar.css';
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import logo from "../../asset/logo.png";
+
 
 
 const Navbar = () =>{
@@ -19,6 +21,7 @@ const Navbar = () =>{
     const handleSearchSubmit = async (e) =>{
         e.preventDefault();
         navigate(`/?search=${searchValue}`)
+        setSearchValue("");
     }
 
     const handleLogout = () => {
@@ -34,11 +37,12 @@ const Navbar = () =>{
     return(
         <nav className="navbar">
             <div className="navbar-brand">
-                <NavLink to="/" > <img src="./laptop88.jpg" alt="Laptop Mart" /></NavLink>
+                <NavLink to="/" > <img src={logo} alt="Laptop Mart" /></NavLink>
             </div>
             <form className="navbar-search" onSubmit={handleSearchSubmit}>
                 <input type="text" 
-                placeholder="Search products" 
+                placeholder="Search products"
+                autoComplete="off"
                 value={searchValue}
                 onChange={handleSearchChange} />
                 <button type="submit">Search</button>

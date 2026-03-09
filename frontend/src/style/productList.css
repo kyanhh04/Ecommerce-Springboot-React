@@ -1,24 +1,28 @@
+
 .product-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    justify-content: center;
     padding: 20px;
-    margin: 0px 5rem;
+    margin: 0 5rem;
 }
+
 
 .product-item {
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    background: #fff;
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3 ease;
-    width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
 }
 
 .product-item:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transform: translate(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
 }
 
 .product-item a {
@@ -26,57 +30,78 @@
     text-decoration: none;
 }
 
-.product-item h3 {
-    color: #333;
-    font-size: 1.2em;
-    margin: 10px 0px;
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
 }
+
+
+.product-item h3 {
+    font-size: 1.1em;
+    margin: 10px 15px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4em;
+    height: 2.8em; /* 2 lines */
+}
+
 
 .product-item p {
-    color: #777;
     font-size: 0.9em;
-    margin: 10px 20px;
-    height: 60px;
+    color: #777;
+    margin: 0 15px 10px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
     overflow: hidden;
+    line-height: 1.4em;
+    height: 4.2em; /* 3 lines */
 }
+
 
 .product-item span {
-    color: #333;
-    font-size: 1.1em;
-    margin: 10px 0px;
-    display: block;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #f68b1e;
 }
 
+
 .product-item button {
+    margin-top: auto;
     background-color: #f68b1e;
     border: none;
     border-radius: 4px;
     color: #fff;
+    padding: 10px;
     cursor: pointer;
-    font-size: 1em;
-    margin: 10px 0;
-    padding: 10px 20px;
-    transition: background-color 0.3 ease;
+    width: 80%;
+    align-self: center;
+    transition: background-color 0.3s ease;
 }
 
 .product-item button:hover {
     background-color: #633d17;
 }
 
-.product-image {
-    height: 200px;
-    object-fit: cover;
-    width: 100%;
-}
 
-.quantity-controls{
+.quantity-controls {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 10px 0;
 }
 
-.quantity-controls button{
+.quantity-controls button {
     background-color: #f68b1e;
     border: none;
     border-radius: 4px;
@@ -84,15 +109,16 @@
     cursor: pointer;
     font-size: 1.2em;
     padding: 5px 10px;
-    transition: background-color 0.3 ease;
-
+    transition: background-color 0.3s ease;
 }
-.quantity-controls button:hover{
+
+.quantity-controls button:hover {
     background-color: #633d17;
-
 }
-.quantity-controls span{
+
+.quantity-controls span {
     margin: 0 10px;
     font-size: 1.2em;
     color: #333;
 }
+
