@@ -166,7 +166,117 @@ export default class ApiService {
         return response.data;
     }
 
-    /***AUTHEMNTICATION CHECKER */
+    /**USER UPDATE */
+    static async updateUser(updateUserDto) {
+        const response = await axios.patch(`${this.BASE_URL}/user/update`, updateUserDto, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getAllUsers() {
+        const response = await axios.get(`${this.BASE_URL}/user/get-all`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    /**DISCOUNT APIS */
+    static async createDiscount(discountDTO) {
+        const response = await axios.post(`${this.BASE_URL}/api/discounts/create`, discountDTO, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async updateDiscount(discountId, discountDTO) {
+        const response = await axios.put(`${this.BASE_URL}/api/discounts/update/${discountId}`, discountDTO, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async deleteDiscount(discountId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/discounts/delete/${discountId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getAllDiscounts() {
+        const response = await axios.get(`${this.BASE_URL}/api/discounts/all`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getDiscountById(discountId) {
+        const response = await axios.get(`${this.BASE_URL}/api/discounts/${discountId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getDiscountByCode(code) {
+        const response = await axios.get(`${this.BASE_URL}/api/discounts/code/${code}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getActiveDiscounts() {
+        const response = await axios.get(`${this.BASE_URL}/api/discounts/active/list`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async validateDiscount(code, orderId) {
+        const response = await axios.post(`${this.BASE_URL}/api/discounts/validate`, null, {
+            headers: this.getHeader(),
+            params: { code, orderId }
+        });
+        return response.data;
+    }
+
+    /**PAYMENT APIS */
+    static async initializePayment(paymentRequest) {
+        const response = await axios.post(`${this.BASE_URL}/api/payments/initialize`, paymentRequest, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async verifyPaymentOTP(verifyRequest) {
+        const response = await axios.post(`${this.BASE_URL}/api/payments/verify-otp`, verifyRequest, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async processPayment(orderId) {
+        const response = await axios.post(`${this.BASE_URL}/api/payments/process/${orderId}`, {}, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getPaymentStatus(orderId) {
+        const response = await axios.get(`${this.BASE_URL}/api/payments/status/${orderId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    /**OTP API */
+    static async requestPaymentOTP(orderId) {
+        const response = await axios.post(`${this.BASE_URL}/api/otp/request-payment/${orderId}`, {}, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    /***AUTHENTICATION CHECKER */
     static logout(){
         localStorage.removeItem('token')
         localStorage.removeItem('role')

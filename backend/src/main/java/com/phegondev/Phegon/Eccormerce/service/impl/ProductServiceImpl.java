@@ -5,10 +5,11 @@ import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.Category;
 import com.phegondev.Phegon.Eccormerce.entity.Product;
 import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
+import com.phegondev.Phegon.Eccormerce.exception.OurException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.CategoryRepo;
-import com.phegondev.Phegon.Eccormerce.repository.ProductRepo;
-import com.phegondev.Phegon.Eccormerce.service.AwsS3Service;
+import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
+import com.phegondev.Phegon.Eccormerce.service.interf.AwsS3Service;
 import com.phegondev.Phegon.Eccormerce.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepo productRepo;
+    private final ProductRepository productRepository;
     private final CategoryRepo categoryRepo;
     private final EntityDtoMapper entityDtoMapper;
     private final AwsS3Service awsS3Service;
@@ -44,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(description);
         product.setImageUrl(productImageUrl);
 
-        productRepo.save(product);
+        productRepository.save(product);
         return Response.builder()
                 .status(200)
                 .message("Product successfully created")
@@ -53,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response updateProduct(Long productId, Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
 
         Category category = null;
         String productImageUrl = null;
@@ -71,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
         if (description != null) product.setDescription(description);
         if (productImageUrl != null) product.setImageUrl(productImageUrl);
 
-        productRepo.save(product);
+        productRepository.save(product);
         return Response.builder()
                 .status(200)
                 .message("Product updated successfully")
@@ -81,9 +82,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response deleteProduct(Long productId) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
-        productRepo.delete(product);
-
+        Product product = productRepository.findById(productId).orElseThrow(()-> new OurException("Product Not Found"));
+        productRepository.delete(product);
         return Response.builder()
                 .status(200)
                 .message("Product deleted successfully")
@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getProductById(Long productId) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
         ProductDto productDto = entityDtoMapper.mapProductToDtoBasic(product);
 
         return Response.builder()
@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getAllProducts() {
-        List<ProductDto> productList = productRepo.findAll(Sort.by(Sort.Direction.DESC, "id"))
+        List<ProductDto> productList = productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
                 .stream()
                 .map(entityDtoMapper::mapProductToDtoBasic)
                 .collect(Collectors.toList());
@@ -117,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getProductsByCategory(Long categoryId) {
-        List<Product> products = productRepo.findByCategoryId(categoryId);
+        List<Product> products = productRepository.findByCategoryId(categoryId);
         if(products.isEmpty()){
             throw new NotFoundException("No Products found for this category");
         }
@@ -134,7 +134,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response searchProduct(String searchValue) {
-        List<Product> products = productRepo.findByNameContainingOrDescriptionContaining(searchValue, searchValue);
+        List<Product> products = productRepository.findByNameContainingOrDescriptionContaining(searchValue, searchValue);
 
         if (products.isEmpty()){
             throw new NotFoundException("No Products Found");

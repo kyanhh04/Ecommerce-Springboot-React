@@ -7,8 +7,8 @@ import com.phegondev.Phegon.Eccormerce.entity.Product;
 import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.CategoryRepo;
-import com.phegondev.Phegon.Eccormerce.repository.ProductRepo;
-import com.phegondev.Phegon.Eccormerce.service.AwsS3Service;
+import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
+import com.phegondev.Phegon.Eccormerce.service.interf.AwsS3Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +30,7 @@ class ProductServiceImplTest {
     private ProductServiceImpl productService;
 
     @Mock
-    private ProductRepo productRepo;
+    private ProductRepository productRepository;
 
     @Mock
     private CategoryRepo categoryRepo;
@@ -67,7 +66,7 @@ class ProductServiceImplTest {
         // Assert
         assertEquals(200, response.getStatus());
         assertEquals("Product successfully created", response.getMessage());
-        verify(productRepo, times(1)).save(any(Product.class));
+        verify(productRepository, times(1)).save(any(Product.class));
     }
 
     @Test
@@ -93,7 +92,7 @@ class ProductServiceImplTest {
         Category category = new Category();
         category.setId(categoryId);
 
-        when(productRepo.findById(productId)).thenReturn(Optional.of(product));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(categoryRepo.findById(categoryId)).thenReturn(Optional.of(category));
         when(awsS3Service.saveImageToS3(multipartFile)).thenReturn("http://example.com/image.jpg");
 
@@ -105,14 +104,14 @@ class ProductServiceImplTest {
         // Assert
         assertEquals(200, response.getStatus());
         assertEquals("Product updated successfully", response.getMessage());
-        verify(productRepo, times(1)).save(product);
+        verify(productRepository, times(1)).save(product);
     }
 
     @Test
     void testUpdateProductNotFound() {
         // Arrange
         Long productId = 1L;
-        when(productRepo.findById(productId)).thenReturn(Optional.empty());
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> productService.updateProduct(
@@ -127,7 +126,7 @@ class ProductServiceImplTest {
         Product product = new Product();
         product.setId(productId);
 
-        when(productRepo.findById(productId)).thenReturn(Optional.of(product));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
         // Act
         Response response = productService.deleteProduct(productId);
@@ -135,14 +134,14 @@ class ProductServiceImplTest {
         // Assert
         assertEquals(200, response.getStatus());
         assertEquals("Product deleted successfully", response.getMessage());
-        verify(productRepo, times(1)).delete(product);
+        verify(productRepository, times(1)).delete(product);
     }
 
     @Test
     void testDeleteProductNotFound() {
         // Arrange
         Long productId = 1L;
-        when(productRepo.findById(productId)).thenReturn(Optional.empty());
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> productService.deleteProduct(productId));
@@ -156,7 +155,7 @@ class ProductServiceImplTest {
         product.setId(productId);
         ProductDto productDto = new ProductDto();
 
-        when(productRepo.findById(productId)).thenReturn(Optional.of(product));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(entityDtoMapper.mapProductToDtoBasic(product)).thenReturn(productDto);
 
         // Act
@@ -171,7 +170,7 @@ class ProductServiceImplTest {
     void testGetProductByIdNotFound() {
         // Arrange
         Long productId = 1L;
-        when(productRepo.findById(productId)).thenReturn(Optional.empty());
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> productService.getProductById(productId));
@@ -184,7 +183,7 @@ class ProductServiceImplTest {
         product.setId(1L);
         ProductDto productDto = new ProductDto();
 
-        when(productRepo.findAll(Sort.by(Sort.Direction.DESC, "id"))).thenReturn(Collections.singletonList(product));
+        when(productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))).thenReturn(Collections.singletonList(product));
         when(entityDtoMapper.mapProductToDtoBasic(product)).thenReturn(productDto);
 
         // Act
@@ -204,7 +203,7 @@ class ProductServiceImplTest {
         product.setId(1L);
         ProductDto productDto = new ProductDto();
 
-        when(productRepo.findByCategoryId(categoryId)).thenReturn(Collections.singletonList(product));
+        when(productRepository.findByCategoryId(categoryId)).thenReturn(Collections.singletonList(product));
         when(entityDtoMapper.mapProductToDtoBasic(product)).thenReturn(productDto);
 
         // Act
@@ -220,7 +219,7 @@ class ProductServiceImplTest {
     void testGetProductsByCategoryNotFound() {
         // Arrange
         Long categoryId = 1L;
-        when(productRepo.findByCategoryId(categoryId)).thenReturn(Collections.emptyList());
+        when(productRepository.findByCategoryId(categoryId)).thenReturn(Collections.emptyList());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> productService.getProductsByCategory(categoryId));
@@ -234,7 +233,7 @@ class ProductServiceImplTest {
         product.setId(1L);
         ProductDto productDto = new ProductDto();
 
-        when(productRepo.findByNameContainingOrDescriptionContaining(searchValue, searchValue))
+        when(productRepository.findByNameContainingOrDescriptionContaining(searchValue, searchValue))
                 .thenReturn(Collections.singletonList(product));
         when(entityDtoMapper.mapProductToDtoBasic(product)).thenReturn(productDto);
 
@@ -251,7 +250,7 @@ class ProductServiceImplTest {
     void testSearchProductNotFound() {
         // Arrange
         String searchValue = "Product";
-        when(productRepo.findByNameContainingOrDescriptionContaining(searchValue, searchValue))
+        when(productRepository.findByNameContainingOrDescriptionContaining(searchValue, searchValue))
                 .thenReturn(Collections.emptyList());
 
         // Act & Assert

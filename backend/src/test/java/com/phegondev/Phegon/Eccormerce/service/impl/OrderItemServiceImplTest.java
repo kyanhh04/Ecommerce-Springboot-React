@@ -13,9 +13,8 @@ import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
-import com.phegondev.Phegon.Eccormerce.repository.ProductRepo;
+import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
-import com.phegondev.Phegon.Eccormerce.specification.OrderItemSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,8 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +45,7 @@ class OrderItemServiceImplTest {
     private OrderItemRepo orderItemRepo;
 
     @Mock
-    private ProductRepo productRepo;
+    private ProductRepository productRepository;
 
     @Mock
     private UserService userService;
@@ -79,7 +76,7 @@ class OrderItemServiceImplTest {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setItems(Collections.singletonList(orderItemRequest)); // Adding OrderItemRequest to OrderRequest
 
-        when(productRepo.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         // Act
         Response response = orderItemService.placeOrder(orderRequest);
@@ -101,7 +98,7 @@ class OrderItemServiceImplTest {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setItems(Collections.singletonList(orderItemRequest));
 
-        when(productRepo.findById(1L)).thenReturn(Optional.empty());
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> orderItemService.placeOrder(orderRequest));

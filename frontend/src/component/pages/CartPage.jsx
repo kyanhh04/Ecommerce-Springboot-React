@@ -8,6 +8,9 @@ const CartPage = () => {
 
     const { cart, dispatch } = useCart();
     const [message, setMessage] = useState(null);
+    const [discountCode, setDiscountCode] = useState('');
+    const [discount, setDiscount] = useState(null);
+    const [discountError, setDiscountError] = useState('');
     const navigate = useNavigate();
 
     const incrementItem = (product) => {
@@ -22,7 +25,48 @@ const CartPage = () => {
         } else {
             dispatch({ type: 'REMOVE_ITEM', payload: product });
         }
+    }
+
+    const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+    // Apply discount
+    const applyDiscount = async () => {
+        if (!discountCode.trim()) {
+            setDiscountError('Vui lòng nhập mã giảm giá');
+            return;
+        }
+
+        try {
+            const response = await ApiService.getDiscountByCode(discountCode.toUpperCase());
+            if (response.status === 200) {
+                setDiscount(response.discount);
+                setDiscountError('');
+                setMessage('✅ Áp dụng mã giảm giá thành công!');
+                setTimeout(() => setMessage(''), 3000);
+            }
+        } catch (error) {
+            setDiscountError(error.response?.data?.message || 'Mã giảm giá không hợp lệ');
+            setDiscount(null);
+            setTimeout(() => setDiscountError(''), 3000);
+        }
     };
+
+    const removeDiscount = () => {
+        setDiscount(null);
+        setDiscountCode('');
+        setMessage('Đã xóa mã giảm giá');
+        setTimeout(() => setMessage(''), 2000);
+    };
+
+    // Calculate discount amount
+    const discountAmount = discount
+        ? discount.type === 'PERCENTAGE'
+            ? (totalPrice * discount.value) / 100
+            : discount.value
+        : 0;
+
+    const finalPrice = totalPrice - discountAmount;
+
 
     const totalPrice = cart.reduce(
         (total, item) => total + item.price * item.quantity,
@@ -113,16 +157,57 @@ const CartPage = () => {
                         ))}
                     </ul>
 
-                    <h2>
-                        Total: {totalPrice.toLocaleString()} ₫
-                    </h2>
+                    {/* Discount Code Section */}
+                    <div className="discount-section">
+                        <h3>Mã Giảm Giá</h3>
+                        {!discount ? (
+                            <div className="discount-input-group">
+                                <input
+                                    type="text"
+                                    placeholder="Nhập mã giảm giá"
+                                    value={discountCode}
+                                    onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                                    className="discount-input"
+                                />
+                                <button onClick={applyDiscount} className="apply-discount-btn">
+                                    Áp dụng
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="discount-applied">
+                                <span className="discount-badge">
+                                    ✓ {discount.code} -
+                                    {discount.type === 'PERCENTAGE'
+                                        ? ` ${discount.value}%`
+                                        : ` ${discount.value.toLocaleString()}đ`}
+                                </span>
+                                <button onClick={removeDiscount} className="remove-discount-btn">
+                                    Xóa
+                                </button>
+                            </div>
+                        )}
+                        {discountError && <p className="error-text">{discountError}</p>}
+                    </div>
 
-                    <button
-                        className="checkout-button"
-                        onClick={handleCheckout}
-                    >
-                        Đặt Hàng
-                    </button>
+                    {/* Price Summary */}
+                    <div className="price-summary">
+                        <div className="price-row">
+                            <span>Tạm tính:</span>
+                            <span>${totalPrice.toFixed(2)}</span>
+                        </div>
+                        {discount && (
+                            <div className="price-row discount-row">
+                                <span>Giảm giá:</span>
+                                <span className="discount-amount">-${discountAmount.toFixed(2)}</span>
+                            </div>
+                        )}
+                        <div className="price-row total-row">
+                            <strong>Tổng cộng:</strong>
+                            <strong>${finalPrice.toFixed(2)}</strong>
+                        </div>
+                    </div>
+
+                    <button className="checkout-button" onClick={handleCheckout}>Đặt Hàng</button>
                 </div>
             )}
         </div>
