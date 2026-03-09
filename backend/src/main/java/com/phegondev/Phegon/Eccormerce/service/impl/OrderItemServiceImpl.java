@@ -15,7 +15,7 @@ import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
 import com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
-import com.phegondev.Phegon.Eccormerce.repository.ProductRepo;
+import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.OrderItemService;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
 import com.phegondev.Phegon.Eccormerce.specification.OrderItemSpecification;
@@ -39,7 +39,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
-    private final ProductRepo productRepo;
+    private final ProductRepository productRepository;
     private final UserService userService;
     private final EntityDtoMapper entityDtoMapper;
     private final DiscountRepository discountRepository;
@@ -50,7 +50,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         try {
             User user = userService.getLoginUser();
             List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
-                Product product = productRepo.findById(orderItemRequest.getProductId())
+                Product product = productRepository.findById(orderItemRequest.getProductId())
                         .orElseThrow(()-> new NotFoundException("Product Not Found"));
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProduct(product);

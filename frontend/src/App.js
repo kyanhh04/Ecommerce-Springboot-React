@@ -22,6 +22,10 @@ import AddProductPage from './component/admin/AddProductPage';
 import EditProductPage from './component/admin/EditProductPage';
 import AdminOrdersPage from './component/admin/AdminOrderPage';
 import AdminOrderDetailsPage from './component/admin/AdminOrderDetailsPage';
+import AdminDiscountPage from './component/admin/AdminDiscountPage';
+import AddDiscountPage from './component/admin/AddDiscountPage';
+import EditDiscountPage from './component/admin/EditDiscountPage';
+import PaymentPageWrapper from './component/pages/PaymentPageWrapper';
 
 function App() {
   return (
@@ -41,7 +45,7 @@ function App() {
           <Route path='/profile' element={<ProtectedRoute element={<ProfilePage/>} />} />
           <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
           <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
-
+          <Route path='/payment' element={<ProtectedRoute element={<PaymentPageWrapper/>} />} />
 
           <Route path='/admin' element={<AdminRoute element={<AdminPage/>} />} />
           <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage/>} />} />
@@ -54,7 +58,10 @@ function App() {
           <Route path='/admin/orders' element={<AdminRoute element={<AdminOrdersPage/>} />} />
           <Route path='/admin/order-details/:itemId' element={<AdminRoute element={<AdminOrderDetailsPage/>} />} />
 
-          
+          <Route path='/admin/discounts' element={<AdminRoute element={<AdminDiscountPage/>} />} />
+          <Route path='/admin/add-discount' element={<AdminRoute element={<AddDiscountPage/>} />} />
+          <Route path='/admin/edit-discount/:discountId' element={<AdminRoute element={<EditDiscountPage/>} />} />
+
         </Routes>
       <Footer/>
     </CartProvider>

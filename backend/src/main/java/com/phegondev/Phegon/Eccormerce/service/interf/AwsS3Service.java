@@ -1,4 +1,4 @@
-package com.phegondev.Phegon.Eccormerce.service;
+package com.phegondev.Phegon.Eccormerce.service.interf;
 
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -36,7 +36,7 @@ public class AwsS3Service {
 
     public String saveImageToS3(MultipartFile photo){
         // Check if AWS S3 configuration is available
-        if (!StringUtils.hasText(awsS3AccessKey) || !StringUtils.hasText(awsS3SecreteKey) 
+        if (!StringUtils.hasText(awsS3AccessKey) || !StringUtils.hasText(awsS3SecreteKey)
                 || !StringUtils.hasText(bucketName) || !StringUtils.hasText(awsS3Region)) {
             log.warn("AWS S3 configuration is missing. Image upload to S3 is disabled.");
             return "S3_UPLOAD_DISABLED";
@@ -44,6 +44,8 @@ public class AwsS3Service {
 
         try {
             String s3FileName = photo.getOriginalFilename();
+            log.info("Uploading file to S3: {} to bucket: {} in region: {}", s3FileName, bucketName, awsS3Region);
+
             //create aes credentials using the access and secrete key
             BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsS3AccessKey, awsS3SecreteKey);
 
@@ -59,15 +61,21 @@ public class AwsS3Service {
             //set metedata for the onject
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType("image/jpeg");
+            metadata.setContentLength(photo.getSize());
 
             //create a put request to upload the image to s3
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3FileName, inputStream, metadata);
             s3Client.putObject(putObjectRequest);
 
-            return "https://" + bucketName + ".s3." + awsS3Region + ".amazonaws.com/" + s3FileName;
+            String imageUrl = "https://" + bucketName + ".s3." + awsS3Region + ".amazonaws.com/" + s3FileName;
+            log.info("Successfully uploaded file to S3: {}", imageUrl);
+            return imageUrl;
 
         }catch (IOException e){
-            e.printStackTrace();
+            log.error("IOException while uploading to S3: {}", e.getMessage(), e);
+            throw new RuntimeException("Unable to upload image to s3 bucket: " + e.getMessage());
+        }catch (Exception e){
+            log.error("Error uploading to S3: {}", e.getMessage(), e);
             throw new RuntimeException("Unable to upload image to s3 bucket: " + e.getMessage());
         }
     }

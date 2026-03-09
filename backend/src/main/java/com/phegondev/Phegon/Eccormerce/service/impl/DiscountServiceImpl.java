@@ -141,9 +141,7 @@ public class DiscountServiceImpl implements DiscountService {
     public Response deleteDiscount(Long discountId) {
         Discount discount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new OurException("Mã giảm giá không tồn tại"));
-
         discountRepository.delete(discount);
-
         return Response.builder()
                 .status(HttpStatus.OK.value())
                 .message("Xóa mã giảm giá thành công")

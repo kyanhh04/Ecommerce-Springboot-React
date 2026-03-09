@@ -10,6 +10,7 @@ const AdminProductPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
     const itemsPerPage = 10;
 
 
@@ -36,28 +37,31 @@ const AdminProductPage = () => {
         const confirmed = window.confirm("Are your sure you want to delete this product? ")
         if(confirmed){
             try {
-                await ApiService.deleteProduct(id);
+                const response = await ApiService.deleteProduct(id);
+                setSuccess(response.message || "Xóa sản phẩm thành công");
+                setError(null);
                 fetchProducts();
+                setTimeout(() => setSuccess(null), 2000); // Ẩn thông báo sau 2s
             } catch (error) {
                 setError(error.response?.data?.message || error.message || 'unable to delete product')
+                setSuccess(null);
             }
         }
     }
 
     return(
         <div className="admin-product-list">
-            {error ? (
-                <p className="error-message">{error}</p>
-            ): (
-                <div>
-                    <h2>Products</h2>
-                    <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Add product</button>
-                    <ul>
-                        {products.map((product)=>(
-                            <li key={product.id}>
-                                <span>{product.name}</span>
-                                <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
-                                <button className="product-btn-delete" onClick={()=> handleDelete(product.id)}>Delete</button>
+            {error && <p className="error-message">{error}</p>}
+            {success && <p className="success-message">{success}</p>}
+            <div>
+                <h2>Products</h2>
+                <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Add product</button>
+                <ul>
+                    {products.map((product)=>(
+                        <li key={product.id}>
+                            <span>{product.name}</span>
+                            <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
+                            <button className="product-btn-delete" onClick={()=> handleDelete(product.id)}>Delete</button>
                             </li>
                         ))}
                     </ul>
@@ -66,7 +70,6 @@ const AdminProductPage = () => {
                     totalPages={totalPages}
                     onPageChange={(page)=> setCurrentPage(page)}/>
                 </div>
-            )}
         </div>
     )
 }
