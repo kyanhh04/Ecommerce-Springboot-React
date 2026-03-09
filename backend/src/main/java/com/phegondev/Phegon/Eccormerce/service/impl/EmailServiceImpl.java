@@ -30,7 +30,6 @@ public class EmailServiceImpl implements EmailService {
             System.out.println("Email OTP đã gửi đến: " + user.getEmail());
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi email OTP: " + e.getMessage());
-            // Có thể log vào database
         }
     }
 

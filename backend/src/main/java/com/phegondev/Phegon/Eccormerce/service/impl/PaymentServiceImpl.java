@@ -153,7 +153,6 @@ public class PaymentServiceImpl implements PaymentService {
             }
             Payment paymentEntity = payment.get();
             
-            // Check if payment is already successful
             if ("SUCCESS".equals(paymentEntity.getStatus())) {
                 return Response.builder()
                         .status(400)
