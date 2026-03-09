@@ -19,7 +19,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class OTPServiceImpl implements OTPService {
+public class  OTPServiceImpl implements OTPService {
 
     private final OTPRepository otpRepository;
     private final UserService userService;
