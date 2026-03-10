@@ -30,7 +30,7 @@ public class PaymentController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    
+
     @PostMapping("/process/{orderId}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> processPayment(@PathVariable Long orderId) {

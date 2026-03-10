@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
@@ -7,6 +7,7 @@ import "../../style/home.css";
 
 const Home = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,8 +57,34 @@ const Home = () => {
     fetchProducts();
   }, [location.search, currentPage]);
 
+  const orderSuccess = location.state?.orderSuccess;
+
   return (
     <div className="home">
+
+      {orderSuccess && (
+        <div className="order-success-banner">
+          <div className="order-success-text">
+            <div className="order-success-title">
+              Đặt hàng thành công! 
+            </div>
+            <div className="order-success-subtitle">
+              Mã đơn: <strong>#{orderSuccess.orderId}</strong> · Tổng thanh toán{" "}
+              <strong>{orderSuccess.amount.toLocaleString()}đ</strong>
+            </div>
+          </div>
+          <button
+            className="order-success-button"
+            onClick={() =>
+              navigate("/order-success", {
+                state: { orderSuccess },
+              })
+            }
+          >
+            Xem chi tiết đơn hàng
+          </button>
+        </div>
+      )}
 
       {/* HERO SECTION */}
       <section className="hero-section">

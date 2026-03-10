@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final DiscountRepository discountRepository;
 
 
+    @Transactional
     @Override
     public Response placeOrder(OrderRequest orderRequest) {
         try {
@@ -118,10 +120,13 @@ public class OrderItemServiceImpl implements OrderItemService {
             
             orderItems.forEach(orderItem -> orderItem.setOrder(order));
             orderRepo.save(order);
-            
+    
+            var orderDto = entityDtoMapper.mapOrderToDtoBasic(order);
+
             return Response.builder()
                     .status(200)
                     .message("Order was successfully placed")
+                    .order(orderDto)
                     .build();
         } catch (OurException e) {
             return Response.builder()
@@ -136,6 +141,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
     }
+    @Transactional
     @Override
     public Response updateOrderItemStatus(Long orderItemId, String status) {
         OrderItem orderItem = orderItemRepo.findById(orderItemId)
@@ -149,6 +155,45 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Response getOrderDetailsForCurrentUser(Long orderId) {
+        try {
+            User user = userService.getLoginUser();
+
+            Order order = orderRepo.findById(orderId)
+                    .orElseThrow(() -> new NotFoundException("Order not found"));
+
+            // Đảm bảo tất cả order item trong đơn đều thuộc về user hiện tại
+            boolean belongsToUser = order.getOrderItemList() != null &&
+                    order.getOrderItemList().stream().allMatch(
+                            item -> item.getUser() != null && item.getUser().getId().equals(user.getId())
+                    );
+
+            if (!belongsToUser) {
+                throw new OurException("Bạn không có quyền xem đơn hàng này");
+            }
+
+            var orderDto = entityDtoMapper.mapOrderToDtoPlusOrderItems(order);
+
+            return Response.builder()
+                    .status(200)
+                    .order(orderDto)
+                    .build();
+        } catch (OurException e) {
+            return Response.builder()
+                    .status(400)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi lấy chi tiết đơn hàng: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Transactional(readOnly = true)
     @Override
     public Response filterOrderItems(OrderStatus status, LocalDateTime startDate, LocalDateTime endDate, Long itemId, Pageable pageable) {
         Specification<OrderItem> spec = Specification.where(OrderItemSpecification.hasStatus(status))

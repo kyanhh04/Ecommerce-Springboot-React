@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ApiService from '../../service/ApiService';
 
 /**
@@ -17,6 +18,7 @@ const SecurePaymentComponent = ({ orderId, amount, token }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   // Step 1: Initialize Payment
   const handleInitializePayment = async () => {
@@ -90,7 +92,16 @@ const SecurePaymentComponent = ({ orderId, amount, token }) => {
       if (response.status === 200) {
         setMessage('✅ ' + response.message);
         setStep(4); // Thanh toán hoàn tất
-        // TODO: Redirect to success page hoặc update order status
+
+        // Tự động quay về trang Home với thông tin đơn hàng để hiển thị banner
+        navigate('/', {
+          state: {
+            orderSuccess: {
+              orderId,
+              amount
+            }
+          }
+        });
       }
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message;
@@ -110,22 +121,6 @@ const SecurePaymentComponent = ({ orderId, amount, token }) => {
       <div className="payment-card">
         <h2>💳 Thanh Toán Bảo Mật</h2>
         <p>Đơn hàng: #{orderId} | Tổng: {amount}đ</p>
-
-        {/* Progress Bar */}
-        <div className="progress-bar">
-          <div className={`step ${step >= 1 ? 'active' : ''}`}>
-            <span>1</span> Thông tin thẻ
-          </div>
-          <div className={`step ${step >= 2 ? 'active' : ''}`}>
-            <span>2</span> Xác minh OTP
-          </div>
-          <div className={`step ${step >= 3 ? 'active' : ''}`}>
-            <span>3</span> Xác nhận
-          </div>
-          <div className={`step ${step >= 4 ? 'active' : ''}`}>
-            <span>✓</span> Thành công
-          </div>
-        </div>
 
         {/* Messages */}
         {message && <div className="alert alert-success">{message}</div>}
@@ -299,9 +294,18 @@ const SecurePaymentComponent = ({ orderId, amount, token }) => {
             <p className="order-number">Đơn hàng: #{orderId}</p>
             <button
               className="btn btn-primary"
-              onClick={() => window.location.href = '/orders'}
+              onClick={() =>
+                navigate('/', {
+                  state: {
+                    orderSuccess: {
+                      orderId,
+                      amount
+                    }
+                  }
+                })
+              }
             >
-              Xem Đơn Hàng
+              Về trang chủ
             </button>
           </div>
         )}
@@ -323,30 +327,6 @@ const SecurePaymentComponent = ({ orderId, amount, token }) => {
         h2 {
           margin-top: 0;
           color: #333;
-        }
-
-        .progress-bar {
-          display: flex;
-          justify-content: space-between;
-          margin: 30px 0;
-          gap: 10px;
-        }
-
-        .step {
-          flex: 1;
-          padding: 10px;
-          text-align: center;
-          background: #f0f0f0;
-          border-radius: 5px;
-          font-size: 12px;
-          color: #999;
-          transition: all 0.3s;
-        }
-
-        .step.active {
-          background: #4CAF50;
-          color: white;
-          font-weight: bold;
         }
 
         .alert {

@@ -38,13 +38,17 @@ const CartPage = () => {
 
         try {
             const response = await ApiService.getDiscountByCode(discountCode.toUpperCase());
+            console.log('Discount API Response:', response);
+            
             if (response.status === 200) {
+                console.log('Discount data:', response.discount);
                 setDiscount(response.discount);
                 setDiscountError('');
                 setMessage('✅ Áp dụng mã giảm giá thành công!');
                 setTimeout(() => setMessage(''), 3000);
             }
         } catch (error) {
+            console.error('Discount error:', error);
             setDiscountError(error.response?.data?.message || 'Mã giảm giá không hợp lệ');
             setDiscount(null);
             setTimeout(() => setDiscountError(''), 3000);
@@ -60,12 +64,12 @@ const CartPage = () => {
 
     // Calculate discount amount
     const discountAmount = discount
-        ? discount.type === 'PERCENTAGE'
-            ? (totalPrice * discount.value) / 100
-            : discount.value
+        ? discount.discountType === 'PERCENTAGE'
+            ? (totalPrice * (discount.discountValue || 0)) / 100
+            : (discount.discountValue || 0)
         : 0;
 
-    const finalPrice = totalPrice - discountAmount;
+    const finalPrice = Math.max(0, totalPrice - discountAmount);
 
 
 
@@ -86,22 +90,30 @@ const CartPage = () => {
         }));
 
         const orderRequest = {
-            totalPrice,
-            items: orderItems
+            totalPrice: finalPrice,
+            items: orderItems,
+            discountCode: discount?.code || null
         };
 
         try {
             const response = await ApiService.createOrder(orderRequest);
-            setMessage(response.message);
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.order) {
+                const newOrderId = response.order.id;
+
+                // Xóa giỏ hàng và chuyển sang trang thanh toán ngay lập tức
                 dispatch({ type: 'CLEAR_CART' });
 
-                setTimeout(() => {
-                    navigate('/payment', {
-                        state: { orderId: response.data.id }
-                    });
-                }, 1000);
+                navigate('/payment', {
+                    state: {
+                        orderId: newOrderId,
+                        totalPrice: finalPrice,
+                        discountCode: discount?.code || null,
+                        discountAmount: discountAmount || 0
+                    }
+                });
+            } else {
+                setMessage(response.message || 'Đặt hàng thất bại');
             }
 
         } catch (error) {
@@ -173,9 +185,9 @@ const CartPage = () => {
                             <div className="discount-applied">
                                 <span className="discount-badge">
                                     ✓ {discount.code} -
-                                    {discount.type === 'PERCENTAGE'
-                                        ? ` ${discount.value}%`
-                                        : ` ${discount.value.toLocaleString()}đ`}
+                                    {discount.discountType === 'PERCENTAGE'
+                                        ? ` ${discount.discountValue || 0}%`
+                                        : ` ${(discount.discountValue || 0).toLocaleString()}đ`}
                                 </span>
                                 <button onClick={removeDiscount} className="remove-discount-btn">
                                     Xóa

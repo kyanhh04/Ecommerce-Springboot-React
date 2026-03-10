@@ -28,6 +28,11 @@ public class OrderItemController {
         return ResponseEntity.ok(orderItemService.placeOrder(orderRequest));
     }
 
+    @GetMapping("/my-order/{orderId}")
+    public ResponseEntity<Response> getMyOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderItemService.getOrderDetailsForCurrentUser(orderId));
+    }
+
     @PutMapping("/update-item-status/{orderItemId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> updateOrderItemStatus(@PathVariable Long orderItemId,  @RequestParam String status){
