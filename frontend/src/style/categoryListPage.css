@@ -1,46 +1,120 @@
-.category-list{
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 80px rgba(0, 9, 9, 0.01);
+.cate-wrapper{
+
+    background:#0f172a;
+
+    min-height:100vh;
+
+    padding:60px 20px;
+
+    color:white;
+
 }
 
-.category-list h2{
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
+
+/* TITLE */
+
+.cate-title{
+
+    text-align:center;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-bottom:60px;
+
 }
 
-.category-list ul{
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+
+/* ROW TOP */
+
+.cate-row-top{
+
+    max-width:1000px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:40px;
+
 }
 
-.category-list li{
-    flex:  1 1 calc(33.33% - 20px);
-    max-width: calc(33.33% - 20px);
-}
-.category-list button{
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2rem;
-    background-color: #f68b1e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3 ease;
+
+/* ROW BOTTOM */
+
+.cate-row-bottom{
+
+    max-width:600px;
+
+    margin:50px auto 0 auto;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:40px;
+
 }
 
-.error-message{
-    color: red;
-    text-align: center;
-    font-size: 1.2em;
-    margin-top: 20px;
+
+/* CARD */
+
+.cate-card{
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+.cate-card:hover{
+
+    transform:translateY(-6px) scale(1.04);
+
+}
+
+
+/* IMAGE */
+
+.cate-img{
+
+    width:100%;
+
+    height:180px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+}
+
+
+/* NAME */
+
+.cate-name{
+
+    margin-top:15px;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+
+/* ERROR */
+
+.cate-error{
+
+    text-align:center;
+
+    color:red;
+
+    font-size:18px;
+
 }

@@ -1,68 +1,67 @@
-.terms-container {
-  max-width: 900px;
-  margin: 120px auto 80px auto;
-  padding: 40px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  line-height: 1.8;
-  font-family: Arial, sans-serif;
+.terms-wrapper{
+background:#020617;
+padding:90px 20px;
+display:flex;
+justify-content:center;
 }
 
-.terms-container h1 {
-  text-align: center;
-  font-size: 36px;
-  margin-bottom: 40px;
-  color: #222;
-  position: relative;
+.terms-container{
+max-width:900px;
+width:100%;
+background:#0f172a;
+padding:50px;
+border-radius:18px;
+border:1px solid #1e293b;
+box-shadow:0 0 40px rgba(0,0,0,0.6);
+color:#e2e8f0;
+line-height:1.8;
+animation:fadeUp 0.8s ease forwards;
 }
 
-.terms-container h1::after {
-  content: "";
-  width: 80px;
-  height: 4px;
-  background: #4CAF50;
-  display: block;
-  margin: 15px auto 0;
-  border-radius: 2px;
+.terms-container h1{
+text-align:center;
+font-size:34px;
+margin-bottom:40px;
+color:#38bdf8;
 }
 
-.terms-container section {
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+.terms-container h2{
+margin-top:25px;
+font-size:20px;
+color:#e2e8f0;
+transition:0.3s;
 }
 
-.terms-container h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #333;
+.terms-container h2:hover{
+transform:translateX(5px);
+color:#3b82f6;
 }
 
-.terms-container p {
-  color: #555;
-  font-size: 15px;
-  margin-top: 5px;
+.terms-container p{
+color:#94a3b8;
+margin-top:8px;
+font-size:15px;
 }
 
-/* Hover effect nhẹ */
-.terms-container section:hover {
-  transform: translateY(-2px);
-  transition: 0.3s;
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(40px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .terms-container {
-    margin: 100px 20px 50px 20px;
-    padding: 20px;
-  }
-
-  .terms-container h1 {
-    font-size: 28px;
-  }
-
-  .terms-container h2 {
-    font-size: 18px;
-  }
+@media(max-width:768px){
+.terms-container{
+padding:30px;
+}
+.terms-container h1{
+font-size:28px;
+}
+.terms-container h2{
+font-size:18px;
+}
 }
