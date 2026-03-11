@@ -9,8 +9,7 @@ const Footer = () => {
 
         {/* Logo + mô tả */}
         <div className="footer-col">
-          <h2 className="footer-logo">LaptopSinhVien
-              </h2>
+          <h2 className="footer-logo">TechNova</h2>
           <p>
             Chuyên cung cấp laptop chính hãng, giá tốt, bảo hành uy tín.
             Cam kết chất lượng và dịch vụ tốt nhất cho khách hàng.
@@ -27,17 +26,16 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Chính sách */}
+        {/* Policies */}
         <div className="footer-col">
           <h3>Policies</h3>
           <ul>
             <li><NavLink to="/terms">Terms & Conditions</NavLink></li>
             <li><NavLink to="/privacy">Privacy Policy</NavLink></li>
-            <li><NavLink to="/return">Return Policy</NavLink></li>
           </ul>
         </div>
 
-        {/* Liên hệ */}
+        {/* Contact */}
         <div className="footer-col">
           <h3>Contact Info</h3>
           <p>Email: support@laptopstore.com</p>
@@ -46,7 +44,6 @@ const Footer = () => {
         </div>
 
       </div>
-
 
     </footer>
   );

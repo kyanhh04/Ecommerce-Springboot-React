@@ -1,54 +1,116 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import '../../style/categoryListPage.css'
+import "../../style/categoryListPage.css";
 
 const CategoryListPage = () => {
-    const [categories, setCategories] = useState([]);
-    const [error, setError] = useState(null);
+
+    const [cateList, setCateList] = useState([]);
+    const [cateError, setCateError] = useState(null);
+
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchCategories();
+        loadCate();
     }, []);
 
-
-
-
-    const fetchCategories = async () => {
+    const loadCate = async () => {
         try {
+
             const response = await ApiService.getAllCategory();
-            setCategories(response.categoryList || [])
+            setCateList(response.categoryList || []);
 
         } catch (err) {
 
-            setError(err.response?.data?.message || err.message || 'Unable to fetch categories')
-
+            setCateError(
+                err.response?.data?.message ||
+                err.message ||
+                "Không tải được danh mục"
+            );
         }
-    }
+    };
 
-    const handleCategoryClick = (categoryId) => {
-        navigate(`/category/${categoryId}`);
-    } 
+    const goCategory = (id) => {
+        navigate(`/category/${id}`);
+    };
 
-    return(
-        <div className="category-list">
-            {error ? (
-                <p className="error-message">{error}</p>
-            ):(
-                <div>
-                    <h2>Categories</h2>
-                    <ul>
-                        {categories.map((category)=>(
-                            <li key={category.id}>
-                                <button onClick={()=> handleCategoryClick(category.id)}>{category.name}</button>
-                            </li>
-                        ))}
-                    </ul>
+    const cateImages = {
+        "Laptop":"https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
+        "Chuột máy tính":"https://images.unsplash.com/photo-1527814050087-3793815479db",
+        "Bàn phím":"https://images.unsplash.com/photo-1511467687858-23d96c32e4ae",
+        "Tai nghe":"https://images.unsplash.com/photo-1518444065439-e933c06ce9cd",
+        "Ổ cứng/SSD":"https://images.unsplash.com/photo-1591799265444-d66432b91588"
+    };
+
+    return (
+
+        <section className="cate-wrapper">
+
+            <h2 className="cate-title">Danh Mục Sản Phẩm</h2>
+
+            {cateError ? (
+
+                <p className="cate-error">{cateError}</p>
+
+            ) : (
+
+                <>
+
+                {/* 3 category trên */}
+
+                <div className="cate-row-top">
+
+                    {cateList.slice(0,3).map((item)=>(
+                        <div
+                            key={item.id}
+                            className="cate-card"
+                            onClick={()=>goCategory(item.id)}
+                        >
+
+                            <img
+                                src={cateImages[item.name]}
+                                alt={item.name}
+                                className="cate-img"
+                            />
+
+                            <p className="cate-name">{item.name}</p>
+
+                        </div>
+                    ))}
+
                 </div>
+
+
+                {/* 2 category dưới */}
+
+                <div className="cate-row-bottom">
+
+                    {cateList.slice(3,5).map((item)=>(
+                        <div
+                            key={item.id}
+                            className="cate-card"
+                            onClick={()=>goCategory(item.id)}
+                        >
+
+                            <img
+                                src={cateImages[item.name]}
+                                alt={item.name}
+                                className="cate-img"
+                            />
+
+                            <p className="cate-name">{item.name}</p>
+
+                        </div>
+                    ))}
+
+                </div>
+
+                </>
+
             )}
-        </div>
-    )
-}
+
+        </section>
+    );
+};
 
 export default CategoryListPage;

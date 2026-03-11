@@ -41,9 +41,10 @@ import FAQs from './component/pages/FAQS';
 
 function App() {
   return (
+  <CartProvider>
     <BrowserRouter>
       <ScrollToTop />
-      <CartProvider>
+
         <div className="app-container">
           <Navbar />
           <div className="main-content">
@@ -83,8 +84,9 @@ function App() {
           </div>
           <Footer />
         </div>
-      </CartProvider>
+
     </BrowserRouter>
+      </CartProvider>
   );
 }
 
