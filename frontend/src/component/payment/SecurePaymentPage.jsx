@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ApiService from '../../service/ApiService';
+import { useCart } from '../context/CartContext';
 import '../../style/securePayment.css';
 
 const SecurePaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { dispatch } = useCart();
   const { orderId } = location.state || {};
 
   const [orderDetails, setOrderDetails] = useState(null);
@@ -145,9 +147,14 @@ const SecurePaymentPage = () => {
         encryptedCardData: cardData.cardNumber.replace(/\s/g, '')
       };
 
+      // Directly process payment without OTP
       const response = await ApiService.initializePayment(paymentRequest);
       
       if (response.status === 200) {
+        // Clear cart after successful payment
+        dispatch({ type: 'CLEAR_CART' });
+        
+        // Success - redirect to success page
         navigate('/order-success', { 
           state: { 
             orderId, 
@@ -164,7 +171,7 @@ const SecurePaymentPage = () => {
 
   const calculateSubtotal = () => {
     if (!orderDetails || orderDetails.length === 0) return 0;
-    return orderDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return orderDetails.reduce((sum, item) => sum + item.price, 0);
   };
 
   const getDiscountAmount = () => {
@@ -360,9 +367,9 @@ const SecurePaymentPage = () => {
             <h3>Sản phẩm ({orderDetails?.length || 0})</h3>
           </div>
 
-          <div className="product-list">
+          <div className="payment-product-list">
             {orderDetails?.map((item, index) => (
-              <div key={index} className="product-item">
+              <div key={index} className="payment-product-item">
                 <img 
                   src={item.product?.imageUrl || '/placeholder.png'} 
                   alt={item.product?.name}
@@ -373,7 +380,7 @@ const SecurePaymentPage = () => {
                   <p>Số lượng: {item.quantity}</p>
                 </div>
                 <div className="product-price">
-                  {(item.price * item.quantity).toLocaleString()}đ
+                  {item.price?.toLocaleString()}đ
                 </div>
               </div>
             ))}
