@@ -2,108 +2,96 @@ import React, { useState } from "react";
 import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import logo from "../../asset/logo.png";
 
-import { FaUser, FaShoppingCart } from "react-icons/fa";
-import { MdFavoriteBorder } from "react-icons/md";
-import { IoFlash } from "react-icons/io5";
+import { FaHome, FaUser, FaShoppingCart, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
+import { MdCategory } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
 
 const Navbar = () => {
 
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
 
+    const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
 
-    const handleSearchSubmit = async (e) => {
+    const handleSearchChange = (e) => {
+        setSearchValue(e.target.value);
+    }
 
+    const handleSearchSubmit = (e) => {
         e.preventDefault();
+        navigate(`/?search=${searchValue}`);
+        setSearchValue("");
+    }
 
-        const keyword = searchValue.toLowerCase().trim();
-        const words = keyword.split(" ");
-
-        try {
-
-            const response = await ApiService.getAllCategory();
-            const categories = response.categoryList || [];
-
-            let bestMatch = null;
-            let maxScore = 0;
-
-            categories.forEach(cat => {
-
-                const categoryName = cat.name.toLowerCase();
-                let score = 0;
-
-                words.forEach(word => {
-                    if (categoryName.includes(word)) {
-                        score++;
-                    }
-                });
-
-                if (score > maxScore) {
-                    maxScore = score;
-                    bestMatch = cat;
-                }
-
-            });
-
-            if (bestMatch && maxScore > 0) {
-                navigate(`/category/${bestMatch.id}`);
-            } else {
-                navigate(`/categories?search=${searchValue}`);
-            }
-
-            setSearchValue("");
-
-        } catch (error) {
-
-            navigate(`/categories?search=${searchValue}`);
-            setSearchValue("");
-
+    const handleLogout = () => {
+        const confirm = window.confirm("Are you sure you want to logout?");
+        if (confirm) {
+            ApiService.logout();
+            setTimeout(() => {
+                navigate("/login");
+            }, 500);
         }
-
-    };
+    }
 
     return (
-
         <nav className="navbar">
 
-            <NavLink
-                to="/"
-                className="nav-logo"
-                onClick={() => setSearchValue("")}
-            >
-                <IoFlash className="logo-icon"/>
-                <span>TechNova</span>
-            </NavLink>
+            <div className="navbar-brand">
+                <NavLink to="/">
+                    <img src={logo} alt="Laptop Mart" />
+                </NavLink>
+            </div>
 
-            <form className="nav-search" onSubmit={handleSearchSubmit}>
+            <form className="navbar-search" onSubmit={handleSearchSubmit}>
                 <input
                     type="text"
-                    placeholder="Tìm sản phẩm, thương hiệu..."
+                    placeholder="Search products"
+                    autoComplete="off"
                     value={searchValue}
-                    onChange={(e)=>setSearchValue(e.target.value)}
+                    onChange={handleSearchChange}
                 />
+                <button type="submit">Search</button>
             </form>
 
-            <div className="nav-menu">
+            <div className="navbar-link">
 
-                <NavLink to="/categories">Danh mục</NavLink>
-                <NavLink to="/deals">Khuyến mãi</NavLink>
-                <NavLink to="/support">Hỗ trợ</NavLink>
+                <NavLink to="/" title="Home">
+                    <FaHome />
+                </NavLink>
+
+                <NavLink to="/categories" title="Categories">
+                    <MdCategory />
+                </NavLink>
 
                 {isAuthenticated && (
-                    <NavLink to="/profile">
-                        <FaUser/>
+                    <NavLink to="/profile" title="Profile">
+                        <FaUser />
                     </NavLink>
                 )}
 
-                <NavLink>
-                    <MdFavoriteBorder/>
-                </NavLink>
+                {isAdmin && (
+                    <NavLink to="/admin" title="Admin">
+                        <RiAdminFill />
+                    </NavLink>
+                )}
 
-                <NavLink to="/cart" className="cart-icon">
-                    <FaShoppingCart/>
+                {!isAuthenticated && (
+                    <NavLink to="/login" title="Login">
+                        <FaSignInAlt />
+                    </NavLink>
+                )}
+
+                {isAuthenticated && (
+                    <NavLink onClick={handleLogout} title="Logout">
+                        <FaSignOutAlt />
+                    </NavLink>
+                )}
+
+                <NavLink to="/cart" title="Cart">
+                    <FaShoppingCart />
                 </NavLink>
 
             </div>

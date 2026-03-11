@@ -26,12 +26,8 @@ const ProductDetailsPage = () => {
 
     const addToCart = () => {
         if (product) {
-            const confirmOrder = window.confirm("Bạn có muốn đặt hàng sản phẩm này không?");
-
-            if (confirmOrder) {
-                dispatch({ type: 'ADD_ITEM', payload: product });
-                navigate("/cart");
-            }
+            dispatch({ type: 'ADD_ITEM', payload: product });
+            alert('✅ Đã thêm sản phẩm vào giỏ hàng!');
         }
     };
 
