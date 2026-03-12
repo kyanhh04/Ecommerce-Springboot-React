@@ -101,7 +101,9 @@ const CartPage = () => {
             if (response.status === 200 && response.order) {
                 const newOrderId = response.order.id;
 
-                // Không xóa giỏ hàng ở đây, sẽ xóa sau khi thanh toán thành công
+                // Xóa giỏ hàng và chuyển sang trang thanh toán ngay lập tức
+                dispatch({ type: 'CLEAR_CART' });
+
                 navigate('/payment', {
                     state: {
                         orderId: newOrderId,

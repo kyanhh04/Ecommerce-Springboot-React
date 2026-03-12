@@ -1,159 +1,200 @@
 .home {
-    padding: 20px;
-    background:#f2f2f2;
+  background: #0f172a;
+  padding: 40px 20px;
+  min-height: 100vh;
 }
-/* ===== COMMON SECTION TITLE ===== */
 .home h2 {
-    margin-bottom: 30px;
-    font-size: 28px;
-    font-weight: bold;
-    text-align: left;
-    color: #222;
-    position: relative;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 40px;
+  text-align: center;
 }
-
-/* ===== ERROR ===== */
 .error-message {
-    text-align: center;
-    color: red;
-    font-size: 20px;
-    margin-top: 20px;
+  text-align: center;
+  color: red;
+  font-size: 18px;
 }
-
-/* ===== HERO SECTION ===== */
 .hero-section {
-    max-width: 1200px;     /* giới hạn chiều ngang */
-    width: 100%;
-    margin: 0 auto 50px;   /* căn giữa */
-    height: 400px;
-
-    background: url("https://images.unsplash.com/photo-1517336714731-489689fd1ca8")
-        center/cover no-repeat;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-
-    border-radius: 10px;
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 80px;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  border-radius: 20px;
+  padding: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+.hero-content {
+  flex: 1;
+  color: white;
+}
+.hero-tag {
+  display: inline-block;
+  background: #1e293b;
+  color: #3b82f6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 .hero-content h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
 }
-
+.hero-content span {
+  color: #3b82f6;
+}
 .hero-content p {
-    font-size: 18px;
-    margin-bottom: 20px;
+  font-size: 18px;
+  color: #94a3b8;
+  margin-bottom: 30px;
+  max-width: 500px;
 }
-
-.hero-content button {
-    padding: 12px 30px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s;
+.hero-buttons {
+  display: flex;
+  gap: 15px;
 }
-
-.hero-content button:hover {
-    transform: scale(1.05);
+.hero-btn {
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s;
 }
-
-/* ===== BRAND SECTION ===== */
-
-
-
-
-/* ===== BRAND SECTION (Banner style) ===== */
-
+.hero-btn.primary {
+  background: #3b82f6;
+  color: white;
+}
+.hero-btn.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5);
+}
+.hero-btn.secondary {
+  background: #1e293b;
+  color: white;
+  border: 1px solid #334155;
+}
+.hero-btn.secondary:hover {
+  background: #334155;
+}
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.hero-image img {
+  width: 380px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+}
 .brand-section {
-text-align: center;
-    margin: 80px auto;
-    max-width: 1200px;
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 80px;
 }
-
-
-
 .brand-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
 }
-
 .brand-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    cursor: pointer;
-    background: #fff;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  cursor: pointer;
+  background: #020617;
+  border: 1px solid #1e293b;
 }
-
 .brand-card img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    transition: 0.4s ease;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  transition: 0.4s;
 }
-
 .brand-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-    color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  color: white;
 }
-
 .brand-overlay h3 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
 }
-
-.brand-overlay p {
-    margin-top: 8px;
-    font-weight: bold;
-    font-size: 18px;
-    color: #ffd700;
-}
-
 .brand-card:hover img {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
-
-/* ===== FEATURED SECTION ===== */
 .featured-section {
-    text-align: center;
-        margin: 80px auto;
-        max-width: 1200px;
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 80px;
 }
-
-
-/* ===== PRODUCT SECTION ===== */
 .product-section {
-    text-align: center;
-        margin: 80px auto;
-        max-width: 1200px;
+  max-width: 1200px;
+  margin: auto;
 }
-
-
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .hero-section {
-        height: 300px;
-        padding: 20px;
-    }
-
-    .hero-content h1 {
-        font-size: 26px;
-    }
-
-    .brand-list {
-        gap: 20px;
-        font-size: 16px;
-    }
+@media (max-width: 900px) {
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-content h1 {
+    font-size: 36px;
+  }
+  .hero-image img {
+    width: 280px;
+  }
+  .hero-buttons {
+    justify-content: center;
+  }
+}
+.category-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  color: white;
+}
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.category-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  color: #cbd5e1;
+  transition: 0.3s;
+}
+.category-card p {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.category-card:hover .category-icon {
+  background: #3b82f6;
+  color: white;
+  transform: scale(1.08);
 }

@@ -3,8 +3,11 @@ import "../../style/terms.css";
 
 const Terms = () => {
   return (
-    <div className="terms-container">
-      <h1>Điều khoản & Điều kiện</h1>
+    <div className="terms-wrapper">
+
+      <div className="terms-container">
+
+        <h1>Điều khoản & Điều kiện</h1>
 
         <h2>1. Giới thiệu</h2>
         <p>
@@ -62,6 +65,8 @@ const Terms = () => {
           bất kỳ lúc nào. Việc tiếp tục sử dụng website sau khi có thay đổi
           đồng nghĩa với việc bạn chấp nhận các điều khoản mới.
         </p>
+
+      </div>
 
     </div>
   );

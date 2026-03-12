@@ -3,6 +3,7 @@ import "../../style/privacy.css";
 
 const Privacy = () => {
   return (
+      <div className="pri-wrapper">
     <div className="privacy-container">
       <h1>Chính sách bảo mật</h1>
 
@@ -66,6 +67,7 @@ const Privacy = () => {
           Mọi thay đổi sẽ được đăng tải trên website.
         </p>
       </div>
+    </div>
     </div>
   );
 };
