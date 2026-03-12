@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import logo from "../../asset/logo.png";
 
 import { FaHome, FaUser, FaShoppingCart, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
@@ -18,13 +17,38 @@ const Navbar = () => {
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
-    }
+    };
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = async (e) => {
         e.preventDefault();
-        navigate(`/?search=${searchValue}`);
+
+        if (!searchValue.trim()) return;
+
+        try {
+
+            const response = await ApiService.searchProducts(searchValue);
+            const products = response.productList || [];
+
+            if (products.length > 0) {
+
+                const categoryId = products[0].category?.id || products[0].categoryId;
+
+                navigate(`/category/${categoryId}?search=${searchValue}`);
+
+            } else {
+
+                alert("Không tìm thấy sản phẩm");
+
+            }
+
+        } catch (error) {
+
+            console.log("Search error:", error);
+
+        }
+
         setSearchValue("");
-    }
+    };
 
     const handleLogout = () => {
         const confirm = window.confirm("Are you sure you want to logout?");
@@ -34,14 +58,14 @@ const Navbar = () => {
                 navigate("/login");
             }, 500);
         }
-    }
+    };
 
     return (
         <nav className="navbar">
 
             <div className="navbar-brand">
                 <NavLink to="/">
-                    <img src={logo} alt="Laptop Mart" />
+                    <span>TechNova</span>
                 </NavLink>
             </div>
 
