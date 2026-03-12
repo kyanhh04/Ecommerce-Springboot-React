@@ -16,7 +16,7 @@ const Home = () => {
   const itemsPerPage = 8;
 
   useEffect(() => {
-    setCurrentPage(1); // reset page khi search
+    setCurrentPage(1);
   }, [location.search]);
 
   useEffect(() => {
