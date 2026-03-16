@@ -25,7 +25,7 @@ const CategoryListPage = () => {
             setCateError(
                 err.response?.data?.message ||
                 err.message ||
-                "Không tải được danh mục"
+                "Lỗi không tải được danh mục"
             );
         }
     };
