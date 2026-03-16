@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
-import '../../style/home.css';
+import '../../style/home.css'
 
 const CategoryProductsPage = () => {
 
@@ -17,37 +17,25 @@ const CategoryProductsPage = () => {
 
     const itemsPerPage = 8;
 
+    // lấy keyword search từ URL
     const queryParams = new URLSearchParams(location.search);
-    const searchItem = queryParams.get("search");
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [categoryId, searchItem]);
+    const keyword = queryParams.get("search");
 
     useEffect(() => {
         fetchProducts();
-    }, [categoryId, currentPage, searchItem]);
+    }, [categoryId, currentPage, keyword]);
 
     const fetchProducts = async () => {
-
         try {
 
-            let allProducts = [];
+            const response = await ApiService.getAllProductsByCategoryId(categoryId);
+            let allProducts = response.productList || [];
 
-            if (searchItem) {
-
-                const response = await ApiService.searchProducts(searchItem);
-                const filtered = response.productList || [];
-
-                allProducts = filtered.filter(
-                    (p) => (p.category?.id || p.categoryId) == categoryId
+            // nếu có search thì filter
+            if (keyword) {
+                allProducts = allProducts.filter(product =>
+                    product.name.toLowerCase().includes(keyword.toLowerCase())
                 );
-
-            } else {
-
-                const response = await ApiService.getAllProductsByCategoryId(categoryId);
-                allProducts = response.productList || [];
-
             }
 
             setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
@@ -60,29 +48,20 @@ const CategoryProductsPage = () => {
             );
 
         } catch (error) {
-
             setError(
                 error.response?.data?.message ||
                 error.message ||
                 "Unable to fetch products"
             );
-
         }
-
     };
 
     return (
-
         <div className="home">
-
             {error ? (
-
                 <p className="error-message">{error}</p>
-
             ) : (
-
                 <div>
-
                     <ProductList products={products} />
 
                     <Pagination
@@ -90,15 +69,10 @@ const CategoryProductsPage = () => {
                         totalPages={totalPages}
                         onPageChange={(page) => setCurrentPage(page)}
                     />
-
                 </div>
-
             )}
-
         </div>
-
     );
-
 };
 
 export default CategoryProductsPage;
