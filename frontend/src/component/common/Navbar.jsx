@@ -93,15 +93,11 @@ const Navbar = () => {
 
             </form>
 
-            {/* MENU */}
+
             <div className="menu">
 
                 <NavLink to="/categories">
                     Categories
-                </NavLink>
-
-                <NavLink to="/my-orders">
-                My Orders
                 </NavLink>
 
                 <NavLink to="/support">

@@ -45,7 +45,7 @@ useEffect(() => {
 const addToCart = () => {
 
     dispatch({ type: "ADD_ITEM", payload: product });
-    alert("Đã thêm vào giỏ hàng");
+    alert("Đã thêm sản phẩm vào giỏ hàng");
 
 };
 

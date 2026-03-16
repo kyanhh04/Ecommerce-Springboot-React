@@ -4,6 +4,7 @@ import{useNavigate}from"react-router-dom";
 import ApiService from"../../service/ApiService";
 import{useCart}from"../context/CartContext";
 import"../../style/cart.css";
+
 const CartPage=()=>{
   const{cart,dispatch}=useCart();
   const[message,setMessage]=useState(null);
