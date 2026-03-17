@@ -2,47 +2,47 @@ import React, { useState } from "react";
 import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import { useCart } from "../context/CartContext";
-import logo from "../../asset/logo.png";
 
-import { FaHome, FaUser, FaShoppingCart, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
+import { FaUser, FaShoppingCart, FaHeart, FaSignOutAlt } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { RiAdminFill } from "react-icons/ri";
+import { FiSearch } from "react-icons/fi";
 
 const Navbar = () => {
 
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
-    const { cart } = useCart();
 
     const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
-    
-    const cartItemCount = cart.length;
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
     };
 
     const handleSearchSubmit = async (e) => {
+
         e.preventDefault();
 
-        if (!searchValue.trim()) return;
+        const keyword = searchValue.trim().toLowerCase();
+        if (!keyword) return;
 
         try {
 
-            const response = await ApiService.searchProducts(searchValue);
-            const products = response.productList || [];
+            const response = await ApiService.getAllCategory();
+            const categories = response.categoryList || [];
 
-            if (products.length > 0) {
+            const foundCategory = categories.find(cate =>
+                cate.name.toLowerCase().includes(keyword)
+            );
 
-                const categoryId = products[0].category?.id || products[0].categoryId;
+            if (foundCategory) {
 
-                navigate(`/category/${categoryId}?search=${searchValue}`);
+                navigate(`/category/${foundCategory.id}`);
 
             } else {
 
-                alert("Không tìm thấy sản phẩm");
+                alert("Không tìm thấy danh mục phù hợp");
 
             }
 
@@ -55,80 +55,92 @@ const Navbar = () => {
         setSearchValue("");
     };
 
+    // LOGOUT FUNCTION
     const handleLogout = () => {
-        const confirm = window.confirm("Are you sure you want to logout?");
-        if (confirm) {
+
+        const confirmLogout = window.confirm("Bạn có chắc muốn đăng xuất không?");
+
+        if (confirmLogout) {
+
             ApiService.logout();
-            setTimeout(() => {
-                navigate("/login");
-            }, 500);
+
+            navigate("/login");
+
         }
+
     };
 
     return (
+
         <nav className="navbar">
 
-            <div className="navbar-brand">
-                <NavLink to="/">
-                    <span>TechNova</span>
-                </NavLink>
+            {/* LOGO */}
+            <div className="logo">
+                <NavLink to="/">⚡ TechNova</NavLink>
             </div>
 
-            <form className="navbar-search" onSubmit={handleSearchSubmit}>
+            {/* SEARCH */}
+            <form className="search-box" onSubmit={handleSearchSubmit}>
+
+                <FiSearch className="search-icon" />
+
                 <input
                     type="text"
-                    placeholder="Search products"
-                    autoComplete="off"
+                    placeholder="Search products, brands..."
                     value={searchValue}
                     onChange={handleSearchChange}
                 />
-                <button type="submit">Search</button>
+
             </form>
 
-            <div className="navbar-link">
 
-                <NavLink to="/" title="Home">
-                    <FaHome />
+            <div className="menu">
+
+                <NavLink to="/categories">
+                    Categories
                 </NavLink>
 
-                <NavLink to="/categories" title="Categories">
-                    <MdCategory />
+                <NavLink to="/support">
+                    Support
                 </NavLink>
+
+            </div>
+
+            {/* ICONS */}
+            <div className="icons">
 
                 {isAuthenticated && (
-                    <NavLink to="/profile" title="Profile">
+                    <NavLink to="/profile">
                         <FaUser />
                     </NavLink>
                 )}
 
+                <NavLink to="/wishlist">
+                    <FaHeart />
+                </NavLink>
+
+                <NavLink to="/cart" className="cart">
+                    <FaShoppingCart />
+
+                </NavLink>
+
                 {isAdmin && (
-                    <NavLink to="/admin" title="Admin">
+                    <NavLink to="/admin">
                         <RiAdminFill />
                     </NavLink>
                 )}
 
-                {!isAuthenticated && (
-                    <NavLink to="/login" title="Login">
-                        <FaSignInAlt />
-                    </NavLink>
-                )}
-
+                {/* LOGOUT */}
                 {isAuthenticated && (
-                    <NavLink onClick={handleLogout} title="Logout">
+                    <button className="logout-btn" onClick={handleLogout}>
                         <FaSignOutAlt />
-                    </NavLink>
+                    </button>
                 )}
-
-                <NavLink to="/cart" title="Cart" className="cart-link">
-                    <FaShoppingCart />
-                    {cartItemCount > 0 && (
-                        <span className="cart-badge">{cartItemCount}</span>
-                    )}
-                </NavLink>
 
             </div>
 
         </nav>
+
     );
 };
 

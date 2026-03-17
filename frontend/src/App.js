@@ -33,6 +33,7 @@ import SecurePaymentPage from './component/payment/SecurePaymentPage';
 import PaymentDemo from './component/payment/PaymentDemo';
 import OrderSuccessPage from './component/pages/OrderSuccessPage';
 
+
 import About from './component/pages/About';
 import Privacy from './component/pages/Privacy';
 import Terms from './component/pages/Terms';
@@ -67,6 +68,7 @@ function App() {
               <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/payment' element={<ProtectedRoute element={<SecurePaymentPage/>} />} />
               <Route path='/order-success' element={<ProtectedRoute element={<OrderSuccessPage />} />} />
+
 
               <Route path='/admin' element={<AdminRoute element={<AdminPage />} />} />
               <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage />} />} />
