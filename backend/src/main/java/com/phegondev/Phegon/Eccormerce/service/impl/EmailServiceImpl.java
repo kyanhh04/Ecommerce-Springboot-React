@@ -1,5 +1,7 @@
 package com.phegondev.Phegon.Eccormerce.service.impl;
 
+import com.phegondev.Phegon.Eccormerce.entity.Order;
+import com.phegondev.Phegon.Eccormerce.entity.OrderItem;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 import com.phegondev.Phegon.Eccormerce.service.interf.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -19,37 +21,51 @@ public class EmailServiceImpl implements EmailService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Mã OTP của bạn - Ecommerce");
-            
-            String emailBody = "Mã OTP xác thực của bạn là: " + otp + 
-                               "\n\nMã này có hiệu lực trong 10 phút.\n" +
-                               "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.";
-            
-            message.setText(emailBody);
+            message.setText("Mã OTP xác thực của bạn là: " + otp +
+                    "\n\nMã này có hiệu lực trong 10 phút.\n" +
+                    "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.");
             javaMailSender.send(message);
-            
-            System.out.println("Email OTP đã gửi đến: " + user.getEmail());
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi email OTP: " + e.getMessage());
         }
     }
 
     @Override
-    public void sendPaymentConfirmationEmail(User user, Long orderId, String status) {
+    public void sendOrderConfirmationEmail(User user, Order order) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
-            message.setSubject("Xác nhận thanh toán - Đơn hàng #" + orderId);
-            
-            String emailBody = "Thanh toán cho đơn hàng #" + orderId + " đã " + 
-                              ("SUCCESS".equals(status) ? "thành công" : "thất bại") + ".\n\n" +
-                              "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!";
-            
-            message.setText(emailBody);
+            message.setSubject("Đặt hàng thành công - Đơn hàng #" + order.getId());
+
+            StringBuilder body = new StringBuilder();
+            body.append("Xin chào ").append(user.getName()).append(",\n\n");
+            body.append("Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!\n\n");
+            body.append("Chi tiết đơn hàng #").append(order.getId()).append(":\n");
+            body.append("------------------------------------------\n");
+
+            if (order.getOrderItemList() != null) {
+                for (OrderItem item : order.getOrderItemList()) {
+                    String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
+                    body.append("- ").append(productName)
+                            .append(" x").append(item.getQuantity())
+                            .append(" - ").append(item.getPrice().toPlainString()).append("đ\n");
+                }
+            }
+
+            body.append("------------------------------------------\n");
+            if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
+                body.append("Mã giảm giá: ").append(order.getDiscountCode())
+                        .append(" (-").append(order.getDiscountAmount().toPlainString()).append("đ)\n");
+            }
+            body.append("Tổng thanh toán: ").append(order.getTotalPrice().toPlainString()).append("đ\n\n");
+            body.append("Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn.\n");
+            body.append("Trân trọng,\nĐội ngũ hỗ trợ");
+
+            message.setText(body.toString());
             javaMailSender.send(message);
-            
-            System.out.println("Email xác nhận thanh toán đã gửi đến: " + user.getEmail());
         } catch (Exception e) {
-            System.err.println("Lỗi khi gửi email xác nhận: " + e.getMessage());
+            System.err.println("Lỗi khi gửi email xác nhận đặt hàng: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

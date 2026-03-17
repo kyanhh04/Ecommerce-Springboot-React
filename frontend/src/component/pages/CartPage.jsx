@@ -131,7 +131,7 @@ const CartPage = () => {
 
     return (
         <div className="cart-page">
-            <h1>Cart</h1>
+            <h1>Giỏ Hàng</h1>
 
             {message && <p className="response-message">{message}</p>}
 

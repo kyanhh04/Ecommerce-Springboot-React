@@ -23,5 +23,6 @@ public class UserDto {
     private String password;
     private String role;
     private List<OrderItemDto> orderItemList;
+    private List<OrderDto> orderList;
     private AddressDto address;
 }

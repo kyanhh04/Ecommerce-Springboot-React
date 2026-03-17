@@ -35,11 +35,9 @@ const ProfilePage = () => {
         navigate(userInfo.address ? '/edit-address' : '/add-address');
     }
 
-    const orderItemList = userInfo.orderItemList || [];
-
-    const totalPages = Math.ceil(orderItemList.length / itemsPerPage);
-
-    const paginatedOrders = orderItemList.slice(
+    const orderList = userInfo.orderList || [];
+    const totalPages = Math.ceil(orderList.length / itemsPerPage);
+    const paginatedOrders = orderList.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -80,13 +78,24 @@ const ProfilePage = () => {
                     <ul>
                         {paginatedOrders.map(order => (
                             <li key={order.id}>
-                                <img src={order.product?.imageUrl} alt={order.product.name} />
-                                <div>
-                                    <p><strong>Name: </strong>{order.product.name}</p>
-                                    <p><strong>Status: </strong>{order.status}</p>
-                                    <p><strong>Quantity: </strong>{order.quantity}</p>
-                                    <p><strong>Price: </strong>{order.price.toFixed(2)}</p>
-                                </div>
+                                <p><strong>Đơn #{order.id}</strong> - {new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
+                                <p><strong>Tổng tiền: </strong>{order.totalPrice?.toLocaleString()}đ</p>
+                                {order.discountCode && (
+                                    <p><strong>Mã giảm giá: </strong>{order.discountCode} (-{order.discountAmount?.toLocaleString()}đ)</p>
+                                )}
+                                <ul>
+                                    {order.orderItemList?.map(item => (
+                                        <li key={item.id}>
+                                            <img src={item.product?.imageUrl} alt={item.product?.name} />
+                                            <div>
+                                                <p><strong>Sản phẩm: </strong>{item.product?.name}</p>
+                                                <p><strong>Trạng thái: </strong>{item.status}</p>
+                                                <p><strong>Số lượng: </strong>{item.quantity}</p>
+                                                <p><strong>Giá: </strong>{item.price?.toLocaleString()}đ</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
                             </li>
                         ))}
                     </ul>

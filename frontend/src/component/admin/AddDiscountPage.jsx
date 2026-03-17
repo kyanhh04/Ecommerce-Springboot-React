@@ -5,10 +5,12 @@ import ApiService from "../../service/ApiService";
 
 const AddDiscountPage = () => {
     const [code, setCode] = useState('');
+    const [description, setDescription] = useState('');
     const [type, setType] = useState('PERCENTAGE');
     const [value, setValue] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [usageLimit, setUsageLimit] = useState(100);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
@@ -39,21 +41,21 @@ const AddDiscountPage = () => {
         try {
             const discountDTO = {
                 code: code.toUpperCase(),
-                type,
-                value: parseFloat(value),
-                startDate,
-                endDate,
-                active: true
+                description,
+                discountType: type,
+                discountValue: parseFloat(value),
+                usageLimit: parseInt(usageLimit) || 100,
+                startDate: new Date(startDate).toISOString().slice(0, 19),
+                endDate: new Date(endDate).toISOString().slice(0, 19),
+                isActive: true
             };
 
             const response = await ApiService.createDiscount(discountDTO);
-            if (response.status === 200) {
-                setMessage(response.message)
-                setTimeout(() => {
-                    setMessage('')
-                    navigate('/admin/discounts')
-                }, 2000);
-            }
+            setMessage(response.message || 'Tạo mã giảm giá thành công');
+            setTimeout(() => {
+                setMessage('');
+                navigate('/admin/discounts');
+            }, 2000);
 
         } catch (error) {
             setError(error.response?.data?.message || error.message || 'Unable to create discount')
@@ -76,6 +78,13 @@ const AddDiscountPage = () => {
                     required
                 />
 
+                <input
+                    type="text"
+                    placeholder="Mô tả (không bắt buộc)"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+
                 <select value={type} onChange={(e) => setType(e.target.value)} required>
                     <option value="PERCENTAGE">Percentage (%)</option>
                     <option value="FIXED_AMOUNT">Fixed Amount (VND)</option>
@@ -88,6 +97,16 @@ const AddDiscountPage = () => {
                     onChange={(e)=> setValue(e.target.value)}
                     min="0"
                     step={type === 'PERCENTAGE' ? '0.01' : '1000'}
+                    required
+                />
+
+                <label>Giới hạn lượt dùng</label>
+                <input
+                    type="number"
+                    placeholder="Số lượt sử dụng tối đa"
+                    value={usageLimit}
+                    onChange={(e) => setUsageLimit(e.target.value)}
+                    min="1"
                     required
                 />
 

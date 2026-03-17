@@ -55,7 +55,7 @@ const AdminDiscountPage = () => {
         const now = new Date();
         const startDate = new Date(discount.startDate);
         const endDate = new Date(discount.endDate);
-        return now >= startDate && now <= endDate && discount.active;
+        return now >= startDate && now <= endDate && discount.isActive;
     }
 
     return(
@@ -87,11 +87,11 @@ const AdminDiscountPage = () => {
                                 {discounts.map((discount)=>(
                                     <tr key={discount.id}>
                                         <td><strong>{discount.code}</strong></td>
-                                        <td>{discount.type}</td>
+                                        <td>{discount.discountType}</td>
                                         <td>
-                                            {discount.type === 'PERCENTAGE'
-                                                ? `${discount.value}%`
-                                                : `${discount.value.toLocaleString()}đ`}
+                                            {discount.discountType === 'PERCENTAGE'
+                                                ? `${discount.discountValue || 0}%`
+                                                : `${(discount.discountValue || 0).toLocaleString()}đ`}
                                         </td>
                                         <td>{formatDate(discount.startDate)}</td>
                                         <td>{formatDate(discount.endDate)}</td>

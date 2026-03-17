@@ -6,31 +6,16 @@ import ApiService from "../../service/ApiService";
 const EditDiscountPage = () => {
     const { discountId } = useParams();
     const [code, setCode] = useState('');
+    const [description, setDescription] = useState('');
     const [type, setType] = useState('PERCENTAGE');
     const [value, setValue] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [active, setActive] = useState(true);
+    const [usageLimit, setUsageLimit] = useState(100);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (discountId) {
-            ApiService.getDiscountById(discountId).then((response) => {
-                const discount = response.discount;
-                setCode(discount.code);
-                setType(discount.type);
-                setValue(discount.value);
-                // Format datetime-local input
-                setStartDate(formatDateTimeLocal(discount.startDate));
-                setEndDate(formatDateTimeLocal(discount.endDate));
-                setActive(discount.active);
-            }).catch((error) => {
-                setError(error.response?.data?.message || 'Unable to load discount');
-            });
-        }
-    }, [discountId]);
 
     const formatDateTimeLocal = (dateString) => {
         const date = new Date(dateString);
@@ -42,10 +27,27 @@ const EditDiscountPage = () => {
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
 
+    useEffect(() => {
+        if (discountId) {
+            ApiService.getDiscountById(discountId).then((response) => {
+                const discount = response.discount;
+                setCode(discount.code);
+                setDescription(discount.description || '');
+                setType(discount.discountType);
+                setValue(discount.discountValue);
+                setUsageLimit(discount.usageLimit || 100);
+                setStartDate(formatDateTimeLocal(discount.startDate));
+                setEndDate(formatDateTimeLocal(discount.endDate));
+                setActive(discount.isActive);
+            }).catch((err) => {
+                setError(err.response?.data?.message || 'Unable to load discount');
+            });
+        }
+    }, [discountId]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation
         if (!code || !value || !startDate || !endDate) {
             setError('All fields are required');
             setTimeout(() => setError(''), 3000);
@@ -67,11 +69,13 @@ const EditDiscountPage = () => {
         try {
             const discountDTO = {
                 code: code.toUpperCase(),
-                type,
-                value: parseFloat(value),
-                startDate,
-                endDate,
-                active
+                description,
+                discountType: type,
+                discountValue: parseFloat(value),
+                usageLimit: parseInt(usageLimit) || 100,
+                startDate: new Date(startDate).toISOString().slice(0, 19),
+                endDate: new Date(endDate).toISOString().slice(0, 19),
+                isActive: active
             };
 
             const response = await ApiService.updateDiscount(discountId, discountDTO);
@@ -82,12 +86,11 @@ const EditDiscountPage = () => {
                     navigate('/admin/discounts');
                 }, 2000);
             }
-
-        } catch (error) {
-            setError(error.response?.data?.message || error.message || 'Unable to update discount');
+        } catch (err) {
+            setError(err.response?.data?.message || err.message || 'Unable to update discount');
             setTimeout(() => setError(''), 3000);
         }
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="product-form">
@@ -103,6 +106,13 @@ const EditDiscountPage = () => {
                 required
             />
 
+            <input
+                type="text"
+                placeholder="Mô tả (không bắt buộc)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+            />
+
             <select value={type} onChange={(e) => setType(e.target.value)} required>
                 <option value="PERCENTAGE">Percentage (%)</option>
                 <option value="FIXED_AMOUNT">Fixed Amount (VND)</option>
@@ -115,6 +125,16 @@ const EditDiscountPage = () => {
                 onChange={(e) => setValue(e.target.value)}
                 min="0"
                 step={type === 'PERCENTAGE' ? '0.01' : '1000'}
+                required
+            />
+
+            <label>Giới hạn lượt dùng</label>
+            <input
+                type="number"
+                placeholder="Số lượt sử dụng tối đa"
+                value={usageLimit}
+                onChange={(e) => setUsageLimit(e.target.value)}
+                min="1"
                 required
             />
 
@@ -149,6 +169,6 @@ const EditDiscountPage = () => {
             </button>
         </form>
     );
-}
+};
 
 export default EditDiscountPage;

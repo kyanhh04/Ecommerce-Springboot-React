@@ -157,8 +157,10 @@ const SecurePaymentPage = () => {
         // Success - redirect to success page
         navigate('/order-success', { 
           state: { 
-            orderId, 
-            amount: calculateTotal() 
+            orderSuccess: {
+              orderId,
+              amount: calculateTotal()
+            }
           } 
         });
       }

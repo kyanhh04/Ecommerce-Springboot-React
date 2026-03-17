@@ -1,6 +1,5 @@
 package com.phegondev.Phegon.Eccormerce.controller;
 
-import com.phegondev.Phegon.Eccormerce.dto.PaymentOTPVerifyRequest;
 import com.phegondev.Phegon.Eccormerce.dto.PaymentRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.service.interf.PaymentService;
@@ -23,20 +22,6 @@ public class PaymentController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/verify-otp")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
-    public ResponseEntity<Response> verifyPaymentOTP(@RequestBody PaymentOTPVerifyRequest request) {
-        Response response = paymentService.verifyPaymentOTP(request.getOrderId(), request.getOtpCode());
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-
-    @PostMapping("/process/{orderId}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
-    public ResponseEntity<Response> processPayment(@PathVariable Long orderId) {
-        Response response = paymentService.processPayment(orderId);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
     @GetMapping("/status/{orderId}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> getPaymentStatus(@PathVariable Long orderId) {

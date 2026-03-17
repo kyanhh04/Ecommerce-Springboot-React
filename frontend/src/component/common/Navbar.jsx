@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import { useCart } from "../context/CartContext";
+import logo from "../../asset/logo.png";
 
 import { FaHome, FaUser, FaShoppingCart, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
@@ -11,9 +13,12 @@ const Navbar = () => {
 
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
+    const { cart } = useCart();
 
     const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
+    
+    const cartItemCount = cart.length;
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
@@ -114,8 +119,11 @@ const Navbar = () => {
                     </NavLink>
                 )}
 
-                <NavLink to="/cart" title="Cart">
+                <NavLink to="/cart" title="Cart" className="cart-link">
                     <FaShoppingCart />
+                    {cartItemCount > 0 && (
+                        <span className="cart-badge">{cartItemCount}</span>
+                    )}
                 </NavLink>
 
             </div>

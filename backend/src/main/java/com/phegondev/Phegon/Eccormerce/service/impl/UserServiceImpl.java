@@ -14,6 +14,7 @@ import com.phegondev.Phegon.Eccormerce.security.JwtUtils;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -107,14 +108,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Response getUserInfoAndOrderHistory() {
         User user = getLoginUser();
-        UserDto userDto = entityDtoMapper.mapUserToDtoPlusAddressAndOrderHistory(user);
+        UserDto userDto = mapUserToDtoPlusAddressAndOrderHistory(user);
 
         return Response.builder()
                 .status(200)
                 .user(userDto)
                 .build();
+    }
+
+    private UserDto mapUserToDtoPlusAddressAndOrderHistory(User user) {
+        UserDto userDto = entityDtoMapper.mapUserToDtoPlusAddress(user);
+
+        if (user.getOrderItemList() != null && !user.getOrderItemList().isEmpty()) {
+            // Gom orderItems theo order
+            java.util.Map<Long, com.phegondev.Phegon.Eccormerce.dto.OrderDto> orderMap = new java.util.LinkedHashMap<>();
+            for (com.phegondev.Phegon.Eccormerce.entity.OrderItem item : user.getOrderItemList()) {
+                if (item.getOrder() == null) continue;
+                Long orderId = item.getOrder().getId();
+                orderMap.computeIfAbsent(orderId, id -> {
+                    com.phegondev.Phegon.Eccormerce.dto.OrderDto dto = entityDtoMapper.mapOrderToDtoBasic(item.getOrder());
+                    dto.setOrderItemList(new java.util.ArrayList<>());
+                    return dto;
+                });
+                orderMap.get(orderId).getOrderItemList().add(entityDtoMapper.mapOrderItemToDtoPlusProduct(item));
+            }
+            userDto.setOrderList(new java.util.ArrayList<>(orderMap.values()));
+        }
+        return userDto;
     }
 
     @Override
