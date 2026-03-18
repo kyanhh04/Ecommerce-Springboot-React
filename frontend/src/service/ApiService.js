@@ -283,6 +283,46 @@ export default class ApiService {
         return response.data;
     }
 
+    /**REVIEWS */
+    static async getProductReviews(productId) {
+        const response = await axios.get(`${this.BASE_URL}/api/reviews/product/${productId}`);
+        return response.data;
+    }
+
+    static async createReview(body) {
+        const response = await axios.post(`${this.BASE_URL}/api/reviews`, body, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    /**WISHLIST */
+    static async addToWishlist(productId) {
+        const response = await axios.post(`${this.BASE_URL}/api/wishlist/add/${productId}`, {}, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async removeFromWishlist(productId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/wishlist/remove/${productId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getWishlist() {
+        const response = await axios.get(`${this.BASE_URL}/api/wishlist`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async getWishlistCount(productId) {
+        const response = await axios.get(`${this.BASE_URL}/api/wishlist/count/${productId}`);
+        return response.data;
+    }
+
     /***AUTHENTICATION CHECKER */
     static logout(){
         localStorage.removeItem('token')

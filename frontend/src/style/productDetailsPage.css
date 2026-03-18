@@ -130,6 +130,40 @@
     margin-top:10px;
 }
 
+/* QUANTITY SELECTOR */
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.quantity-selector button {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #f68b1e;
+    border-radius: 8px;
+    background: white;
+    color: #f68b1e;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.quantity-selector button:hover {
+    background: #f68b1e;
+    color: white;
+}
+
+.quantity-selector span {
+    font-size: 20px;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+}
+
 /* ADD TO CART */
 
 .add-cart-btn{
@@ -148,6 +182,25 @@
 .add-cart-btn:hover{
     background:#d9730d;
     transform:translateY(-2px);
+}
+
+.wishlist-btn {
+    width: 220px;
+    padding: 14px;
+    border: 2px solid #e11d48;
+    border-radius: 8px;
+    background: white;
+    color: #e11d48;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+    margin-top: 10px;
+}
+
+.wishlist-btn:hover {
+    background: #e11d48;
+    color: white;
 }
 
 /* REVIEW SECTION */

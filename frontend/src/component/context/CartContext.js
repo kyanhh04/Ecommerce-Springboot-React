@@ -4,19 +4,20 @@ const cartReducer=(state,action)=>{
     switch(action.type){
         case "ADD_ITEM":
             const exist=state.cart.find(i=>i.id===action.payload.id);
+            const quantityToSet = action.payload.quantity || 1;
             if(exist){
                 return{
                     ...state,
                     cart:state.cart.map(i=>
                         i.id===action.payload.id
-                        ?{...i,quantity:i.quantity+1}
+                        ?{...i,quantity:quantityToSet}
                         :i
                     )
                 };
             }
             return{
                 ...state,
-                cart:[...state.cart,{...action.payload,quantity:1}]
+                cart:[...state.cart,{...action.payload,quantity:quantityToSet}]
             };
         case "REMOVE_ITEM":
             return{

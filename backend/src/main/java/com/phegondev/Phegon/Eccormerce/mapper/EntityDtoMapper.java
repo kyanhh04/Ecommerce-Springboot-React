@@ -156,4 +156,18 @@ public class EntityDtoMapper {
         return orderDto;
     }
 
+    public ReviewDto mapReviewToDtoBasic(Review review) {
+        ReviewDto dto = new ReviewDto();
+        dto.setId(review.getId());
+        dto.setContent(review.getContent());
+        dto.setRating(review.getRating());
+        dto.setCreatedAt(review.getCreatedAt());
+        if (review.getProduct() != null) dto.setProductId(review.getProduct().getId());
+        if (review.getUser() != null) {
+            dto.setUserId(review.getUser().getId());
+            dto.setUserName(review.getUser().getName());
+        }
+        return dto;
+    }
+
 }

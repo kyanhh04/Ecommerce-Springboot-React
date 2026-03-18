@@ -32,6 +32,8 @@ import PaymentPageWrapper from './component/pages/PaymentPageWrapper';
 import SecurePaymentPage from './component/payment/SecurePaymentPage';
 import PaymentDemo from './component/payment/PaymentDemo';
 import OrderSuccessPage from './component/pages/OrderSuccessPage';
+import OrderDetailPage from './component/pages/OrderDetailPage';
+import WishlistPage from './component/pages/WishlistPage';
 
 
 import About from './component/pages/About';
@@ -68,6 +70,8 @@ function App() {
               <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/payment' element={<ProtectedRoute element={<SecurePaymentPage/>} />} />
               <Route path='/order-success' element={<ProtectedRoute element={<OrderSuccessPage />} />} />
+              <Route path='/order/:orderId' element={<ProtectedRoute element={<OrderDetailPage />} />} />
+              <Route path='/wishlist' element={<ProtectedRoute element={<WishlistPage />} />} />
 
 
               <Route path='/admin' element={<AdminRoute element={<AdminPage />} />} />

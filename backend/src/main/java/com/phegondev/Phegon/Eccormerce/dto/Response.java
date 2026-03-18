@@ -46,4 +46,10 @@ public class Response {
 
     private DiscountDTO discount;
     private List<DiscountDTO> discountList;
+
+    private ReviewDto review;
+    private List<ReviewDto> reviewList;
+    private Double averageRating;
+
+    private List<WishlistDto> wishlistList;
 }

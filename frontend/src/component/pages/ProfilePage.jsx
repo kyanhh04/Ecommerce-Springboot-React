@@ -83,19 +83,6 @@ const ProfilePage = () => {
                                 {order.discountCode && (
                                     <p><strong>Mã giảm giá: </strong>{order.discountCode} (-{order.discountAmount?.toLocaleString()}đ)</p>
                                 )}
-                                <ul>
-                                    {order.orderItemList?.map(item => (
-                                        <li key={item.id}>
-                                            <img src={item.product?.imageUrl} alt={item.product?.name} />
-                                            <div>
-                                                <p><strong>Sản phẩm: </strong>{item.product?.name}</p>
-                                                <p><strong>Trạng thái: </strong>{item.status}</p>
-                                                <p><strong>Số lượng: </strong>{item.quantity}</p>
-                                                <p><strong>Giá: </strong>{item.price?.toLocaleString()}đ</p>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
                             </li>
                         ))}
                     </ul>
