@@ -1,104 +1,90 @@
-.terms-wrapper{
-background:#020617;
-padding:90px 20px;
-display:flex;
-justify-content:center;
+.terms-wrapper {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.terms-container{
-max-width:900px;
-width:100%;
-background:#0f172a;
-padding:50px;
-border-radius:18px;
-border:1px solid #1e293b;
+.terms-container {
+  max-width: 1200px;
+  width: 100%;
 
-box-shadow:
-0 0 35px rgba(59,130,246,0.15),
-0 10px 40px rgba(0,0,0,0.6);
+  padding: 20px 35px;
+  border-radius: 18px;
+  box-shadow: 0 8px 35px rgba(59, 130, 246, 0.15);
 
-transition:0.35s;
-
-color:#e2e8f0;
-line-height:1.8;
-animation:fadeUp 0.8s ease forwards;
+  transition: 0.35s;
+  line-height: 1.8;
+  animation: fadeUp 0.8s ease forwards;
 }
 
-.terms-container:hover{
-box-shadow:
-0 0 55px rgba(59,130,246,0.35),
-0 15px 50px rgba(0,0,0,0.7);
+.terms-container:hover {
+  box-shadow: 0 8px 35px rgba(59, 130, 246, 0.25);
 
-transform:translateY(-4px);
+  transform: translateY(-4px);
 }
 
-.terms-container h1{
-text-align:center;
-font-size:34px;
-margin-bottom:40px;
-color:#38bdf8;
+.terms-container h1 {
+  text-align: center;
+  font-size: 34px;
+  margin-bottom: 40px;
 }
 
-.terms-container h2{
-margin-top:25px;
-font-size:20px;
-color:#e2e8f0;
-transition:0.3s;
+.terms-container h2 {
+  margin-top: 25px;
+  font-size: 20px;
+
+  transition: 0.3s;
 }
 
-.terms-container h2:hover{
-transform:translateX(6px);
-color:#3b82f6;
+.terms-container h2:hover {
+  transform: translateX(6px);
+  color: #3b82f6;
 }
 
-.terms-container p{
-color:#94a3b8;
-margin-top:8px;
-font-size:15px;
+.terms-container p {
+  margin-top: 4px;
+  font-size: 15px;
 }
-@keyframes fadeUp{
-from{
-opacity:0;
-transform:translateY(40px);
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
 
 /* ===== RESPONSIVE ===== */
 
-@media(max-width:768px){
+@media (max-width: 768px) {
+  .terms-container {
+    padding: 30px;
+  }
 
-.terms-container{
-padding:30px;
-}
+  .terms-container h1 {
+    font-size: 28px;
+  }
 
-.terms-container h1{
-font-size:28px;
-}
+  .terms-container h2 {
+    font-size: 18px;
+  }
 
-.terms-container h2{
-font-size:18px;
-}
+  .privacy-container {
+    margin: 100px 20px 50px 20px;
+    padding: 25px;
+  }
 
-.privacy-container{
-margin:100px 20px 50px 20px;
-padding:25px;
-}
+  .privacy-container h1 {
+    font-size: 28px;
+  }
 
-.privacy-container h1{
-font-size:28px;
-}
+  .privacy-block h2 {
+    font-size: 18px;
+  }
 
-.privacy-block h2{
-font-size:18px;
-}
-
-.privacy-block p{
-font-size:14px;
-}
-
+  .privacy-block p {
+    font-size: 14px;
+  }
 }

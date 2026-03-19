@@ -1,157 +1,140 @@
 /* PRODUCT LIST GRID */
 .product-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
-    padding: 40px 20px;
-    margin: 0 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  padding: 40px 20px;
+  margin: 0 6rem;
 }
 
 /* CARD */
 .product-item {
-    background: #0f172a;
-    border-radius: 16px;
-    overflow: hidden;
+  border-radius: 16px;
+  overflow: hidden;
 
-    border: 1px solid #1e293b;
-
-    box-shadow:
-        0 0 20px rgba(59,130,246,0.08),
-        0 10px 30px rgba(0,0,0,0.6);
-
-    transition: all 0.35s ease;
-
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 20px;
+  border: 1px solid;
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
 }
 
 /* HOVER EFFECT */
 .product-item:hover {
-    transform: translateY(-8px);
+  transform: translateY(-8px);
 
-    border: 1px solid #3b82f6;
+  border: 1px solid #3b82f6;
 
-    box-shadow:
-        0 0 35px rgba(59,130,246,0.35),
-        0 15px 45px rgba(0,0,0,0.7);
+  box-shadow:
+    0 0 35px rgba(59, 130, 246, 0.35),
+    0 15px 45px rgba(0, 0, 0, 0.7);
 }
 
 .product-item a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 /* IMAGE */
 .product-image {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    background: #020617;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  background: #020617;
 }
 
 /* PRODUCT TITLE */
 .product-item h3 {
-    font-size: 18px;
-    margin: 15px 18px 8px;
-    color: #f1f5f9;
-    font-weight: 600;
+  font-size: 18px;
+  margin: 15px 18px 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.4em;
-    height: 2.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4em;
 }
 
 /* DESCRIPTION */
 .product-item p {
-    font-size: 0.9em;
-    color: #94a3b8;
-    margin: 0 18px 12px;
+  font-size: 0.9em;
+  margin: 0 18px 12px;
 
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 
-    overflow: hidden;
-    line-height: 1.4em;
-    height: 4.2em;
+  overflow: hidden;
+  line-height: 1.4em;
 }
 
 /* PRICE */
 .product-item span {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 10px 18px 15px;
-    color: #3b82f6;
+  font-size: 24px;
+  margin: 10px 18px 15px;
 }
 
 /* ADD TO CART BUTTON */
 .product-item button {
-    margin-top: auto;
+  margin-top: auto;
 
-    background: linear-gradient(135deg,#2563eb,#4f46e5);
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
 
-    border: none;
-    border-radius: 10px;
+  border: none;
+  border-radius: 10px;
 
-    color: white;
+  color: white;
 
-    padding: 14px;
+  padding: 14px;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    width: 90%;
-    align-self: center;
+  width: 90%;
+  align-self: center;
 
-    font-size: 15px;
-    font-weight: 600;
+  font-size: 15px;
+  font-weight: 600;
 
-    transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .product-item button:hover {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
 
-    background: linear-gradient(135deg,#3b82f6,#6366f1);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
 
-    box-shadow: 0 0 20px rgba(59,130,246,0.6);
-
-    transform: translateY(-2px);
+  transform: translateY(-2px);
 }
 
 /* QUANTITY */
 .quantity-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
 }
 
 /* +/- BUTTON */
 .quantity-controls button {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 6px;
-    color: #e2e8f0;
-    cursor: pointer;
-    font-size: 1.1em;
-    padding: 6px 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 1.1em;
+  padding: 6px 12px;
 
-    transition: all 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .quantity-controls button:hover {
-    background: #3b82f6;
-    border-color: #3b82f6;
+  background: #3b82f6;
+  border-color: #3b82f6;
 }
 
-
+/* QUANTITY NUMBER */
 .quantity-controls span {
-    margin: 0 12px;
-    font-size: 1.2em;
-
+  margin: 0 12px;
+  font-size: 1.2em;
 }
