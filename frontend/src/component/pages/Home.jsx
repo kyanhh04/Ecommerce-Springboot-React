@@ -24,11 +24,6 @@ const Home = () => {
   // 🔥 SLIDER DATA (đã thêm categoryId)
   const slides = [
     {
-      title: "Laptop Gaming",
-      img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800",
-      categoryId: 1,
-    },
-    {
       title: "Tai nghe cao cấp",
       img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800",
       categoryId: 4,
@@ -48,6 +43,11 @@ const Home = () => {
       img: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1600",
       categoryId: 5,
     },
+    {
+      title: "Laptop Gaming",
+      img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800",
+      categoryId: 1,
+    },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -56,7 +56,7 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);

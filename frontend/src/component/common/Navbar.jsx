@@ -14,7 +14,8 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const { cart } = useCart(); // lấy giỏ hàng từ context
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0); // tổng số lượng sản phẩm
+    // Số loại sản phẩm khác nhau trong giỏ
+    const cartItemCount = cart.length;
 
     const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
@@ -63,7 +64,7 @@ const Navbar = () => {
 
             {/* LOGO */}
             <div className="logo">
-                <NavLink to="/">⚡ TechNova</NavLink>
+                <NavLink to="/">TechNova</NavLink>
             </div>
 
             {/* SEARCH */}
@@ -92,8 +93,8 @@ const Navbar = () => {
 
                 <NavLink to="/cart" className="cart">
                     <FaShoppingCart />
-                    {totalQuantity > 0 && (
-                        <span className="cart-count">{totalQuantity}</span>
+                    {cartItemCount > 0 && (
+                        <span className="cart-count">{cartItemCount}</span>
                     )}
                 </NavLink>
 

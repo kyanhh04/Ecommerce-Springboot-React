@@ -39,7 +39,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             
             helper.setTo(user.getEmail());
-            helper.setSubject("✅ Đặt hàng thành công - Đơn hàng #" + order.getId());
+            helper.setSubject("  Đặt hàng thành công - Đơn hàng #" + order.getId());
 
             StringBuilder html = new StringBuilder();
             html.append("<!DOCTYPE html><html><head><style>");
