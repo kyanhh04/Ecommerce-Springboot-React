@@ -1,83 +1,149 @@
-.profile-page{
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ffd8b1;
-    border-radius: 10px;
+.profile-page-wrapper {
+  margin: auto;
+  background: #f8fafc;
+  padding: 50px 20px;
+}
+.profile-page {
+  max-width: 1200px;
+  margin: 20px auto;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.profile-page h2{
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 30px;
-    font-weight: 800;
-}
-.profile-page h3{
-    font-size: 30px;
-}
-.profile-page p{
-    margin-bottom: 10px;
-}
-.profile-page strong{
-    color: #f68b1e;
-    font-size: 20px;
-}
-.profile-page ul{
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.profile-page li{
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.profile-page li:hover{
-    background-color: #f0f0f0;
-}
-.profile-page li img{
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-right: 20px;
-}
-.profile-page li div{
-    flex-grow: 1;
+/* Header & Typography */
+.profile-page h2 {
+  text-align: center;
+  color: #1e293b;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 700;
 }
 
-.profile-page li h4{
-    margin-bottom: 5px;
-    font-size: 1.3em;
+.profile-page h3 {
+  font-size: 22px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f68b1e;
+  padding-bottom: 8px;
+  color: #334155;
 }
 
-.profile-page li p{
-    margin-bottom: 5px;
-    color: #666;
+.profile-page p {
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
-.profile-button{
-    background-color: #f68b1e;
-    padding: 13px;
-    font-weight: 700;
-    border: 1px solid white;
-    color: #fff;
-    font-size: 20px;
-    margin: 10px 0px;
-} 
-
-.profile-button:hover{
-    background-color: #86490d;
+.profile-page strong {
+  color: #f68b1e;
 }
-.error-message{
-    color: red;
-    text-align: center;
-    font-size: 1.2em;
-    margin-top: 20px;
+
+/* Button Edit/Add Address */
+.profile-button {
+  background-color: #f68b1e;
+  padding: 10px 24px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.profile-button:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+/* ===== ORDER HISTORY SECTION ===== */
+
+/* Thẻ li chứa TOÀN BỘ 1 đơn hàng */
+.profile-page > div > ul > li {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+
+  display: flex;
+  flex-direction: column; /* Đơn hàng ở trên, SP ở dưới */
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-page > div > ul > li:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Danh sách sản phẩm bên trong đơn hàng */
+.order-items-list {
+  margin-top: 15px;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Từng dòng sản phẩm cụ thể */
+.order-item {
+  display: flex; /* Ảnh trái, chữ phải */
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.order-item img {
+  width: 250px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.order-item-info p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.error-message {
+  color: #ef4444;
+  text-align: center;
+  font-weight: bold;
+}
+/* ORDER ITEM */
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* nút nằm bên phải */
+  gap: 15px;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* THÔNG TIN SẢN PHẨM */
+.order-item-info {
+  flex-grow: 1;
+}
+
+/* NÚT ĐÁNH GIÁ */
+.order-item-action {
+  flex-shrink: 0;
+}
+
+.review-btn {
+  background-color: #2563eb; /* xanh nổi bật */
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.review-btn:hover {
+  background-color: #1e40af; /* xanh đậm khi hover */
 }
