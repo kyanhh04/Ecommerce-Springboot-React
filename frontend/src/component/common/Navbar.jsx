@@ -71,6 +71,7 @@ const Navbar = () => {
             <form className="search-box" onSubmit={handleSearchSubmit}>
                 <FiSearch className="search-icon" />
                 <input
+
                     type="text"
                     placeholder="Tìm kiếm sản phẩm ..."
                     value={searchValue}
