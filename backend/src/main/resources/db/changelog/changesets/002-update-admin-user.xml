@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Update Admin User -->
+    <changeSet id="001-update-admin-user" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM users WHERE email = 'admin@ecommerce.com'
+            </sqlCheck>
+        </preConditions>
+
+        <update tableName="users">
+            <column name="name" value="Kỳ Anh"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="password" value="$2a$12$PHJuDV9SXO1NObfVJEJdRu5RM//ZiiKNHOQOpm3yGk6pWa8.QEIRO"/>
+            <column name="phone_number" value="0913932812"/>
+            <where>email = 'admin@ecommerce.com'</where>
+        </update>
+
+        <rollback>
+            <update tableName="users">
+                <column name="name" value="Admin User"/>
+                <column name="email" value="admin@ecommerce.com"/>
+                <column name="phone_number" value="+1234567890"/>
+                <where>email = 'admin@gmail.com'</where>
+            </update>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

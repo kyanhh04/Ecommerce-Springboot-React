@@ -98,11 +98,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
             BigDecimal finalDiscountAmount = discountAmount;
             if (finalDiscountAmount.compareTo(BigDecimal.ZERO) > 0 && totalPrice.compareTo(BigDecimal.ZERO) > 0) {
-                for (OrderItem item : orderItems) {
-                    BigDecimal itemDiscountAmount = finalDiscountAmount.multiply(item.getPrice()).divide(totalPrice, BigDecimal.ROUND_HALF_UP);
-                    item.setDiscountAmount(itemDiscountAmount);
-                    item.setPrice(item.getPrice().subtract(itemDiscountAmount));
-                }
+                // Discount is applied at Order level, not distributed to OrderItems
+                totalPrice = totalPrice.subtract(finalDiscountAmount);
             }
             
             Order order = new Order();
@@ -113,11 +110,17 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
                 Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
                 if (discountOpt.isPresent()) {
-                    order.setDiscount(discountOpt.get());
-                    order.setDiscountCode(discountOpt.get().getCode());
+                    Discount discount = discountOpt.get();
+                    order.setDiscount(discount);
+                    order.setDiscountCode(discount.getCode());
+
+                    // Increment discount usage
+                    discount.setCurrentUsage(discount.getCurrentUsage() + 1);
+                    discount.setUpdatedAt(LocalDateTime.now());
+                    discountRepository.save(discount);
                 }
             }
-            
+
             orderItems.forEach(orderItem -> orderItem.setOrder(order));
             orderRepo.save(order);
     

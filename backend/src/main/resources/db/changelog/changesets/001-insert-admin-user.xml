@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Insert Admin User -->
+    <changeSet id="001-insert-admin-user" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM users WHERE email = 'admin@ecommerce.com'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="users">
+            <column name="name" value="ADMIN"/>
+            <column name="email" value="admin@ecommerce.com"/>
+            <!-- Password: Admin@123 (BCrypt encoded) -->
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMye1J1EQVGF0gJXXdQvYE5QkEpfDcWKfyq"/>
+            <column name="phone_number" value="0123456789"/>
+            <column name="role" value="ADMIN"/>
+            <column name="created_at" valueDate="now()"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="users">
+                <where>email = 'admin@ecommerce.com'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <!-- Insert Admin Address -->
+    <changeSet id="002-insert-admin-address" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM users WHERE email = 'admin@ecommerce.com'
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM addresses a
+                JOIN users u ON a.user_id = u.id
+                WHERE u.email = 'admin@ecommerce.com'
+            </sqlCheck>
+        </preConditions>
+
+        <sql>
+            INSERT INTO addresses (street, city, state, zip_code, country, user_id, created_at)
+            SELECT '123 Admin Street', 'Hanoi', 'Hoan Kiem', '100000', 'Vietnam', u.id, NOW()
+            FROM users u
+            WHERE u.email = 'admin@ecommerce.com'
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE a FROM addresses a
+                JOIN users u ON a.user_id = u.id
+                WHERE u.email = 'admin@ecommerce.com'
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Insert Discount Code NEWUSER -->
+    <changeSet id="003-insert-newuser-discount" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM discounts WHERE code = 'NEWUSER'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="discounts">
+            <column name="code" value="NEWUSER"/>
+            <column name="description" value="Welcome discount for new users - 10% off your first purchase"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" value="10.00"/>
+            <column name="usage_limit" value="1000"/>
+            <column name="current_usage" value="0"/>
+            <column name="start_date" valueDate="now()"/>
+            <column name="end_date" valueComputed="DATE_ADD(NOW(), INTERVAL 1 YEAR)"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="discounts">
+                <where>code = 'NEWUSER'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -129,6 +129,7 @@ const Home = () => {
             <div className="success-text">
               <h3> Đặt hàng thành công!</h3>
               <p>Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng của chúng tôi.</p>
+              <p>Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến tay bạn.</p>
               <div className="order-details">
                 <span className="detail-item"> Mã đơn hàng: <strong>#{orderSuccessData.orderId}</strong></span>
                 <span className="detail-item"> Tổng tiền: <strong>{orderSuccessData.amount?.toLocaleString()}đ</strong></span>
@@ -138,7 +139,8 @@ const Home = () => {
               ) : (
                 <p className="payment-note"> Thanh toán đã được xác nhận</p>
               )}
-              <p className="tracking-note">Chúng tôi sẽ gửi email xác nhận và cập nhật trạng thái đơn hàng cho bạn.</p>
+              <p className="tracking-note">Chúng tôi sẽ gửi email xác nhận sau khi đơn hàng được xác nhận.</p>
+              <p className="tracking-note">Bạn có thể theo dõi trạng thái đơn hàng trong mục "Đơn hàng của tôi".</p>
             </div>
             <button 
               className="close-notification"

@@ -1,5 +1,6 @@
 package com.phegondev.Phegon.Eccormerce.entity;
 
+import com.phegondev.Phegon.Eccormerce.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +19,8 @@ public class Order {
     private Long id;
 
     private BigDecimal totalPrice;
+
+    private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_id")

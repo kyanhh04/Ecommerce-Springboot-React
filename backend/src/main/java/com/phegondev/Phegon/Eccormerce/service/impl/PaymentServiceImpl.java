@@ -5,6 +5,8 @@ import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.Order;
 import com.phegondev.Phegon.Eccormerce.entity.Payment;
 import com.phegondev.Phegon.Eccormerce.entity.User;
+import com.phegondev.Phegon.Eccormerce.enums.OrderStatus;
+import com.phegondev.Phegon.Eccormerce.enums.PaymentStatus;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
 import com.phegondev.Phegon.Eccormerce.repository.PaymentRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.DiscountService;
@@ -50,21 +52,21 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         var existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
-        if (existingPayment.isPresent() && "COMPLETED".equals(existingPayment.get().getStatus())) {
+        if (existingPayment.isPresent() && PaymentStatus.COMPLETED.equals(existingPayment.get().getStatus())) {
             return Response.builder().status(400).message("Đơn hàng này đã được thanh toán rồi").build();
         }
 
-        String paymentStatus;
-        String orderStatus;
+        PaymentStatus paymentStatus;
+        OrderStatus orderStatus;
         String responseMessage;
         
         if ("CASH".equals(paymentRequest.getMethod())) {
-            paymentStatus = "PENDING";
-            orderStatus = "PENDING";
+            paymentStatus = PaymentStatus.PENDING;
+            orderStatus = OrderStatus.PENDING;
             responseMessage = "Đơn hàng đã được đặt thành công. Vui lòng thanh toán khi nhận hàng.";
         } else {
-            paymentStatus = "COMPLETED";
-            orderStatus = "CONFIRMED";
+            paymentStatus = PaymentStatus.COMPLETED;
+            orderStatus = OrderStatus.PENDING;
             responseMessage = "Thanh toán thành công. Cảm ơn bạn đã đặt hàng!";
         }
 
@@ -75,8 +77,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .order(order)
                 .build();
         paymentRepository.save(payment);
-
-        // Update order status
         order.setStatus(orderStatus);
         orderRepository.save(order);
 
@@ -88,11 +88,12 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
-        // Send appropriate email based on payment method
-        if ("COMPLETED".equals(paymentStatus)) {
+        if (PaymentStatus.COMPLETED.equals(paymentStatus)) {
             emailService.sendOrderConfirmationEmail(user, order);
-        } else if ("PENDING".equals(paymentStatus)) {
+            System.out.println("✅ Đã gửi email xác nhận thanh toán cho: " + user.getEmail());
+        } else {
             emailService.sendCODOrderConfirmationEmail(user, order);
+            System.out.println("✅ Đã gửi email COD cho: " + user.getEmail());
         }
 
         return Response.builder().status(200).message(responseMessage).build();

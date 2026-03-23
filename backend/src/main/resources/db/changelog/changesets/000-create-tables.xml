@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create users table -->
+    <changeSet id="000-create-users-table" author="system">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create categories table -->
+    <changeSet id="000-create-categories-table" author="system">
+        <createTable tableName="categories">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create products table -->
+    <changeSet id="000-create-products-table" author="system">
+        <createTable tableName="products">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="image_url" type="VARCHAR(500)"/>
+            <column name="price" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_products_category" references="categories(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create addresses table -->
+    <changeSet id="000-create-addresses-table" author="system">
+        <createTable tableName="addresses">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="street" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(100)"/>
+            <column name="state" type="VARCHAR(100)"/>
+            <column name="zip_code" type="VARCHAR(20)"/>
+            <column name="country" type="VARCHAR(100)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_addresses_user" references="users(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create discounts table -->
+    <changeSet id="000-create-discounts-table" author="system">
+        <createTable tableName="discounts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="discount_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_value" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usage_limit" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_usage" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create orders table -->
+    <changeSet id="000-create-orders-table" author="system">
+        <createTable tableName="orders">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="total_price" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="discount_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_orders_discount" references="discounts(id)"/>
+            </column>
+            <column name="discount_code" type="VARCHAR(100)"/>
+            <column name="discount_amount" type="DECIMAL(19,2)" defaultValue="0"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create order_items table -->
+    <changeSet id="000-create-order-items-table" author="system">
+        <createTable tableName="order_items">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="quantity" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_order_items_user" references="users(id)"/>
+            </column>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_order_items_product" references="products(id)"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_order_items_order" references="orders(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create payments table -->
+    <changeSet id="000-create-payments-table" author="system">
+        <createTable tableName="payments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="method" type="VARCHAR(100)"/>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_payments_order" references="orders(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create reviews table -->
+    <changeSet id="000-create-reviews-table" author="system">
+        <createTable tableName="reviews">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_reviews_product" references="products(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_reviews_user" references="users(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create otp table -->
+    <changeSet id="000-create-otp-table" author="system">
+        <createTable tableName="otp">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_otp_user" references="users(id)"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_otp_order" references="orders(id)"/>
+            </column>
+            <column name="code" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="expires_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="used_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create wishlists table -->
+    <changeSet id="000-create-wishlists-table" author="system">
+        <createTable tableName="wishlists">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_wishlists_user" references="users(id)"/>
+            </column>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_wishlists_product" references="products(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="wishlists" columnNames="user_id,product_id" constraintName="uk_wishlists_user_product"/>
+    </changeSet>
+
+</databaseChangeLog>

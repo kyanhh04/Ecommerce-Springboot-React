@@ -60,6 +60,13 @@ public class EntityDtoMapper {
         productDto.setDescription(product.getDescription());
         productDto.setPrice(product.getPrice());
         productDto.setImageUrl(product.getImageUrl());
+        
+        // Map category if exists
+        if (product.getCategory() != null) {
+            CategoryDto categoryDto = mapCategoryToDtoBasic(product.getCategory());
+            productDto.setCategory(categoryDto);
+        }
+        
         return productDto;
     }
 

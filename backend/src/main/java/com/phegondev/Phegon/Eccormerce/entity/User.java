@@ -40,6 +40,7 @@ public class User {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @JsonIgnore

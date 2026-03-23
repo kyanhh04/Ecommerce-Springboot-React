@@ -1,5 +1,6 @@
 package com.phegondev.Phegon.Eccormerce.entity;
 
+import com.phegondev.Phegon.Eccormerce.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class Payment {
     private Long id;
     private BigDecimal amount;
     private String method;
-    private String status;
+    private PaymentStatus status;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import ApiService from "../../service/ApiService";
 import "../../style/productDetailsPage.css";
@@ -15,6 +15,7 @@ if (!document.querySelector('link[href*="Inter"]')) {
 const ProductDetailsPage = () => {
 
 const { productId } = useParams();
+const navigate = useNavigate();
 const { dispatch } = useCart();
 
 const [product, setProduct] = useState(null);
@@ -184,6 +185,10 @@ return (
                 <div className="product-extra-info">
                     <h3>Thông tin sản phẩm</h3>
                     <div className="info-table">
+                        <div className="info-row">
+                            <span className="info-label">Danh mục</span>
+                            <span className="info-value">{product.category?.name || "Chưa phân loại"}</span>
+                        </div>
                         <div className="info-row">
                             <span className="info-label">An tâm khi mua hàng</span>
                             <span className="info-value">Trả hàng miễn phí sau 15 ngày</span>

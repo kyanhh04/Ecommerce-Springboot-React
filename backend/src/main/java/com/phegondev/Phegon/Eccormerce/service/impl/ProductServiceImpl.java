@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -91,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response getProductById(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
         ProductDto productDto = entityDtoMapper.mapProductToDtoBasic(product);
