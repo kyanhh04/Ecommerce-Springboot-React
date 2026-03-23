@@ -1,6 +1,5 @@
 package com.phegondev.Phegon.Eccormerce.entity;
 
-import com.phegondev.Phegon.Eccormerce.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,8 +17,6 @@ public class OrderItem {
     private Long id;
     private int quantity;
     private BigDecimal price;
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -40,7 +37,6 @@ public class OrderItem {
         return quantity == that.quantity &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(price, that.price) &&
-                status == that.status &&
                 Objects.equals(user, that.user) &&
                 Objects.equals(product, that.product) &&
                 Objects.equals(order, that.order);
@@ -49,7 +45,7 @@ public class OrderItem {
     // hashCode method
     @Override
     public int hashCode() {
-        return Objects.hash(id, quantity, price, status, user, product, order);
+        return Objects.hash(id, quantity, price, user, product, order);
     }
 
     // canEqual method

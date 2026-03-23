@@ -15,7 +15,7 @@
 
         <update tableName="users">
             <column name="name" value="Kỳ Anh"/>
-            <column name="email" value="admin@gmail.com"/>
+            <column name="email" value="hoangky.a3th.2k4@gmail.com"/>
             <column name="password" value="$2a$12$PHJuDV9SXO1NObfVJEJdRu5RM//ZiiKNHOQOpm3yGk6pWa8.QEIRO"/>
             <column name="phone_number" value="0913932812"/>
             <where>email = 'admin@ecommerce.com'</where>
@@ -24,9 +24,9 @@
         <rollback>
             <update tableName="users">
                 <column name="name" value="Admin User"/>
-                <column name="email" value="admin@ecommerce.com"/>
+                <column name="email" value="admin@gmail.com"/>
                 <column name="phone_number" value="+1234567890"/>
-                <where>email = 'admin@gmail.com'</where>
+                <where>email = 'hoangky.a3th.2k4@gmail.com'</where>
             </update>
         </rollback>
     </changeSet>

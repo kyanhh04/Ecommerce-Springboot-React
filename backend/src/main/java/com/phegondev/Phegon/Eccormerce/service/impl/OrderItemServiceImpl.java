@@ -57,8 +57,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProduct(product);
                 orderItem.setQuantity(orderItemRequest.getQuantity());
-                orderItem.setPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity()))); //set price according to the quantity
-                orderItem.setStatus(OrderStatus.PENDING);
+                orderItem.setPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity())));
                 orderItem.setUser(user);
                 return orderItem;
             }).collect(Collectors.toList());
@@ -106,6 +105,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             order.setOrderItemList(orderItems);
             order.setTotalPrice(totalPrice);
             order.setDiscountAmount(discountAmount);
+            order.setStatus(OrderStatus.PENDING); // Mặc định PENDING
             
             if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
                 Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
@@ -150,7 +150,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         OrderItem orderItem = orderItemRepo.findById(orderItemId)
                 .orElseThrow(()-> new NotFoundException("Order Item not found"));
 
-        orderItem.setStatus(OrderStatus.valueOf(status.toUpperCase()));
         orderItemRepo.save(orderItem);
         return Response.builder()
                 .status(200)
@@ -167,7 +166,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             Order order = orderRepo.findById(orderId)
                     .orElseThrow(() -> new NotFoundException("Order not found"));
 
-            // Đảm bảo tất cả order item trong đơn đều thuộc về user hiện tại
             boolean belongsToUser = order.getOrderItemList() != null &&
                     order.getOrderItemList().stream().allMatch(
                             item -> item.getUser() != null && item.getUser().getId().equals(user.getId())

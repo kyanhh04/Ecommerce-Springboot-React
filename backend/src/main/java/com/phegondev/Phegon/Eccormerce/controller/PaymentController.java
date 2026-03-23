@@ -28,4 +28,11 @@ public class PaymentController {
         Response response = paymentService.getPaymentStatus(orderId);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
+    @PostMapping("/confirm-and-send-email/{orderId}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    public ResponseEntity<Response> confirmPaymentAndSendEmail(@PathVariable Long orderId) {
+        Response response = paymentService.confirmPaymentAndSendEmail(orderId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }

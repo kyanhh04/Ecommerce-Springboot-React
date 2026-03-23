@@ -2,6 +2,35 @@
     min-height:100vh;
     background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);
     padding:60px 0;
+    position:relative;
+}
+
+/* Toast Notification */
+.toast-notification {
+    position:fixed;
+    top:80px;
+    right:-400px;
+    background:#10b981;
+    color:white;
+    padding:16px 24px;
+    border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    font-size:15px;
+    font-weight:500;
+    z-index:9999;
+    animation:slideIn 0.3s ease-out forwards, slideOut 0.3s ease-in 2.7s forwards;
+}
+
+@keyframes slideIn {
+    to {
+        right:20px;
+    }
+}
+
+@keyframes slideOut {
+    to {
+        right:-400px;
+    }
 }
 
 .product-detail{

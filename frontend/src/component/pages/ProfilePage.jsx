@@ -78,11 +78,11 @@ const ProfilePage = () => {
                 </p>
                 <p>
                   <strong>Thành phố: </strong>
-                  {userInfo.address.city}, {userInfo.address.state}
+                  {userInfo.address.city}
                 </p>
                 <p>
-                  <strong>Quốc gia: </strong>
-                  {userInfo.address.country}
+                  <strong>Quận/Huyện: </strong>
+                  {userInfo.address.state}
                 </p>
               </div>
             ) : (

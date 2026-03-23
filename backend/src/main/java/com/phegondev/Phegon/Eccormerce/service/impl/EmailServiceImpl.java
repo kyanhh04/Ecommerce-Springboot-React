@@ -88,7 +88,7 @@ public class EmailServiceImpl implements EmailService {
                     html.append("<p class='product-name'>").append(productName).append("</p>");
                     html.append("<p class='product-meta'>Số lượng: ").append(item.getQuantity()).append("</p>");
                     html.append("</div>");
-                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append("đ</div>");
+                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append(" đ</div>");
                     html.append("</div>");
                 }
             }
@@ -97,12 +97,12 @@ public class EmailServiceImpl implements EmailService {
             if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
                 html.append("<div class='summary-row'>");
                 html.append("<span>Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
-                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append("đ</span>");
+                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append(" đ</span>");
                 html.append("</div>");
             }
             html.append("<div class='summary-row summary-total'>");
-            html.append("<span>Tổng thanh toán: </span>");
-            html.append("<span>").append(order.getTotalPrice().toPlainString()).append("đ</span>");
+            html.append("<span>Tổng thanh toán:</span>");
+            html.append("<span>").append(order.getTotalPrice().toPlainString()).append(" đ</span>");
             html.append("</div>");
             html.append("</div>");
 
@@ -128,7 +128,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             
             helper.setTo(user.getEmail());
-            helper.setSubject("📦 Xác nhận đơn hàng - Thanh toán khi nhận hàng #" + order.getId());
+            helper.setSubject(" Xác nhận đơn hàng - Thanh toán khi nhận hàng #" + order.getId());
 
             StringBuilder html = new StringBuilder();
             html.append("<!DOCTYPE html><html><head><style>");
@@ -185,7 +185,7 @@ public class EmailServiceImpl implements EmailService {
                     html.append("<p class='product-name'>").append(productName).append("</p>");
                     html.append("<p class='product-meta'>Số lượng: ").append(item.getQuantity()).append("</p>");
                     html.append("</div>");
-                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append("đ</div>");
+                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append(" đ</div>");
                     html.append("</div>");
                 }
             }
@@ -194,12 +194,12 @@ public class EmailServiceImpl implements EmailService {
             if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
                 html.append("<div class='summary-row'>");
                 html.append("<span>Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
-                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append("đ</span>");
+                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append(" đ</span>");
                 html.append("</div>");
             }
             html.append("<div class='summary-row summary-total'>");
             html.append("<span>Tổng thanh toán khi nhận hàng:</span>");
-            html.append("<span>").append(order.getTotalPrice().toPlainString()).append("đ</span>");
+            html.append("<span>").append(order.getTotalPrice().toPlainString()).append(" đ</span>");
             html.append("</div>");
             html.append("</div>");
 

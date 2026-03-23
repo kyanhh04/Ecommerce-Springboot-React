@@ -6,4 +6,5 @@ import com.phegondev.Phegon.Eccormerce.dto.Response;
 public interface PaymentService {
     Response initializePayment(PaymentRequest paymentRequest);
     Response getPaymentStatus(Long orderId);
+    Response confirmPaymentAndSendEmail(Long orderId);
 }

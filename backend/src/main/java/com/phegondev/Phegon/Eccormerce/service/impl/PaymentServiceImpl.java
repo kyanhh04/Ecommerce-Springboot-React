@@ -60,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
         OrderStatus orderStatus;
         String responseMessage;
         
-        if ("CASH".equals(paymentRequest.getMethod())) {
+        if ("cash".equals(paymentRequest.getMethod())) {
             paymentStatus = PaymentStatus.PENDING;
             orderStatus = OrderStatus.PENDING;
             responseMessage = "Đơn hàng đã được đặt thành công. Vui lòng thanh toán khi nhận hàng.";
@@ -97,6 +97,28 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return Response.builder().status(200).message(responseMessage).build();
+    }
+
+    @Override
+    @Transactional
+    public Response confirmPaymentAndSendEmail(Long orderId) {
+        var orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return Response.builder().status(404).message("Đơn hàng không tồn tại").build();
+        }
+
+        Order order = orderOpt.get();
+        User user = userService.getLoginUser();
+        
+        if (user == null || !isUserAuthorizedForOrder(user, order)) {
+            return Response.builder().status(403).message("Không có quyền xác nhận đơn hàng này").build();
+        }
+
+        // Gửi email xác nhận
+        emailService.sendOrderConfirmationEmail(user, order);
+        System.out.println("✅ Đã gửi email xác nhận thanh toán cho: " + user.getEmail());
+
+        return Response.builder().status(200).message("Đã gửi email xác nhận").build();
     }
 
     @Override

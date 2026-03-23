@@ -13,4 +13,5 @@ public class OrderRequest {
     private BigDecimal totalPrice;
     private List<OrderItemRequest> items;
     private String discountCode;
+    private String paymentMethod;
 }

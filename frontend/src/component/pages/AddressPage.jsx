@@ -79,7 +79,7 @@ const AddressPage = () => {
                     required/>
                 </label>
                 <label>
-                    State:
+                    Quận/Huyện:
                     <input type="text"
                     name="state"
                     value={address.state}
@@ -92,15 +92,6 @@ const AddressPage = () => {
                     <input type="text"
                     name="zipCode"
                     value={address.zipCode}
-                    onChange={handleChange}
-                    required/>
-                </label>
-
-                <label>
-                    Country:
-                    <input type="text"
-                    name="country"
-                    value={address.country}
                     onChange={handleChange}
                     required/>
                 </label>

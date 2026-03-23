@@ -47,7 +47,6 @@ public class EntityDtoMapper {
         orderItemDto.setId(orderItem.getId());
         orderItemDto.setQuantity(orderItem.getQuantity());
         orderItemDto.setPrice(orderItem.getPrice());
-        orderItemDto.setStatus(orderItem.getStatus().name());
         orderItemDto.setCreatedAt(orderItem.getCreatedAt());
         return orderItemDto;
     }

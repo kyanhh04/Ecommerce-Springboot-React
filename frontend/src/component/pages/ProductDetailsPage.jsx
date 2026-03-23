@@ -30,6 +30,7 @@ const [reviewSuccess, setReviewSuccess] = useState("");
 const [rating, setRating] = useState(0);
 const [hover, setHover] = useState(0);
 const [content, setContent] = useState("");
+const [showToast, setShowToast] = useState(false);
 
 useEffect(() => {
 
@@ -86,7 +87,8 @@ const toggleWishlist = async () => {
 
 const addToCart = () => {
     dispatch({ type: "ADD_ITEM", payload: { ...product, quantity } });
-    alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
 };
 
 const incrementQuantity = () => {
@@ -144,6 +146,13 @@ if (!product) {
 return (
 
     <div className="product-detail-page">
+    
+    {showToast && (
+        <div className="toast-notification">
+            ✓ Đã thêm {quantity} sản phẩm vào giỏ hàng
+        </div>
+    )}
+    
     <div className="product-detail">
 
         <div className="product-container">

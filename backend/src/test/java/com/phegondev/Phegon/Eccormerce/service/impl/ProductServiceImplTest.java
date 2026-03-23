@@ -8,7 +8,6 @@ import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
 import com.phegondev.Phegon.Eccormerce.repository.CategoryRepo;
 import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
-import com.phegondev.Phegon.Eccormerce.service.interf.AwsS3Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

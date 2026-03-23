@@ -24,6 +24,7 @@ public class Payment {
     private Long id;
     private BigDecimal amount;
     private String method;
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")

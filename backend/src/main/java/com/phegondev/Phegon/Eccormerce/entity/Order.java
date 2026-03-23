@@ -20,6 +20,7 @@ public class Order {
 
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
