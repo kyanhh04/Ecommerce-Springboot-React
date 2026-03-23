@@ -50,17 +50,35 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         var existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
-        if (existingPayment.isPresent() && "SUCCESS".equals(existingPayment.get().getStatus())) {
+        if (existingPayment.isPresent() && "COMPLETED".equals(existingPayment.get().getStatus())) {
             return Response.builder().status(400).message("Đơn hàng này đã được thanh toán rồi").build();
+        }
+
+        String paymentStatus;
+        String orderStatus;
+        String responseMessage;
+        
+        if ("CASH".equals(paymentRequest.getMethod())) {
+            paymentStatus = "PENDING";
+            orderStatus = "PENDING";
+            responseMessage = "Đơn hàng đã được đặt thành công. Vui lòng thanh toán khi nhận hàng.";
+        } else {
+            paymentStatus = "COMPLETED";
+            orderStatus = "CONFIRMED";
+            responseMessage = "Thanh toán thành công. Cảm ơn bạn đã đặt hàng!";
         }
 
         Payment payment = Payment.builder()
                 .amount(paymentRequest.getAmount())
                 .method(paymentRequest.getMethod())
-                .status("SUCCESS")
+                .status(paymentStatus)
                 .order(order)
                 .build();
         paymentRepository.save(payment);
+
+        // Update order status
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
 
         if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
             try {
@@ -70,9 +88,14 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
-        emailService.sendOrderConfirmationEmail(user, order);
+        // Send appropriate email based on payment method
+        if ("COMPLETED".equals(paymentStatus)) {
+            emailService.sendOrderConfirmationEmail(user, order);
+        } else if ("PENDING".equals(paymentStatus)) {
+            emailService.sendCODOrderConfirmationEmail(user, order);
+        }
 
-        return Response.builder().status(200).message("Thanh toán thành công. Cảm ơn bạn đã đặt hàng!").build();
+        return Response.builder().status(200).message(responseMessage).build();
     }
 
     @Override

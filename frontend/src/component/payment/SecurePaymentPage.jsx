@@ -154,12 +154,13 @@ const SecurePaymentPage = () => {
         // Clear cart after successful payment
         dispatch({ type: 'CLEAR_CART' });
         
-        // Success - redirect to success page
-        navigate('/order-success', { 
+        // Success - redirect to home with notification
+        navigate('/', { 
           state: { 
             orderSuccess: {
               orderId,
-              amount: calculateTotal()
+              amount: calculateTotal(),
+              paymentMethod: 'CREDIT_CARD'
             }
           } 
         });
@@ -210,10 +211,11 @@ const SecurePaymentPage = () => {
       return orderInfo.totalPrice;
     }
     
-    // Otherwise calculate from items minus discount
+    // Otherwise calculate from items minus discount plus shipping
     const subtotal = calculateSubtotal();
     const discount = getDiscountAmount();
-    return subtotal - discount;
+    const shipping = 25000;
+    return subtotal - discount + shipping;
   };
 
   if (loading) {
@@ -395,7 +397,7 @@ const SecurePaymentPage = () => {
             </div>
             <div className="summary-row">
               <span>Phí vận chuyển</span>
-              <span className="free">Miễn phí</span>
+              <span>25,000đ</span>
             </div>
             <div className="summary-total">
               <span>Tổng cộng</span>

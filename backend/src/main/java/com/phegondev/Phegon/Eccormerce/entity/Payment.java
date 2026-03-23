@@ -27,14 +27,9 @@ public class Payment {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @Column(name = "otp_verified")
-    private Boolean otpVerified = false;
-
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();  // This field will be ignored for equality and hashCode comparisons.
 
-    // equals method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

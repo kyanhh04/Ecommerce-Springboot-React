@@ -5,14 +5,14 @@ import { useCart } from "../context/CartContext";
 import "../../style/cart.css";
 const CartPage = () => {
   const { cart, dispatch } = useCart();
-  const [message, setMessage] = useState(null);
+  // Đã bỏ message/thông báo
   const [discountCode, setDiscountCode] = useState("");
   const [discount, setDiscount] = useState(null);
   const [discountError, setDiscountError] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [displayCount, setDisplayCount] = useState(5);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const hasUserInteractedRef = useRef(false);
-  const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,12 +23,7 @@ const CartPage = () => {
     }
 
     const cartIdSet = new Set(cart.map((i) => i.id));
-    if (!hasUserInteractedRef.current) {
-      setSelectedIds(cart.map((i) => i.id));
-      return;
-    }
-
-    // Keep only selected ids that still exist in cart
+    // Không tự động chọn sản phẩm khi vào giỏ hàng nữa
     setSelectedIds((prev) => prev.filter((id) => cartIdSet.has(id)));
   }, [cart]);
 
@@ -47,7 +42,7 @@ const CartPage = () => {
   };
 
   const handleSelectAllChange = () => {
-    hasUserInteractedRef.current = true;
+    hasUserInteractedRef.current = true; 
     if (isAllSelected) {
       setSelectedIds([]);
     } else {
@@ -78,8 +73,6 @@ const CartPage = () => {
       if (response.status === 200) {
         setDiscount(response.discount);
         setDiscountError("");
-        setMessage("Áp dụng mã giảm giá thành công!");
-        setTimeout(() => setMessage(""), 3000);
       }
     } catch (error) {
       setDiscountError("Mã giảm giá không hợp lệ");
@@ -90,8 +83,6 @@ const CartPage = () => {
   const removeDiscount = () => {
     setDiscount(null);
     setDiscountCode("");
-    setMessage("Đã xóa mã giảm giá");
-    setTimeout(() => setMessage(""), 2000);
   };
   const discountAmount = discount
     ? discount.discountType === "PERCENTAGE"
@@ -103,35 +94,21 @@ const CartPage = () => {
 
   const handleRemoveSelected = () => {
     if (selectedIds.length === 0) {
-      setMessage("Bạn chưa chọn sản phẩm nào để xóa");
-      setTimeout(() => setMessage(""), 2000);
       return;
     }
 
     dispatch({ type: "REMOVE_ITEMS", payload: { ids: selectedIds } });
     setSelectedIds([]);
     hasUserInteractedRef.current = true;
-    setMessage("Đã xóa sản phẩm đã chọn");
-    setTimeout(() => setMessage(""), 2000);
-  };
-
-  const handleEditToggle = () => {
-    setEditMode((prev) => !prev);
   };
 
   const handleCheckout = async () => {
     if (!ApiService.isAuthenticated()) {
-      setMessage("Bạn cần đăng nhập trước khi đặt hàng");
-      setTimeout(() => {
-        setMessage("");
-        navigate("/login");
-      }, 3000);
+      navigate("/login");
       return;
     }
 
     if (selectedItems.length === 0) {
-      setMessage("Vui lòng chọn ít nhất 1 sản phẩm để đặt hàng");
-      setTimeout(() => setMessage(""), 2500);
       return;
     }
 
@@ -143,25 +120,51 @@ const CartPage = () => {
       totalPrice: finalPrice,
       items: orderItems,
       discountCode: discount?.code || null,
+      paymentMethod: paymentMethod,
     };
-    try {
-      const response = await ApiService.createOrder(orderRequest);
-      if (response.status === 200 && response.order) {
-        const newOrderId = response.order.id;
-        navigate("/payment", {
-          state: {
-            orderId: newOrderId,
-            totalPrice: finalPrice,
-            discountCode: discount?.code || null,
-            discountAmount: discountAmount || 0,
-          },
-        });
-      } else {
-        setMessage("Đặt hàng thất bại");
+
+    if (paymentMethod === "cash") {
+      try {
+        const response = await ApiService.createOrder(orderRequest);
+        if (response.status === 200 && response.order) {
+          const newOrderId = response.order.id;
+          
+          // Clear selected items from cart
+          dispatch({ type: "REMOVE_ITEMS", payload: { ids: selectedIds } });
+          
+          // Navigate to home with success notification
+          navigate("/", {
+            state: {
+              orderSuccess: {
+                orderId: newOrderId,
+                amount: finalPrice,
+                paymentMethod: "CASH"
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Đặt hàng thất bại:", error);
       }
-    } catch (error) {
-      setMessage("Đặt hàng thất bại");
-      setTimeout(() => setMessage(""), 3000);
+    } else {
+      // Chuyển khoản: chuyển đến trang thanh toán
+      try {
+        const response = await ApiService.createOrder(orderRequest);
+        if (response.status === 200 && response.order) {
+          const newOrderId = response.order.id;
+          navigate("/payment", {
+            state: {
+              orderId: newOrderId,
+              totalPrice: finalPrice,
+              discountCode: discount?.code || null,
+              discountAmount: discountAmount || 0,
+            },
+          });
+        }
+        // Không hiển thị thông báo
+      } catch (error) {
+        // Không hiển thị thông báo
+      }
     }
   };
 
@@ -174,9 +177,17 @@ const CartPage = () => {
   return (
     <div className="cart-page">
       <div className="cart-wrapper">
-        {message && <p className="response-message">{message}</p>}
+
         {cart.length === 0 ? (
           <div className="empty-cart-wrapper">
+            <div className="empty-cart-icon">
+              {/* SVG icon giỏ hàng trống */}
+              <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="45" cy="45" r="45" fill="#f3f6fb"/>
+                <path d="M28 65c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm34 0c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zM28.2 57l-2.7-6.2c-.2-.5-.5-1.1-.5-1.8 0-1.7 1.3-3 3-3h36.2c1.3 0 2.5.9 2.9 2.2l3.7 11.1c.2.5.2 1.1.2 1.7 0 2.2-1.8 4-4 4H32.1c-1.6 0-3-1.1-3.6-2.7l-.3-.7zm2.3-7.2l2.2 5.2h29.7l-2.2-5.2H30.5z" fill="#a0aec0"/>
+                <path d="M32 38c0-7.2 5.8-13 13-13s13 5.8 13 13v2H32v-2zm13-15c-8.3 0-15 6.7-15 15v2c0 1.1.9 2 2 2h26c1.1 0 2-.9 2-2v-2c0-8.3-6.7-15-15-15z" fill="#a0aec0"/>
+              </svg>
+            </div>
             <p className="empty-cart">Giỏ hàng của bạn đang trống</p>
             <button
               className="continue-shopping-btn"
@@ -198,32 +209,14 @@ const CartPage = () => {
                 </div>
                 <div className="select-all-label">Chọn tất cả</div>
                 <div className="select-actions">
-                  {!editMode ? (
+                  {selectedIds.length > 0 && (
                     <button
                       type="button"
-                      className="edit-button"
-                      onClick={handleEditToggle}
+                      className="remove-selected-button"
+                      onClick={handleRemoveSelected}
                     >
-                      Chỉnh sửa
+                      Xóa sản phẩm đã chọn
                     </button>
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        className="remove-selected-button"
-                        onClick={handleRemoveSelected}
-                        disabled={selectedIds.length === 0}
-                      >
-                        Xóa đã chọn
-                      </button>
-                      <button
-                        type="button"
-                        className="cancel-button"
-                        onClick={handleEditToggle}
-                      >
-                        Hủy
-                      </button>
-                    </>
                   )}
                 </div>
               </div>
@@ -271,6 +264,30 @@ const CartPage = () => {
                 <span>Phí vận chuyển</span>
                 <span>{shippingFee.toLocaleString()} ₫</span>
               </div>
+              <div className="discount-section">
+                <div className="summary-row voucher-row">
+                  <span>Voucher</span>
+                  <span className="voucher-name">{discount ? discount.code : "Chưa áp dụng"}</span>
+                </div>
+                {!discount ? (
+                  <div className="discount-input-group">
+                    <input
+                      type="text"
+                      placeholder="Nhập mã giảm giá"
+                      value={discountCode}
+                      onChange={(e) =>
+                        setDiscountCode(e.target.value.toUpperCase())
+                      }
+                    />
+                    <button onClick={applyDiscount}>Áp dụng</button>
+                  </div>
+                ) : (
+                  <div className="discount-applied-group">
+                    <button className="remove-discount-btn" onClick={removeDiscount}>Xóa</button>
+                  </div>
+                )}
+                {discountError && <p className="error-text">{discountError}</p>}
+              </div>
               {discount && (
                 <div className="summary-row discount-row">
                   <span>Giảm giá</span>
@@ -281,26 +298,31 @@ const CartPage = () => {
                 <strong>Tổng</strong>
                 <strong>{finalPrice.toLocaleString()} ₫</strong>
               </div>
-              <div className="discount-section">
-                {!discount ? (
-                  <div className="discount-input-group">
+              {/* Hình thức thanh toán */}
+              <div className="payment-method-section">
+                <label className="payment-method-label">Hình thức thanh toán:</label>
+                <div className="payment-method-options">
+                  <label>
                     <input
-                      type="text"
-                      placeholder="Nhập mã"
-                      value={discountCode}
-                      onChange={(e) =>
-                        setDiscountCode(e.target.value.toUpperCase())
-                      }
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={paymentMethod === "cash"}
+                      onChange={() => setPaymentMethod("cash")}
                     />
-                    <button onClick={applyDiscount}>Áp dụng</button>
-                  </div>
-                ) : (
-                  <div className="discount-input-group">
-                    <span>{discount.code}</span>
-                    <button onClick={removeDiscount}>Xóa</button>
-                  </div>
-                )}
-                {discountError && <p className="error-text">{discountError}</p>}
+                    Tiền mặt khi nhận hàng
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="bank"
+                      checked={paymentMethod === "bank"}
+                      onChange={() => setPaymentMethod("bank")}
+                    />
+                    Chuyển khoản ngân hàng
+                  </label>
+                </div>
               </div>
               <div className="cart-actions">
                 <button

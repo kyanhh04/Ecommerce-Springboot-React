@@ -4,6 +4,14 @@ import { useCart } from "../context/CartContext";
 import ApiService from "../../service/ApiService";
 import "../../style/productDetailsPage.css";
 
+// Import Google Font
+const fontLink = document.createElement('link');
+fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+fontLink.rel = 'stylesheet';
+if (!document.querySelector('link[href*="Inter"]')) {
+    document.head.appendChild(fontLink);
+}
+
 const ProductDetailsPage = () => {
 
 const { productId } = useParams();
@@ -97,6 +105,13 @@ const handleQuantityChange = (e) => {
     }
 };
 
+const scrollToReviews = () => {
+    const reviewSection = document.querySelector('.review-section');
+    if (reviewSection) {
+        reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
+
 const submitReview = async () => {
     if (!rating || !content) {
         setReviewError("Vui lòng nhập đánh giá và nội dung");
@@ -132,77 +147,82 @@ return (
 
         <div className="product-container">
 
-            <div className="product-image-detail">
-                <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                />
+            <div className="product-left-column">
+                <div className="product-image-detail">
+                    <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                    />
+                </div>
             </div>
 
             <div className="product-info">
 
                 <h1>{product.name}</h1>
 
-                <div className="rating">
-
-                    <span className="stars">
-                        {"⭐".repeat(Math.round(averageRating))}
-                    </span>
-
-                    <span className="rating-text">
-                        {averageRating.toFixed(1)} / 5
-                    </span>
-
-                    <span className="review-count">
-                        ({reviews.length} reviews)
-                    </span>
-
-                </div>
-
-                <p className="description">
-                    {product.description}
-                </p>
-
-                <div className="product-extra-info">
-
-                    <h3>Product Information</h3>
-
-                    <div className="info-table">
-
-                        <div className="info-row">
-                            <span className="info-label">Stock</span>
-                            <span className="info-value">
-                                {product.stock || "Available"}
-                            </span>
-                        </div>
-
+                <div className="rating-review-bar">
+                    <div className="rating">
+                        <span className="stars">
+                            {"⭐".repeat(Math.round(averageRating))}
+                        </span>
+                        <span className="rating-text">
+                            {averageRating.toFixed(1)} / 5
+                        </span>
+                        <span className="review-count">
+                            ({reviews.length} reviews)
+                        </span>
                     </div>
-
+                    <button className="view-reviews-btn" onClick={scrollToReviews}>
+                        Xem đánh giá
+                    </button>
                 </div>
 
                 <div className="price">
                     {product.price.toLocaleString()} ₫
                 </div>
 
-                <div className="action-row">
-                    <div className="quantity-selector">
-                        <button onClick={decrementQuantity}>-</button>
-                        <input 
-                            type="number" 
-                            value={quantity} 
-                            onChange={handleQuantityChange}
-                            min="1"
-                        />
-                        <button onClick={incrementQuantity}>+</button>
+                <div className="product-extra-info">
+                    <h3>Thông tin sản phẩm</h3>
+                    <div className="info-table">
+                        <div className="info-row">
+                            <span className="info-label">An tâm khi mua hàng</span>
+                            <span className="info-value">Trả hàng miễn phí sau 15 ngày</span>
+                        </div>
+                        <div className="info-row">
+                            <span className="info-label">Cam kết</span>
+                            <span className="info-value">Hàng chính hàng, chất lượng cao</span>
+                        </div>
+                        
+                        <div className="info-row">
+                            <span className="info-label">Tồn kho</span>
+                            <span className="info-value">
+                                {product.stock || "Còn hàng"}
+                            </span>
+                        </div>
                     </div>
-
-                    <button className="wishlist-btn" onClick={toggleWishlist}>
-                        {isWishlisted ? "❤️" : "🤍"}
-                        <span className="wishlist-count">{wishlistCount}</span>
-                    </button>
                 </div>
 
-                <button className="add-cart-btn" onClick={addToCart}>Thêm vào giỏ hàng</button>
+                <div className="quantity-selector">
+                    <button onClick={decrementQuantity}>-</button>
+                    <input 
+                        type="number" 
+                        value={quantity} 
+                        onChange={handleQuantityChange}
+                        min="1"
+                    />
+                    <button onClick={incrementQuantity}>+</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div className="bottom-actions-row">
+            <div className="image-actions">
+                <button className="wishlist-btn" onClick={toggleWishlist}>
+                    {isWishlisted ? "❤️" : "🤍"}
+                    <span className="wishlist-count">{wishlistCount}</span>
+                </button>
 
                 <div className="share-section">
                     <span className="share-label">Chia sẻ:</span>
@@ -229,11 +249,15 @@ return (
                         </button>
                     </div>
                 </div>
-
             </div>
 
+            <button className="add-cart-btn" onClick={addToCart}>Thêm vào giỏ hàng</button>
         </div>
 
+        <div className="product-description-section">
+            <h2>Mô tả sản phẩm</h2>
+            <p>{product.description}</p>
+        </div>
 
         <div className="review-section">
 

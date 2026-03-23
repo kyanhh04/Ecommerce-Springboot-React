@@ -18,6 +18,8 @@ const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const [error, setError] = useState(null);
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+  const [orderSuccessData, setOrderSuccessData] = useState(null);
 
   const itemsPerPage = 8;
 
@@ -60,6 +62,22 @@ const Home = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Check for order success notification
+  useEffect(() => {
+    if (location.state?.orderSuccess) {
+      setOrderSuccessData(location.state.orderSuccess);
+      setShowSuccessNotification(true);
+      
+      // Auto hide after 8 seconds
+      setTimeout(() => {
+        setShowSuccessNotification(false);
+      }, 8000);
+      
+      // Clear location state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -104,6 +122,34 @@ const Home = () => {
 
   return (
     <div className="home">
+      {/* Success Notification */}
+      {showSuccessNotification && orderSuccessData && (
+        <div className="success-notification">
+          <div className="success-content">
+            <div className="success-text">
+              <h3> Đặt hàng thành công!</h3>
+              <p>Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng của chúng tôi.</p>
+              <div className="order-details">
+                <span className="detail-item"> Mã đơn hàng: <strong>#{orderSuccessData.orderId}</strong></span>
+                <span className="detail-item"> Tổng tiền: <strong>{orderSuccessData.amount?.toLocaleString()}đ</strong></span>
+              </div>
+              {orderSuccessData.paymentMethod === "CASH" ? (
+                <p className="payment-note"> Vui lòng chuẩn bị tiền mặt khi nhận hàng</p>
+              ) : (
+                <p className="payment-note"> Thanh toán đã được xác nhận</p>
+              )}
+              <p className="tracking-note">Chúng tôi sẽ gửi email xác nhận và cập nhật trạng thái đơn hàng cho bạn.</p>
+            </div>
+            <button 
+              className="close-notification"
+              onClick={() => setShowSuccessNotification(false)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       <section className="hero-section">
         <div className="hero-slider">
           {slides.map((slide, index) => (
