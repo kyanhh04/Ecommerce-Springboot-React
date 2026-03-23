@@ -39,81 +39,9 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             helper.setTo(user.getEmail());
-            helper.setSubject("  Đặt hàng thành công - Đơn hàng #" + order.getId());
-
-            StringBuilder html = new StringBuilder();
-            html.append("<!DOCTYPE html><html><head><style>");
-            html.append("body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}");
-            html.append(".container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}");
-            html.append(".header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:30px;text-align:center}");
-            html.append(".header h1{margin:0;font-size:24px}");
-            html.append(".content{padding:30px}");
-            html.append(".order-info{background:#f8f9fa;padding:15px;border-radius:8px;margin:20px 0}");
-            html.append(".product-item{display:flex;align-items:center;padding:15px;border-bottom:1px solid #eee}");
-            html.append(".product-item:last-child{border-bottom:none}");
-            html.append(".product-img{width:80px;height:80px;object-fit:cover;border-radius:8px;margin-right:15px}");
-            html.append(".product-info{flex:1}");
-            html.append(".product-name{font-weight:600;margin:0 0 5px;color:#333}");
-            html.append(".product-meta{color:#666;font-size:14px;margin:0}");
-            html.append(".product-price{font-weight:700;color:#667eea;white-space:nowrap}");
-            html.append(".summary{background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px}");
-            html.append(".summary-row{display:flex;justify-content:space-between;margin:8px 0}");
-            html.append(".summary-total{font-size:18px;font-weight:700;color:#667eea;border-top:2px solid #ddd;padding-top:12px;margin-top:12px}");
-            html.append(".footer{text-align:center;padding:20px;color:#888;font-size:13px}");
-            html.append("</style></head><body>");
-
-            html.append("<div class='container'>");
-            html.append("<div class='header'><h1> Đặt hàng thành công! </h1></div>");
-            html.append("<div class='content'>");
-            html.append("<p>Xin chào <strong>").append(user.getName()).append("</strong>,</p>");
-            html.append("<p>Cảm ơn bạn đã tin tưởng và đặt hàng tại cửa hàng của chúng tôi!</p>");
-
-            html.append("<div class='order-info'>");
-            html.append("<strong>Mã đơn hàng:</strong> #").append(order.getId()).append("<br>");
-            html.append("<strong>Ngày đặt:</strong> ").append(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            html.append("</div>");
-
-            html.append("<h3 style='margin-top:25px'>Chi tiết sản phẩm:</h3>");
-
-            if (order.getOrderItemList() != null) {
-                for (OrderItem item : order.getOrderItemList()) {
-                    String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
-                    String imageUrl = item.getProduct() != null && item.getProduct().getImageUrl() != null
-                            ? item.getProduct().getImageUrl()
-                            : "https://via.placeholder.com/80";
-
-                    html.append("<div class='product-item'>");
-                    html.append("<img src='").append(imageUrl).append("' class='product-img' alt='").append(productName).append("'/>");
-                    html.append("<div class='product-info'>");
-                    html.append("<p class='product-name'>").append(productName).append("</p>");
-                    html.append("<p class='product-meta'>Số lượng: ").append(item.getQuantity()).append("</p>");
-                    html.append("</div>");
-                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append(" đ</div>");
-                    html.append("</div>");
-                }
-            }
-
-            html.append("<div class='summary'>");
-            if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
-                html.append("<div class='summary-row'>");
-                html.append("<span>Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
-                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append(" đ</span>");
-                html.append("</div>");
-            }
-            html.append("<div class='summary-row summary-total'>");
-            html.append("<span>Tổng thanh toán:</span>");
-            html.append("<span>").append(order.getTotalPrice().toPlainString()).append(" đ</span>");
-            html.append("</div>");
-            html.append("</div>");
-
-            html.append("<p style='margin-top:25px;color:#666'>Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến tay bạn. Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển.</p>");
-            html.append("<p style='color:#666'>Trân trọng,<br><strong>Đội ngũ hỗ trợ</strong></p>");
-            html.append("</div>");
-            html.append("<div class='footer'>© 2026 Ecommerce. All rights reserved.</div>");
-            html.append("</div>");
-            html.append("</body></html>");
-
-            helper.setText(html.toString(), true);
+            helper.setSubject(" Đặt hàng thành công - Đơn hàng #" + order.getId());
+            String html = buildOrderEmailHtml(user, order, false);
+            helper.setText(html, true);
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi email xác nhận đặt hàng: " + e.getMessage());
@@ -128,96 +56,157 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             
             helper.setTo(user.getEmail());
-            helper.setSubject(" Xác nhận đơn hàng - Thanh toán khi nhận hàng #" + order.getId());
+            helper.setSubject(" Xác nhận đơn hàng COD - Đơn hàng #" + order.getId());
 
-            StringBuilder html = new StringBuilder();
-            html.append("<!DOCTYPE html><html><head><style>");
-            html.append("body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}");
-            html.append(".container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}");
-            html.append(".header{background:linear-gradient(135deg,#f68b1e 0%,#ff4d1f 100%);color:#fff;padding:30px;text-align:center}");
-            html.append(".header h1{margin:0;font-size:24px}");
-            html.append(".content{padding:30px}");
-            html.append(".notice{background:#fff3cd;border-left:4px solid #ffc107;padding:15px;margin:20px 0;border-radius:4px}");
-            html.append(".notice strong{color:#856404}");
-            html.append(".order-info{background:#f8f9fa;padding:15px;border-radius:8px;margin:20px 0}");
-            html.append(".product-item{display:flex;align-items:center;padding:15px;border-bottom:1px solid #eee}");
-            html.append(".product-item:last-child{border-bottom:none}");
-            html.append(".product-img{width:80px;height:80px;object-fit:cover;border-radius:8px;margin-right:15px}");
-            html.append(".product-info{flex:1}");
-            html.append(".product-name{font-weight:600;margin:0 0 5px;color:#333}");
-            html.append(".product-meta{color:#666;font-size:14px;margin:0}");
-            html.append(".product-price{font-weight:700;color:#f68b1e;white-space:nowrap}");
-            html.append(".summary{background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px}");
-            html.append(".summary-row{display:flex;justify-content:space-between;margin:8px 0}");
-            html.append(".summary-total{font-size:18px;font-weight:700;color:#f68b1e;border-top:2px solid #ddd;padding-top:12px;margin-top:12px}");
-            html.append(".footer{text-align:center;padding:20px;color:#888;font-size:13px}");
-            html.append("</style></head><body>");
-            
-            html.append("<div class='container'>");
-            html.append("<div class='header'><h1>📦 Đơn hàng đã được xác nhận!</h1></div>");
-            html.append("<div class='content'>");
-            html.append("<p>Xin chào <strong>").append(user.getName()).append("</strong>,</p>");
-            html.append("<p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!</p>");
-            
-            html.append("<div class='notice'>");
-            html.append("<strong>💵 Thanh toán khi nhận hàng (COD)</strong><br>");
-            html.append("Bạn sẽ thanh toán bằng tiền mặt khi nhận được hàng. Vui lòng chuẩn bị đủ số tiền.");
-            html.append("</div>");
-            
-            html.append("<div class='order-info'>");
-            html.append("<strong>Mã đơn hàng:</strong> #").append(order.getId()).append("<br>");
-            html.append("<strong>Ngày đặt:</strong> ").append(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))).append("<br>");
-            html.append("<strong>Trạng thái:</strong> <span style='color:#ffc107'>Chờ xác nhận</span>");
-            html.append("</div>");
-
-            html.append("<h3 style='margin-top:25px'>Chi tiết sản phẩm:</h3>");
-            
-            if (order.getOrderItemList() != null) {
-                for (OrderItem item : order.getOrderItemList()) {
-                    String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
-                    String imageUrl = item.getProduct() != null && item.getProduct().getImageUrl() != null
-                        ? item.getProduct().getImageUrl()
-                        : "https://via.placeholder.com/80";
-                    
-                    html.append("<div class='product-item'>");
-                    html.append("<img src='").append(imageUrl).append("' class='product-img' alt='").append(productName).append("'/>");
-                    html.append("<div class='product-info'>");
-                    html.append("<p class='product-name'>").append(productName).append("</p>");
-                    html.append("<p class='product-meta'>Số lượng: ").append(item.getQuantity()).append("</p>");
-                    html.append("</div>");
-                    html.append("<div class='product-price'>").append(item.getPrice().toPlainString()).append(" đ</div>");
-                    html.append("</div>");
-                }
-            }
-
-            html.append("<div class='summary'>");
-            if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
-                html.append("<div class='summary-row'>");
-                html.append("<span>Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
-                html.append("<span style='color:#10b981'>-").append(order.getDiscountAmount().toPlainString()).append(" đ</span>");
-                html.append("</div>");
-            }
-            html.append("<div class='summary-row summary-total'>");
-            html.append("<span>Tổng thanh toán khi nhận hàng:</span>");
-            html.append("<span>").append(order.getTotalPrice().toPlainString()).append(" đ</span>");
-            html.append("</div>");
-            html.append("</div>");
-
-            html.append("<p style='margin-top:25px;color:#666'>Đơn hàng của bạn đang được xử lý. Chúng tôi sẽ liên hệ với bạn để xác nhận và giao hàng trong thời gian sớm nhất.</p>");
-            html.append("<p style='color:#666;font-size:14px;background:#e3f2fd;padding:12px;border-radius:6px;margin-top:15px'>");
-            html.append("ℹ️ <strong>Lưu ý:</strong> Vui lòng kiểm tra kỹ sản phẩm trước khi thanh toán cho shipper.");
-            html.append("</p>");
-            html.append("<p style='color:#666'>Trân trọng,<br><strong>Đội ngũ hỗ trợ</strong></p>");
-            html.append("</div>");
-            html.append("<div class='footer'>© 2026 Ecommerce. All rights reserved.</div>");
-            html.append("</div>");
-            html.append("</body></html>");
-
-            helper.setText(html.toString(), true);
+            String html = buildOrderEmailHtml(user, order, true);
+            helper.setText(html, true);
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi email xác nhận đơn hàng COD: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private String buildOrderEmailHtml(User user, Order order, boolean isCOD) {
+        StringBuilder html = new StringBuilder();
+        
+        // Header color based on payment method
+        String headerColor = isCOD ? "#fb923c" : "#7c3aed";
+        String accentColor = isCOD ? "#fb923c" : "#7c3aed";
+        String bgColor = isCOD ? "#fff7ed" : "#f5f3ff";
+        
+        html.append("<!DOCTYPE html>");
+        html.append("<html><head>");
+        html.append("<meta charset='UTF-8'>");
+        html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+        html.append("<style>");
+        html.append("* { margin: 0; padding: 0; box-sizing: border-box; }");
+        html.append("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; line-height: 1.6; }");
+        html.append(".container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }");
+        html.append(".header { background: ").append(headerColor).append("; color: #ffffff; padding: 40px 30px; text-align: center; }");
+        html.append(".header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }");
+        html.append(".content { padding: 35px 30px; }");
+        html.append(".greeting { font-size: 16px; color: #333; margin-bottom: 10px; }");
+        html.append(".greeting strong { color: ").append(accentColor).append("; }");
+        html.append(".intro-text { color: #666; margin-bottom: 25px; font-size: 15px; }");
+        
+        if (isCOD) {
+            html.append(".notice { background: #fef3c7; border-left: 5px solid #fbbf24; padding: 20px; margin: 25px 0; border-radius: 12px; }");
+            html.append(".notice strong { color: #92400e; font-size: 16px; display: block; margin-bottom: 8px; }");
+            html.append(".notice-text { color: #92400e; font-size: 14px; line-height: 1.6; }");
+            html.append(".status-badge { display: inline-block; padding: 6px 14px; background: #fbbf24; color: #92400e; border-radius: 20px; font-size: 13px; font-weight: 600; margin-left: 8px; }");
+        }
+        
+        html.append(".order-info { background: ").append(bgColor).append("; padding: 20px; border-radius: 12px; margin: 25px 0; border-left: 4px solid ").append(accentColor).append("; }");
+        html.append(".order-info strong { color: #333; font-weight: 600; }");
+        html.append(".order-info br { line-height: 2; }");
+        html.append(".section-title { font-size: 18px; font-weight: 700; color: #333; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 2px solid #e9ecef; }");
+        html.append(".product-list { background: #fafbfc; border-radius: 12px; padding: 10px; margin: 20px 0; }");
+        html.append(".product-item { display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 10px; margin-bottom: 10px; }");
+        html.append(".product-item:last-child { margin-bottom: 0; }");
+        html.append(".product-img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; margin-right: 18px; border: 2px solid #f0f2f5; }");
+        html.append(".product-info { flex: 1; }");
+        html.append(".product-name { font-weight: 700; font-size: 16px; margin: 0 0 8px; color: #2d3748; }");
+        html.append(".product-meta { color: #718096; font-size: 14px; margin: 0; }");
+        html.append(".product-price { font-weight: 700; font-size: 17px; color: ").append(accentColor).append("; white-space: nowrap; }");
+        html.append(".summary { background: ").append(bgColor).append("; padding: 25px; border-radius: 12px; margin-top: 25px; }");
+        html.append(".summary-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 15px; color: #4a5568; }");
+        html.append(".summary-row span:last-child { font-weight: 600; color: #2d3748; }");
+        html.append(".discount-row span { color: #10b981 !important; font-weight: 600; }");
+        html.append(".summary-total { font-size: 20px; font-weight: 700; color: ").append(accentColor).append(" !important; border-top: 2px solid #cbd5e0; padding-top: 15px; margin-top: 15px; }");
+        html.append(".summary-total span { color: ").append(accentColor).append(" !important; }");
+        html.append(".note-text { margin-top: 30px; padding: 18px; background: #f7fafc; border-left: 4px solid ").append(accentColor).append("; border-radius: 8px; color: #4a5568; font-size: 14px; line-height: 1.8; }");
+        
+        if (isCOD) {
+            html.append(".info-box { background: #dbeafe; padding: 18px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #3b82f6; }");
+            html.append(".info-box strong { color: #1e40af; display: block; margin-bottom: 6px; }");
+            html.append(".info-box-text { color: #1e40af; font-size: 14px; line-height: 1.7; }");
+        }
+        
+        html.append(".signature { margin-top: 30px; color: #718096; font-size: 15px; }");
+        html.append(".signature strong { color: ").append(accentColor).append("; }");
+        html.append(".footer { text-align: center; padding: 25px; background: #f8f9fa; color: #a0aec0; font-size: 13px; }");
+        html.append("@media only screen and (max-width: 600px) {");
+        html.append("  .container { border-radius: 0; }");
+        html.append("  .content { padding: 25px 20px; }");
+        html.append("  .header { padding: 30px 20px; }");
+        html.append("  .product-img { width: 70px; height: 70px; margin-right: 12px; }");
+        html.append("  .product-name { font-size: 14px; }");
+        html.append("  .product-price { font-size: 15px; }");
+        html.append("}");
+        html.append("</style></head><body>");
+
+        html.append("<div class='container'>");
+        html.append("<div class='header'><h1>✓ Đặt hàng thành công!</h1></div>");
+        html.append("<div class='content'>");
+        html.append("<p class='greeting'>Xin chào <strong>").append(user.getName()).append("</strong>,</p>");
+        html.append("<p class='intro-text'>Cảm ơn bạn đã tin tưởng và đặt hàng tại cửa hàng của chúng tôi! Đơn hàng của bạn đã được tiếp nhận").append(isCOD ? "." : " và đang được xử lý.").append("</p>");
+
+        if (isCOD) {
+            html.append("<div class='notice'>");
+            html.append("<strong> Thanh toán khi nhận hàng (COD)</strong>");
+            html.append("<div class='notice-text'>Bạn sẽ thanh toán bằng tiền mặt khi nhận được hàng. Vui lòng chuẩn bị đủ số tiền.</div>");
+            html.append("</div>");
+        }
+
+        html.append("<div class='order-info'>");
+        html.append("<strong>Mã đơn hàng:</strong> #").append(order.getId()).append("<br>");
+        html.append("<strong>Ngày đặt:</strong> ").append(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        if (isCOD) {
+            html.append("<br><strong>Trạng thái:</strong> <span class='status-badge'> Chờ xác nhận</span>");
+        }
+        html.append("</div>");
+
+        html.append("<h3 class='section-title'> Chi tiết sản phẩm</h3>");
+        html.append("<div class='product-list'>");
+
+        if (order.getOrderItemList() != null) {
+            for (OrderItem item : order.getOrderItemList()) {
+                String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
+                String imageUrl = item.getProduct() != null && item.getProduct().getImageUrl() != null
+                        ? item.getProduct().getImageUrl()
+                        : "https://via.placeholder.com/80";
+
+                html.append("<div class='product-item'>");
+                html.append("<img src='").append(imageUrl).append("' class='product-img' alt='").append(productName).append("'/>");
+                html.append("<div class='product-info'>");
+                html.append("<p class='product-name'>").append(productName).append("</p>");
+                html.append("<p class='product-meta'>Số lượng: ").append(item.getQuantity()).append("</p>");
+                html.append("</div>");
+                html.append("<div class='product-price'>").append(String.format("%,d", item.getPrice().longValue())).append(" đ</div>");
+                html.append("</div>");
+            }
+        }
+        html.append("</div>");
+
+        html.append("<div class='summary'>");
+        if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
+            html.append("<div class='summary-row discount-row'>");
+            html.append("<span> Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
+            html.append("<span>-").append(String.format("%,d", order.getDiscountAmount().longValue())).append(" đ</span>");
+            html.append("</div>");
+        }
+        html.append("<div class='summary-row summary-total'>");
+        html.append("<span> Tổng thanh toán").append(isCOD ? " khi nhận hàng" : "").append("</span>");
+        html.append("<span>").append(String.format("%,d", order.getTotalPrice().longValue())).append(" đ</span>");
+        html.append("</div>");
+        html.append("</div>");
+
+        html.append("<div class='note-text'>Đơn hàng của bạn đang được xử lý").append(isCOD ? ". Chúng tôi sẽ liên hệ với bạn để xác nhận và giao hàng trong thời gian sớm nhất." : " và sẽ sớm được giao đến tay bạn. Chúng tôi sẽ thông báo ngay khi đơn hàng được vận chuyển.").append("</div>");
+        
+        if (isCOD) {
+            html.append("<div class='info-box'>");
+            html.append("<strong>ℹ Lưu ý quan trọng</strong>");
+            html.append("<div class='info-box-text'>Vui lòng kiểm tra kỹ sản phẩm trước khi thanh toán cho shipper. Đảm bảo sản phẩm đúng như đơn hàng và không bị hư hỏng.</div>");
+            html.append("</div>");
+        }
+        
+        html.append("<p class='signature'>Trân trọng,<br><strong>Đội ngũ hỗ trợ Ecommerce</strong></p>");
+        html.append("</div>");
+        html.append("<div class='footer'>© 2026 Ecommerce. All rights reserved.</div>");
+        html.append("</div>");
+        html.append("</body></html>");
+
+        return html.toString();
     }
 }

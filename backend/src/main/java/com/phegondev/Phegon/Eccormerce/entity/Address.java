@@ -23,7 +23,6 @@ public class Address {
     private String city;
     private String state;
     private String zipCode;
-    private String country;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -41,13 +40,12 @@ public class Address {
                 Objects.equals(city, address.city) &&
                 Objects.equals(state, address.state) &&
                 Objects.equals(zipCode, address.zipCode) &&
-                Objects.equals(country, address.country) &&
                 address.canEqual(this);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, street, city, state, zipCode, country);
+        return Objects.hash(id, street, city, state, zipCode);
     }
 
     public boolean canEqual(Object other) {

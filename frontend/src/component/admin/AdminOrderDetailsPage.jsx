@@ -67,8 +67,7 @@ const AdminOrderDetailsPage = () => {
 
                             <div className="info">
                                 <h3>Delivery Address</h3>
-                                <p><strong>Country:</strong>{orderItem.user.address?.country}</p>
-                                <p><strong>State:</strong>{orderItem.user.address?.state}</p>
+                                <p><strong>Quận/Huyện:</strong>{orderItem.user.address?.state}</p>
                                 <p><strong>City:</strong>{orderItem.user.address?.city}</p>
                                 <p><strong>Street:</strong>{orderItem.user.address?.street}</p>
                                 <p><strong>Zip Code:</strong>{orderItem.user.address?.zipcode}</p>

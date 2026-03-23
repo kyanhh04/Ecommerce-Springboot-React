@@ -46,11 +46,6 @@ public class PaymentServiceImpl implements PaymentService {
         if (!isUserAuthorizedForOrder(user, order)) {
             return Response.builder().status(403).message("Bạn không có quyền thanh toán đơn hàng này").build();
         }
-
-        if (paymentRequest.getAmount().compareTo(order.getTotalPrice()) != 0) {
-            return Response.builder().status(400).message("Số tiền không khớp với đơn hàng").build();
-        }
-
         var existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
         if (existingPayment.isPresent() && PaymentStatus.COMPLETED.equals(existingPayment.get().getStatus())) {
             return Response.builder().status(400).message("Đơn hàng này đã được thanh toán rồi").build();
@@ -60,15 +55,10 @@ public class PaymentServiceImpl implements PaymentService {
         OrderStatus orderStatus;
         String responseMessage;
         
-        if ("cash".equals(paymentRequest.getMethod())) {
-            paymentStatus = PaymentStatus.PENDING;
-            orderStatus = OrderStatus.PENDING;
-            responseMessage = "Đơn hàng đã được đặt thành công. Vui lòng thanh toán khi nhận hàng.";
-        } else {
-            paymentStatus = PaymentStatus.COMPLETED;
-            orderStatus = OrderStatus.PENDING;
-            responseMessage = "Thanh toán thành công. Cảm ơn bạn đã đặt hàng!";
-        }
+        
+        paymentStatus = PaymentStatus.COMPLETED;
+        orderStatus = OrderStatus.PENDING;
+        responseMessage = "Thanh toán thành công. Cảm ơn bạn đã đặt hàng!";
 
         Payment payment = Payment.builder()
                 .amount(paymentRequest.getAmount())
@@ -90,10 +80,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (PaymentStatus.COMPLETED.equals(paymentStatus)) {
             emailService.sendOrderConfirmationEmail(user, order);
-            System.out.println("✅ Đã gửi email xác nhận thanh toán cho: " + user.getEmail());
-        } else {
-            emailService.sendCODOrderConfirmationEmail(user, order);
-            System.out.println("✅ Đã gửi email COD cho: " + user.getEmail());
+            System.out.println(" Đã gửi email xác nhận thanh toán cho: " + user.getEmail());
         }
 
         return Response.builder().status(200).message(responseMessage).build();

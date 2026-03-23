@@ -9,8 +9,7 @@ const AddressPage = () => {
         street: '',
         city: '',
         state: '',
-        zipCode: '',
-        country: ''
+        zipCode: ''
     });
 
     const [error, setError] = useState(null);

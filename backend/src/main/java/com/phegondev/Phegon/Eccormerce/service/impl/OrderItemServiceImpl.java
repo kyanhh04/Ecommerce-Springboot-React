@@ -16,6 +16,7 @@ import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
 import com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
 import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
+import com.phegondev.Phegon.Eccormerce.service.interf.EmailService;
 import com.phegondev.Phegon.Eccormerce.service.interf.OrderItemService;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
 import com.phegondev.Phegon.Eccormerce.specification.OrderItemSpecification;
@@ -44,6 +45,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final UserService userService;
     private final EntityDtoMapper entityDtoMapper;
     private final DiscountRepository discountRepository;
+    private final EmailService emailService;
 
 
     @Transactional
@@ -105,7 +107,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             order.setOrderItemList(orderItems);
             order.setTotalPrice(totalPrice);
             order.setDiscountAmount(discountAmount);
-            order.setStatus(OrderStatus.PENDING); // Mặc định PENDING
+            order.setStatus(OrderStatus.PENDING);
             
             if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
                 Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
@@ -123,6 +125,15 @@ public class OrderItemServiceImpl implements OrderItemService {
 
             orderItems.forEach(orderItem -> orderItem.setOrder(order));
             orderRepo.save(order);
+    
+            if ("cash".equalsIgnoreCase(orderRequest.getPaymentMethod())) {
+                try {
+                    emailService.sendCODOrderConfirmationEmail(user, order);
+                    log.info("COD order confirmation email sent to: {}", user.getEmail());
+                } catch (Exception e) {
+                    log.error("Failed to send COD order confirmation email: {}", e.getMessage());
+                }
+            }
     
             var orderDto = entityDtoMapper.mapOrderToDtoBasic(order);
 

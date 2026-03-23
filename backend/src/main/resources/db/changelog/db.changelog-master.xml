@@ -9,5 +9,6 @@
     <include file="db/changelog/changesets/001-insert-admin-user.xml"/>
     <include file="db/changelog/changesets/002-update-admin-user.xml"/>
     <include file="db/changelog/changesets/003-remove-order-item-status.xml"/>
+    <include file="db/changelog/changesets/004-remove-country-from-address.xml"/>
 
 </databaseChangeLog>
