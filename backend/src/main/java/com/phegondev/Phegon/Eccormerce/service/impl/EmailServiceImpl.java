@@ -39,7 +39,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             helper.setTo(user.getEmail());
-            helper.setSubject(" Đặt hàng thành công - Đơn hàng #" + order.getId());
+            helper.setSubject("✓ Đặt hàng thành công - Đơn hàng #" + order.getId());
             String html = buildOrderEmailHtml(user, order, false);
             helper.setText(html, true);
             javaMailSender.send(mimeMessage);
@@ -56,7 +56,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             
             helper.setTo(user.getEmail());
-            helper.setSubject(" Xác nhận đơn hàng COD - Đơn hàng #" + order.getId());
+            helper.setSubject("✓ Đặt hàng thành công - Đơn hàng #" + order.getId());
 
             String html = buildOrderEmailHtml(user, order, true);
             helper.setText(html, true);
@@ -105,16 +105,17 @@ public class EmailServiceImpl implements EmailService {
         html.append(".product-item { display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 10px; margin-bottom: 10px; }");
         html.append(".product-item:last-child { margin-bottom: 0; }");
         html.append(".product-img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; margin-right: 18px; border: 2px solid #f0f2f5; }");
-        html.append(".product-info { flex: 1; }");
+        html.append(".product-info { flex: 1; padding-right: 30px; }");
         html.append(".product-name { font-weight: 700; font-size: 16px; margin: 0 0 8px; color: #2d3748; }");
         html.append(".product-meta { color: #718096; font-size: 14px; margin: 0; }");
         html.append(".product-price { font-weight: 700; font-size: 17px; color: ").append(accentColor).append("; white-space: nowrap; }");
         html.append(".summary { background: ").append(bgColor).append("; padding: 25px; border-radius: 12px; margin-top: 25px; }");
-        html.append(".summary-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 15px; color: #4a5568; }");
-        html.append(".summary-row span:last-child { font-weight: 600; color: #2d3748; }");
-        html.append(".discount-row span { color: #10b981 !important; font-weight: 600; }");
-        html.append(".summary-total { font-size: 20px; font-weight: 700; color: ").append(accentColor).append(" !important; border-top: 2px solid #cbd5e0; padding-top: 15px; margin-top: 15px; }");
-        html.append(".summary-total span { color: ").append(accentColor).append(" !important; }");
+        html.append(".summary-table { width: 100%; border-collapse: collapse; }");
+        html.append(".summary-table td { padding: 10px 0; font-size: 15px; color: #4a5568; }");
+        html.append(".summary-table td:first-child { text-align: left; }");
+        html.append(".summary-table td:last-child { text-align: right; font-weight: 600; color: #2d3748; white-space: nowrap; }");
+        html.append(".discount-row td { color: #10b981 !important; font-weight: 600; }");
+        html.append(".summary-total td { font-size: 20px; font-weight: 700; color: ").append(accentColor).append(" !important; border-top: 2px solid #cbd5e0; padding-top: 15px; }");
         html.append(".note-text { margin-top: 30px; padding: 18px; background: #f7fafc; border-left: 4px solid ").append(accentColor).append("; border-radius: 8px; color: #4a5568; font-size: 14px; line-height: 1.8; }");
         
         if (isCOD) {
@@ -180,23 +181,25 @@ public class EmailServiceImpl implements EmailService {
         html.append("</div>");
 
         html.append("<div class='summary'>");
+        html.append("<table class='summary-table'>");
         if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
-            html.append("<div class='summary-row discount-row'>");
-            html.append("<span> Mã giảm giá (").append(order.getDiscountCode()).append(")</span>");
-            html.append("<span>-").append(String.format("%,d", order.getDiscountAmount().longValue())).append(" đ</span>");
-            html.append("</div>");
+            html.append("<tr class='discount-row'>");
+            html.append("<td>🎟️ Mã giảm giá (").append(order.getDiscountCode()).append(")</td>");
+            html.append("<td>-").append(String.format("%,d", order.getDiscountAmount().longValue())).append(" đ</td>");
+            html.append("</tr>");
         }
-        html.append("<div class='summary-row summary-total'>");
-        html.append("<span> Tổng thanh toán").append(isCOD ? " khi nhận hàng" : "").append("</span>");
-        html.append("<span>").append(String.format("%,d", order.getTotalPrice().longValue())).append(" đ</span>");
-        html.append("</div>");
+        html.append("<tr class='summary-total'>");
+        html.append("<td>💰 Tổng thanh toán").append(isCOD ? " khi nhận hàng" : "").append("</td>");
+        html.append("<td>").append(String.format("%,d", order.getTotalPrice().longValue())).append(" đ</td>");
+        html.append("</tr>");
+        html.append("</table>");
         html.append("</div>");
 
         html.append("<div class='note-text'>Đơn hàng của bạn đang được xử lý").append(isCOD ? ". Chúng tôi sẽ liên hệ với bạn để xác nhận và giao hàng trong thời gian sớm nhất." : " và sẽ sớm được giao đến tay bạn. Chúng tôi sẽ thông báo ngay khi đơn hàng được vận chuyển.").append("</div>");
         
         if (isCOD) {
             html.append("<div class='info-box'>");
-            html.append("<strong>ℹ Lưu ý quan trọng</strong>");
+            html.append("<strong> Lưu ý quan trọng</strong>");
             html.append("<div class='info-box-text'>Vui lòng kiểm tra kỹ sản phẩm trước khi thanh toán cho shipper. Đảm bảo sản phẩm đúng như đơn hàng và không bị hư hỏng.</div>");
             html.append("</div>");
         }
