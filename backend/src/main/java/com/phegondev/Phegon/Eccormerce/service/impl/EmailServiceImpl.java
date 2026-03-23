@@ -37,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            
+
             helper.setTo(user.getEmail());
             helper.setSubject("  Đặt hàng thành công - Đơn hàng #" + order.getId());
 
@@ -61,27 +61,27 @@ public class EmailServiceImpl implements EmailService {
             html.append(".summary-total{font-size:18px;font-weight:700;color:#667eea;border-top:2px solid #ddd;padding-top:12px;margin-top:12px}");
             html.append(".footer{text-align:center;padding:20px;color:#888;font-size:13px}");
             html.append("</style></head><body>");
-            
+
             html.append("<div class='container'>");
             html.append("<div class='header'><h1> Đặt hàng thành công! </h1></div>");
             html.append("<div class='content'>");
             html.append("<p>Xin chào <strong>").append(user.getName()).append("</strong>,</p>");
             html.append("<p>Cảm ơn bạn đã tin tưởng và đặt hàng tại cửa hàng của chúng tôi!</p>");
-            
+
             html.append("<div class='order-info'>");
             html.append("<strong>Mã đơn hàng:</strong> #").append(order.getId()).append("<br>");
             html.append("<strong>Ngày đặt:</strong> ").append(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
             html.append("</div>");
 
             html.append("<h3 style='margin-top:25px'>Chi tiết sản phẩm:</h3>");
-            
+
             if (order.getOrderItemList() != null) {
                 for (OrderItem item : order.getOrderItemList()) {
                     String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
                     String imageUrl = item.getProduct() != null && item.getProduct().getImageUrl() != null
-                        ? item.getProduct().getImageUrl()
-                        : "https://via.placeholder.com/80";
-                    
+                            ? item.getProduct().getImageUrl()
+                            : "https://via.placeholder.com/80";
+
                     html.append("<div class='product-item'>");
                     html.append("<img src='").append(imageUrl).append("' class='product-img' alt='").append(productName).append("'/>");
                     html.append("<div class='product-info'>");
@@ -120,7 +120,6 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
         }
     }
-}
 
     @Override
     public void sendCODOrderConfirmationEmail(User user, Order order) {
