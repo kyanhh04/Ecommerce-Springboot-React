@@ -14,10 +14,9 @@
         </preConditions>
 
         <insert tableName="users">
-            <column name="name" value="ADMIN"/>
+            <column name="name" value="Kỳ anh"/>
             <column name="email" value="hoangky.a3th.2k4@gmail.com"/>
-            <!-- Password: Admin@123 (BCrypt encoded) -->
-            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMye1J1EQVGF0gJXXdQvYE5QkEpfDcWKfyq"/>
+            <column name="password" value="$2a$12$x6C9brDADyeSmNb22P2OYudXoB12Lw9cWpV5QJzUE5P0D1XVrCcAO"/>
             <column name="phone_number" value="0123456789"/>
             <column name="role" value="ADMIN"/>
             <column name="created_at" valueDate="now()"/>
@@ -44,17 +43,17 @@
         </preConditions>
 
         <sql>
-            INSERT INTO addresses (street, city, state, zip_code, country, user_id, created_at)
-            SELECT '123 Admin Street', 'Hanoi', 'Hoan Kiem', '100000', 'Vietnam', u.id, NOW()
+            INSERT INTO addresses (street, city, state, zip_code, user_id, created_at)
+            SELECT '123 Admin Street', 'Hanoi', 'Hoan Kiem', '100000', u.id, NOW()
             FROM users u
-            WHERE u.email = 'admin@ecommerce.com'
+            WHERE u.email = 'hoangky.a3th.2k4@gmail.com'
         </sql>
 
         <rollback>
             <sql>
                 DELETE a FROM addresses a
                 JOIN users u ON a.user_id = u.id
-                WHERE u.email = 'admin@ecommerce.com'
+                WHERE u.email = 'hoangky.a3th.2k4@gmail.com0'
             </sql>
         </rollback>
     </changeSet>
