@@ -6,6 +6,7 @@ import Footer from './component/common/footer';
 import ScrollToTop from "./component/common/ScrollToTop";
 import { CartProvider } from './component/context/CartContext';
 
+
 import Home from './component/pages/Home';
 import ProductDetailsPage from './component/pages/ProductDetailsPage';
 import CategoryListPage from './component/pages/CategoryListPage';
@@ -16,6 +17,7 @@ import LoginPage from './component/pages/LoginPage';
 import ForgotPasswordPage from './component/pages/ForgotPasswordPage';
 import ProfilePage from './component/pages/ProfilePage';
 import AddressPage from './component/pages/AddressPage';
+import MyOrdersPage from './component/pages/MyOrder';
 
 import AdminPage from './component/admin/AdminPage';
 import AdminLayout from './component/admin/AdminLayout';
@@ -66,7 +68,7 @@ function AppLayout() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/faqs" element={<FAQs />} />
               <Route path="/payment-demo" element={<PaymentDemo />} />
-
+              <Route path="/my-orders" element={<MyOrdersPage />} />
               <Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />} />
               <Route path='/add-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage />} />} />
@@ -77,6 +79,7 @@ function AppLayout() {
 
               <Route path='/admin' element={<AdminRoute element={<AdminLayout />} />}>
                 <Route index element={<AdminPage />} />
+
                 <Route path='categories' element={<AdminCategoryPage />} />
                 <Route path='add-category' element={<AddCategory />} />
                 <Route path='edit-category/:categoryId' element={<EditCategory />} />
