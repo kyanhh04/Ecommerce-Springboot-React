@@ -80,7 +80,6 @@
             <column name="city" type="VARCHAR(100)"/>
             <column name="state" type="VARCHAR(100)"/>
             <column name="zip_code" type="VARCHAR(20)"/>
-            <column name="country" type="VARCHAR(100)"/>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_addresses_user" references="users(id)"/>
             </column>
@@ -161,7 +160,6 @@
             <column name="price" type="DECIMAL(19,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="VARCHAR(50)"/>
             <column name="user_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_order_items_user" references="users(id)"/>
             </column>

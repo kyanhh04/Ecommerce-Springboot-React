@@ -9,13 +9,13 @@
     <changeSet id="001-insert-admin-user" author="system">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM users WHERE email = 'admin@ecommerce.com'
+                SELECT COUNT(*) FROM users WHERE email = 'hoangky.a3th.2k4@gmail.com'
             </sqlCheck>
         </preConditions>
 
         <insert tableName="users">
             <column name="name" value="ADMIN"/>
-            <column name="email" value="admin@ecommerce.com"/>
+            <column name="email" value="hoangky.a3th.2k4@gmail.com"/>
             <!-- Password: Admin@123 (BCrypt encoded) -->
             <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMye1J1EQVGF0gJXXdQvYE5QkEpfDcWKfyq"/>
             <column name="phone_number" value="0123456789"/>
@@ -25,7 +25,7 @@
 
         <rollback>
             <delete tableName="users">
-                <where>email = 'admin@ecommerce.com'</where>
+                <where>email = 'hoangky.a3th.2k4@gmail.com'</where>
             </delete>
         </rollback>
     </changeSet>
@@ -34,12 +34,12 @@
     <changeSet id="002-insert-admin-address" author="system">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM users WHERE email = 'admin@ecommerce.com'
+                SELECT COUNT(*) FROM users WHERE email = 'hoangky.a3th.2k4@gmail.com'
             </sqlCheck>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM addresses a
                 JOIN users u ON a.user_id = u.id
-                WHERE u.email = 'admin@ecommerce.com'
+                WHERE u.email = 'hoangky.a3th.2k4@gmail.com'
             </sqlCheck>
         </preConditions>
 
