@@ -14,20 +14,5 @@ services:
       - mysql_data:/var/lib/mysql
     restart: always
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
-    depends_on:
-      - mysql
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ecommerce
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456
-    ports:
-      - "8080:8080"
-    restart: always
-
 volumes:
   mysql_data:
