@@ -5,7 +5,7 @@ import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
 
 
-const OrderStatus = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED"];
+const OrderStatus = ["PENDING", "CONFIRMED", "SHIPPED", "CANCELLED", "RETURNED"];
 
 
 const AdminOrdersPage = () => {
