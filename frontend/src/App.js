@@ -13,6 +13,7 @@ import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
 import RegisterPage from './component/pages/RegisterPage';
 import LoginPage from './component/pages/LoginPage';
+import ForgotPasswordPage from './component/pages/ForgotPasswordPage';
 import ProfilePage from './component/pages/ProfilePage';
 import AddressPage from './component/pages/AddressPage';
 
@@ -59,6 +60,7 @@ function AppLayout() {
               <Route path='/cart' element={<CartPage />} />
               <Route path='/register' element={<RegisterPage />} />
               <Route path='/login' element={<LoginPage />} />
+              <Route path='/forgot-password' element={<ForgotPasswordPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
