@@ -6,48 +6,58 @@ import ApiService from "../../service/ApiService";
 import { FaUser, FaShoppingCart, FaHeart, FaSignOutAlt } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
 import { FiSearch } from "react-icons/fi";
-
-import { useCart } from "../context/CartContext"; // import cart context
-
+import { useCart } from "../context/CartContext"; 
 const Navbar = () => {
     const [searchValue, setSearchValue] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
-    const { cart } = useCart(); // lấy giỏ hàng từ context
-    // Số loại sản phẩm khác nhau trong giỏ
+    const { cart } = useCart(); 
     const cartItemCount = cart.length;
-
     const isAdmin = ApiService.isAdmin();
     const isAuthenticated = ApiService.isAuthenticated();
 
-    const handleSearchChange = (e) => {
-        setSearchValue(e.target.value);
+    const handleSearchChange = async (e) => {
+        const value = e.target.value;
+        setSearchValue(value);
+
+        if (value.trim().length > 0) {
+            try {
+                const response = await ApiService.searchProducts(value.trim());
+                setSearchResults(response.productList || []);
+                setShowDropdown(true);
+            } catch (error) {
+                setSearchResults([]);
+                setShowDropdown(false);
+            }
+        } else {
+            setSearchResults([]);
+            setShowDropdown(false);
+        }
     };
 
-    const handleSearchSubmit = async (e) => {
-        e.preventDefault();
+    const handleSearchFocus = () => {
+        // Show dropdown if there are existing results
+        if (searchValue.trim().length > 0 && searchResults.length > 0) {
+            setShowDropdown(true);
+        }
+    };
 
-        const keyword = searchValue.trim().toLowerCase();
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        const keyword = searchValue.trim();
         if (!keyword) return;
 
-        try {
-            const response = await ApiService.getAllCategory();
-            const categories = response.categoryList || [];
-
-            const foundCategory = categories.find(cate =>
-                cate.name.toLowerCase().includes(keyword)
-            );
-
-            if (foundCategory) {
-                navigate(`/category/${foundCategory.id}?search=${searchValue}`);
-            } else {
-                alert("Không tìm thấy danh mục phù hợp");
-            }
-        } catch (error) {
-            console.log("Search error:", error);
-        }
-
+        navigate(`/?search=${encodeURIComponent(keyword)}`);
         setSearchValue("");
+        setShowDropdown(false);
+    };
+
+    const handleProductClick = (productId) => {
+        navigate(`/product/${productId}`);
+        setSearchValue("");
+        setShowDropdown(false);
     };
 
     // LOGOUT FUNCTION
@@ -71,12 +81,31 @@ const Navbar = () => {
             <form className="search-box" onSubmit={handleSearchSubmit}>
                 <FiSearch className="search-icon" />
                 <input
-
                     type="text"
                     placeholder="Tìm kiếm sản phẩm ..."
                     value={searchValue}
                     onChange={handleSearchChange}
+                    onFocus={handleSearchFocus}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                 />
+                
+                {showDropdown && searchResults.length > 0 && (
+                    <div className="search-dropdown">
+                        {searchResults.slice(0, 5).map((product) => (
+                            <div 
+                                key={product.id} 
+                                className="search-item"
+                                onClick={() => handleProductClick(product.id)}
+                            >
+                                <img src={product.imageUrl} alt={product.name} />
+                                <div className="search-item-info">
+                                    <p className="search-item-name">{product.name}</p>
+                                    <p className="search-item-price">{product.price.toLocaleString()} ₫</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </form>
 
             <div className="menu">

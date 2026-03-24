@@ -19,12 +19,24 @@ const CartPage = () => {
     if (cart.length === 0) {
       setSelectedIds([]);
       hasUserInteractedRef.current = false;
+      localStorage.removeItem("autoSelectProductId");
       return;
     }
 
     const cartIdSet = new Set(cart.map((i) => i.id));
-    // Không tự động chọn sản phẩm khi vào giỏ hàng nữa
-    setSelectedIds((prev) => prev.filter((id) => cartIdSet.has(id)));
+    
+    // Check if there's an autoSelect product from "Buy Now"
+    const autoSelectId = localStorage.getItem("autoSelectProductId");
+    if (autoSelectId && !hasUserInteractedRef.current) {
+      const productId = parseInt(autoSelectId);
+      if (cartIdSet.has(productId)) {
+        setSelectedIds([productId]);
+        localStorage.removeItem("autoSelectProductId");
+      }
+    } else {
+      // Không tự động chọn sản phẩm khi vào giỏ hàng nữa
+      setSelectedIds((prev) => prev.filter((id) => cartIdSet.has(id)));
+    }
   }, [cart]);
 
   const selectedItems = cart.filter((i) => selectedIds.includes(i.id));
@@ -254,8 +266,20 @@ const CartPage = () => {
             </div>
             <div className="cart-summary">
               <h3>
-                Order Summary ({selectedItems.length}/{cart.length})
+                Tổng sản phẩm ({selectedItems.length}):
               </h3>
+              
+              {selectedItems.length > 0 && (
+                <div className="selected-products-list">
+                  {selectedItems.map((item) => (
+                    <div key={item.id} className="selected-product-item">
+                      <span className="product-name-summary">{item.name}</span>
+                      <span className="product-quantity-summary">x{item.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               <div className="summary-row">
                 <span>Tạm tính</span>
                 <span>{selectedTotalPrice.toLocaleString()} ₫</span>

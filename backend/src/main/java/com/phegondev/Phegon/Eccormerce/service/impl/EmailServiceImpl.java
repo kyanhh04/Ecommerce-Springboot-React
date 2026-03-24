@@ -116,7 +116,7 @@ public class EmailServiceImpl implements EmailService {
         html.append(".summary-table td:last-child { text-align: right; font-weight: 600; color: #2d3748; white-space: nowrap; }");
         html.append(".discount-row td { color: #10b981 !important; font-weight: 600; }");
         html.append(".summary-total td { font-size: 20px; font-weight: 700; color: ").append(accentColor).append(" !important; border-top: 2px solid #cbd5e0; padding-top: 15px; }");
-        html.append(".note-text { margin-top: 30px; padding: 18px; background: #f7fafc; border-left: 4px solid ").append(accentColor).append("; border-radius: 8px; color: #4a5568; font-size: 14px; line-height: 1.8; }");
+        html.append(".note-text { margin-top: 30px; padding: 20px; background: #f7fafc; border-left: 4px solid ").append(accentColor).append("; border-radius: 8px; color: #2d3748; font-size: 16px; line-height: 1.8; font-weight: 500; }");
         
         if (isCOD) {
             html.append(".info-box { background: #dbeafe; padding: 18px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #3b82f6; }");
@@ -184,12 +184,12 @@ public class EmailServiceImpl implements EmailService {
         html.append("<table class='summary-table'>");
         if (order.getDiscountCode() != null && !order.getDiscountCode().isEmpty()) {
             html.append("<tr class='discount-row'>");
-            html.append("<td>🎟️ Mã giảm giá (").append(order.getDiscountCode()).append(")</td>");
+            html.append("<td> Mã giảm giá (").append(order.getDiscountCode()).append(")</td>");
             html.append("<td>-").append(String.format("%,d", order.getDiscountAmount().longValue())).append(" đ</td>");
             html.append("</tr>");
         }
         html.append("<tr class='summary-total'>");
-        html.append("<td>💰 Tổng thanh toán").append(isCOD ? " khi nhận hàng" : "").append("</td>");
+        html.append("<td> Tổng thanh toán").append(isCOD ? " khi nhận hàng" : "").append("</td>");
         html.append("<td>").append(String.format("%,d", order.getTotalPrice().longValue())).append(" đ</td>");
         html.append("</tr>");
         html.append("</table>");

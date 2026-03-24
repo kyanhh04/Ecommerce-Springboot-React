@@ -91,6 +91,18 @@ const addToCart = () => {
     setTimeout(() => setShowToast(false), 3000);
 };
 
+const buyNow = () => {
+    // Add to cart
+    dispatch({ 
+        type: "ADD_ITEM", 
+        payload: { ...product, quantity }
+    });
+    // Store product ID for auto-selection in cart
+    localStorage.setItem("autoSelectProductId", product.id.toString());
+    // Navigate to cart page
+    navigate("/cart");
+};
+
 const incrementQuantity = () => {
     setQuantity(prev => prev + 1);
 };
@@ -265,7 +277,10 @@ return (
                 </div>
             </div>
 
-            <button className="add-cart-btn" onClick={addToCart}>Thêm vào giỏ hàng</button>
+            <div className="action-buttons">
+                <button className="add-cart-btn" onClick={addToCart}>Thêm vào giỏ hàng</button>
+                <button className="buy-now-btn" onClick={buyNow}>Mua ngay</button>
+            </div>
         </div>
 
         <div className="product-description-section">

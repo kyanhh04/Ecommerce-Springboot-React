@@ -1,25 +1,46 @@
-.admin-page{
-    margin-bottom: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.admin-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-.admin-page h1{
-    margin-bottom: 20xp;
-    font-size: 35px;
-}
-.admin-page button{
-    margin: 10px;
-    padding: 20px;
-    font-size: 20px;
-    border-radius: 8px;
+
+.admin-page h1 {
+    padding: 20px 30px;
+    font-size: 36px;
     font-weight: 700;
-    border: none;
-    cursor: pointer;
-    background-color: #f68b1e;
-    width: 35%;
-    color: #fff;
+    color: #1f2937;
+    margin: 0;
+    background: white;
 }
-.admin-page button:hover{
-    background-color: #a45d17;
+
+.admin-sidebar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    min-height: calc(100vh - 120px);
+}
+
+.admin-sidebar button {
+    width: 100%;
+    padding: 16px 24px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    background: white;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.admin-sidebar button:hover {
+    background: #f9fafb;
+}
+
+.admin-sidebar button:active {
+    background: #f3f4f6;
 }

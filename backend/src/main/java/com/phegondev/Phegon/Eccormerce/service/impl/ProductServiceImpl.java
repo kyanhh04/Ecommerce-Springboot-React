@@ -135,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response searchProduct(String searchValue) {
-        List<Product> products = productRepository.findByNameContainingOrDescriptionContaining(searchValue, searchValue);
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(searchValue);
 
         if (products.isEmpty()){
             throw new NotFoundException("No Products Found");
