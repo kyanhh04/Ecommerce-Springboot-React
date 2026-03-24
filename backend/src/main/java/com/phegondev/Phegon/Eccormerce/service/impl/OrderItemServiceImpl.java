@@ -161,7 +161,12 @@ public class OrderItemServiceImpl implements OrderItemService {
         OrderItem orderItem = orderItemRepo.findById(orderItemId)
                 .orElseThrow(()-> new NotFoundException("Order Item not found"));
 
-        orderItemRepo.save(orderItem);
+        Order order = orderItem.getOrder();
+        if (order == null) throw new NotFoundException("Order not found for this item");
+
+        order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        orderRepo.save(order);
+
         return Response.builder()
                 .status(200)
                 .message("Order status updated successfully")
@@ -214,9 +219,6 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         Page<OrderItem> orderItemPage = orderItemRepo.findAll(spec, pageable);
 
-        if (orderItemPage.isEmpty()){
-            throw new NotFoundException("No Order Found");
-        }
         List<OrderItemDto> orderItemDtos = orderItemPage.getContent().stream()
                 .map(entityDtoMapper::mapOrderItemToDtoPlusProductAndUser)
                 .collect(Collectors.toList());

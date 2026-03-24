@@ -1,35 +1,146 @@
 .product-form {
     display: flex;
     flex-direction: column;
-    width: 50%;
-    margin: auto;
-    margin-bottom: 250px;
+    gap: 14px;
+    background: white;
+    padding: 28px 32px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    max-width: 560px;
+    margin: 24px 30px;
+}
+
+.product-form h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 4px 0;
 }
 
 .product-form input,
 .product-form select,
-.product-form textarea,
-.product-form button {
-    margin: 10x 0;
-    padding: 10px;
-    font-size: 16px;
+.product-form textarea {
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
 }
 
-.product-form button {
-    background-color: #f68b1e;
-    padding: 15px;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 800;
+.product-form input:focus,
+.product-form select:focus,
+.product-form textarea:focus { border-color: #f68b1e; }
+
+.product-form textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
-.product-form button:hover {
-    background-color: #b46d26;
-
+.product-form label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: -6px;
 }
 
 .product-form img {
-    max-width: 100px;
-    margin: 10px 0;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.product-form button[type="submit"] {
+    padding: 11px;
+    background: #f68b1e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.product-form button[type="submit"]:hover { background: #e07b10; }
+
+.cancel-btn {
+    padding: 11px !important;
+    background: white !important;
+    color: #6b7280 !important;
+    border: 1.5px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+}
+
+.cancel-btn:hover {
+    border-color: #9ca3af !important;
+    color: #374151 !important;
+    background: white !important;
+}
+
+.message {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.message.success, .message:not(.error) {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.message.error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #f68b1e;
+    cursor: pointer;
+}
+
+.back-btn {
+    align-self: flex-start;
+    padding: 7px 14px;
+    background: white;
+    color: #6b7280;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    border-color: #f68b1e;
+    color: #f68b1e;
 }

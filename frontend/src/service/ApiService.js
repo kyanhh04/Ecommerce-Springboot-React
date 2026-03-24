@@ -323,6 +323,22 @@ export default class ApiService {
         return response.data;
     }
 
+    /**REVIEWS - ADMIN */
+    static async getAllReviews() {
+        const response = await axios.get(`${this.BASE_URL}/api/reviews/all`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async addReviewReply(reviewId, reply) {
+        const response = await axios.put(`${this.BASE_URL}/api/reviews/${reviewId}/reply`, {}, {
+            headers: this.getHeader(),
+            params: { reply }
+        });
+        return response.data;
+    }
+
     /***AUTHENTICATION CHECKER */
     static logout(){
         localStorage.removeItem('token')
@@ -338,7 +354,5 @@ export default class ApiService {
         const role = localStorage.getItem('role')
         return role === 'ADMIN'
     }
-
-
 
 }

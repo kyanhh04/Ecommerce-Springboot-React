@@ -47,6 +47,7 @@ const EditCategory = () => {
         <div className="add-category-page">
             {message && <p className="message">{message}</p>}
             <form onSubmit={handleSubmit} className="category-form">
+                <button type="button" className="back-btn" onClick={() => navigate('/admin/categories')}>← Quay lại</button>
                 <h2>Edit Category</h2>
                 <input type="text"
                     placeholder="Category Name"

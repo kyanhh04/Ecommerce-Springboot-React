@@ -21,10 +21,24 @@ public class ReviewController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> getAllReviews() {
+        Response response = reviewService.getAllReviews();
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Response> createReview(@RequestBody CreateReviewRequest request) {
         Response response = reviewService.createReview(request);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/{reviewId}/reply")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> addReply(@PathVariable Long reviewId, @RequestParam String reply) {
+        Response response = reviewService.addReply(reviewId, reply);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

@@ -27,7 +27,6 @@ public class EntityDtoMapper {
         addressDto.setCity(address.getCity());
         addressDto.setStreet(address.getStreet());
         addressDto.setState(address.getState());
-        addressDto.setZipCode(address.getZipCode());
         return addressDto;
     }
 
@@ -47,6 +46,10 @@ public class EntityDtoMapper {
         orderItemDto.setQuantity(orderItem.getQuantity());
         orderItemDto.setPrice(orderItem.getPrice());
         orderItemDto.setCreatedAt(orderItem.getCreatedAt());
+        // status lives on the parent Order
+        if (orderItem.getOrder() != null && orderItem.getOrder().getStatus() != null) {
+            orderItemDto.setStatus(orderItem.getOrder().getStatus().name());
+        }
         return orderItemDto;
     }
 
@@ -166,8 +169,12 @@ public class EntityDtoMapper {
         dto.setId(review.getId());
         dto.setContent(review.getContent());
         dto.setRating(review.getRating());
+        dto.setReply(review.getReply());
         dto.setCreatedAt(review.getCreatedAt());
-        if (review.getProduct() != null) dto.setProductId(review.getProduct().getId());
+        if (review.getProduct() != null) {
+            dto.setProductId(review.getProduct().getId());
+            dto.setProductName(review.getProduct().getName());
+        }
         if (review.getUser() != null) {
             dto.setUserId(review.getUser().getId());
             dto.setUserName(review.getUser().getName());

@@ -50,6 +50,7 @@ const AddProductPage = () => {
     return(
         <div>
             <form onSubmit={handleSubmit} className="product-form">
+                <button type="button" className="back-btn" onClick={() => navigate('/admin/products')}>← Quay lại</button>
                 <h2>Add Product</h2>
                 {message && <div className="message">{message}</div>}
                 <input type="file" onChange={handleImage} />

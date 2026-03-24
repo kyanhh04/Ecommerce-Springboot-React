@@ -17,6 +17,9 @@ public class Review {
     private String content;
     private int rating; // assuming it is in 1 to 10
 
+    @Column(columnDefinition = "TEXT")
+    private String reply;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

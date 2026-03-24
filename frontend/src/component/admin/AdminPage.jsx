@@ -1,22 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import '../../style/adminPage.css'
+import AdminRevenueReport from "./AdminRevenueReport";
 
-
-const AdminPage = () => {
-    const navigate = useNavigate();
-
-    return(
-        <div className="admin-page">
-            <h1>Welcome Admin</h1>
-            <div className="admin-sidebar">
-                <button onClick={()=> navigate("/admin/categories")}>Manage Categories</button>
-                <button onClick={()=> navigate("/admin/products")}>Manage Products</button>
-                <button onClick={()=> navigate("/admin/orders")}>Manage Orders</button>
-                <button onClick={()=> navigate("/admin/discounts")}>Manage Discounts</button>
-            </div>
-        </div>
-    )
-}
+const AdminPage = () => <AdminRevenueReport />;
 
 export default AdminPage;

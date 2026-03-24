@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../style/adminProduct.css'
 import Pagination from "../common/Pagination";
+import ConfirmDialog from "../common/ConfirmDialog";
 import ApiService from "../../service/ApiService";
 
 const AdminDiscountPage = () => {
@@ -11,6 +12,7 @@ const AdminDiscountPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
+    const [confirmState, setConfirmState] = useState({ show: false, id: null });
     const itemsPerPage = 10;
 
     const fetchDiscounts = async() => {
@@ -32,20 +34,28 @@ const AdminDiscountPage = () => {
         navigate(`/admin/edit-discount/${id}`)
     }
 
-    const handleDelete = async(id) => {
-        const confirmed = window.confirm("Are you sure you want to delete this discount code? ")
-        if(confirmed){
-            try {
-                const response = await ApiService.deleteDiscount(id);
-                setMessage(response.message);
-                fetchDiscounts();
-                setTimeout(() => setMessage(null), 3000);
-            } catch (error) {
-                setError(error.response?.data?.message || error.message || 'Unable to delete discount')
-                setTimeout(() => setError(null), 3000);
-            }
+    const openDeleteDialog = (id) => {
+        setConfirmState({ show: true, id });
+    };
+
+    const closeDeleteDialog = () => {
+        setConfirmState({ show: false, id: null });
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            const response = await ApiService.deleteDiscount(confirmState.id);
+            setMessage(response.message || 'Xóa mã giảm giá thành công');
+            setError(null);
+            fetchDiscounts();
+            closeDeleteDialog();
+            setTimeout(() => setMessage(null), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'Unable to delete discount');
+            setTimeout(() => setError(null), 3000);
+            closeDeleteDialog();
         }
-    }
+    };
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('vi-VN');
@@ -102,7 +112,7 @@ const AdminDiscountPage = () => {
                                         </td>
                                         <td>
                                             <button className="product-btn" onClick={()=> handleEdit(discount.id)}>Edit</button>
-                                            <button className="product-btn-delete" onClick={()=> handleDelete(discount.id)}>Delete</button>
+                                            <button className="product-btn-delete" onClick={()=> openDeleteDialog(discount.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -110,6 +120,14 @@ const AdminDiscountPage = () => {
                         </table>
                     </div>
                 )}
+
+                <ConfirmDialog
+                    show={confirmState.show}
+                    title="Xác nhận xóa mã giảm giá"
+                    message="Bạn có chắc chắn muốn xóa mã giảm giá này không?"
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={closeDeleteDialog}
+                />
 
                 <Pagination
                     currentPage={currentPage}

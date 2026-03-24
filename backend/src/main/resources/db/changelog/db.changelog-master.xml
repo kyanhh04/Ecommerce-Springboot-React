@@ -7,5 +7,6 @@
 
     <include file="db/changelog/changesets/000-create-tables.xml"/>
     <include file="db/changelog/changesets/001-insert-admin-user.xml"/>
+    <include file="db/changelog/changesets/002-add-reply-to-reviews.xml"/>
 
 </databaseChangeLog>

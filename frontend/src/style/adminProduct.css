@@ -1,82 +1,146 @@
 .success-message {
-    background: #e6ffed;
-    color: #218838;
-    border: 1.5px solid #b7eb8f;
-    padding: 12px 18px;
-    border-radius: 6px;
-    margin: 12px 0 16px 0;
-    font-size: 17px;
+    background: #f0fdf4;
+    color: #166534;
+    border: 1.5px solid #bbf7d0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(34,197,94,0.08);
-    text-align: center;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
 }
 
 .error-message {
-    background: #fff1f0;
-    color: #d93025;
-    border: 1.5px solid #ffa39e;
-    padding: 12px 18px;
-    border-radius: 6px;
-    margin: 12px 0 16px 0;
-    font-size: 17px;
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1.5px solid #fecaca;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(255,0,0,0.08);
-    text-align: center;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
-}
-.admin-product-list{
-    align-items: center;
-    width: 50%;
-    margin: auto;
-    font-size: 16px;
-}
-.product-btn{
-    border-radius: 5px;
-    margin: 5px 0px;
-    padding: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 18px;
-    color: #fff;
-    border: none;
-    background-color: #f68b1e;
 }
 
-.product-btn-delete{
-    border-radius: 5px;
-    margin: 5px 0px;
-    padding: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 18px;
-    color: #fff;
-    border: none;
-    background-color: tomato;
+.admin-product-list {
+    padding: 24px 30px;
+}
 
+.admin-product-list h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 16px 0;
 }
-.admin-product-list button:hover{
-    background-color: #a66320;
+
+.product-btn {
+    padding: 7px 14px;
+    background: #f68b1e;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
-.admin-product-list ul{
-    list-style-type: none;
+
+.product-btn:hover { opacity: 0.85; }
+
+.product-btn-delete {
+    padding: 7px 14px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-left: 8px;
+}
+
+.product-btn-delete:hover { opacity: 0.85; }
+
+.admin-product-list ul {
+    list-style: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
-.admin-product-list li{
+
+.admin-product-list li {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 10px 10px 15px;
-    margin-bottom: 1.5px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    padding: 14px 18px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
 }
-.admin-product-list span{
+
+.admin-product-list li:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+
+.admin-product-list span {
     flex: 1;
-    color: #444;
+    font-size: 15px;
+    color: #374151;
+    font-weight: 500;
 }
-.admin-product-list button{
-    margin-left: 10px;
+
+.admin-product-list li .product-btn,
+.admin-product-list li .product-btn-delete {
+    margin-left: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    color: white;
+}
+
+.discount-table { overflow-x: auto; margin-top: 16px; }
+
+.discount-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.discount-table th {
+    background: #f9fafb;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.discount-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+}
+
+.discount-table tr:hover td { background: #fafafa; }
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.active   { background: #d1fae5; color: #065f46; }
+.status-badge.inactive { background: #f3f4f6; color: #6b7280; }
+
+/* Add button ở đầu trang */
+.admin-product-list > div > .product-btn {
+    margin-bottom: 16px;
+    padding: 9px 18px;
+    font-size: 14px;
 }

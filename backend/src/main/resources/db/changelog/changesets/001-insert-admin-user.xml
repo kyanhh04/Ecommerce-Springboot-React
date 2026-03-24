@@ -43,8 +43,8 @@
         </preConditions>
 
         <sql>
-            INSERT INTO addresses (street, city, state, zip_code, user_id, created_at)
-            SELECT '123 Admin Street', 'Hanoi', 'Hoan Kiem', '100000', u.id, NOW()
+            INSERT INTO addresses (street, city, state, user_id, created_at)
+            SELECT '123 Street', 'Hanoi', 'Ha Dong', u.id, NOW()
             FROM users u
             WHERE u.email = 'hoangky.a3th.2k4@gmail.com'
         </sql>

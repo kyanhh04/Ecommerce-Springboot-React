@@ -6,41 +6,204 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-.admin-page h1 {
-    padding: 20px 30px;
-    font-size: 36px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0;
-    background: white;
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
 }
 
+/* ── Sidebar ── */
 .admin-sidebar {
-    width: 280px;
+    width: 230px;
+    flex-shrink: 0;
     background: white;
     border-right: 1px solid #e5e7eb;
-    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
+.admin-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar h1 {
+    padding: 24px 20px 16px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #f68b1e;
+    margin: 0;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.admin-logo {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.admin-logo:hover {
+    opacity: 0.75;
+}
+
+/* Nav buttons */
 .admin-sidebar button {
     width: 100%;
-    padding: 16px 24px;
+    padding: 14px 20px;
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2937;
+    font-size: 15px;
+    font-weight: 500;
+    color: #374151;
     background: white;
     border: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f3f4f6;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 11px;
 }
 
 .admin-sidebar button:hover {
-    background: #f9fafb;
+    background: #fff7ed;
+    color: #f68b1e;
+    padding-left: 24px;
 }
 
-.admin-sidebar button:active {
-    background: #f3f4f6;
+.admin-sidebar button.active {
+    background: #fff7ed;
+    color: #f68b1e;
+    font-weight: 600;
+    border-left: 3px solid #f68b1e;
+    padding-left: 17px;
+}
+
+/* Nav icons */
+.nav-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ── Sidebar banner ── */
+.sidebar-banner {
+    padding: 20px 16px 24px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: #fafafa;
+}
+
+.sidebar-banner svg {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+}
+
+.banner-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #f68b1e;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.banner-sub {
+    margin: 0;
+    font-size: 11px;
+    color: #9ca3af;
+    letter-spacing: 0.3px;
+}
+
+/* ── Main content ── */
+.admin-main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.admin-content-centered {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 24px;
+    background: #f8f9fa;
+}
+
+.admin-content-centered > * {
+    width: 100%;
+    max-width: 600px;
+}
+
+/* ── Confirm dialog ── */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.confirm-dialog {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.18);
+    width: min(90%, 420px);
+    text-align: center;
+}
+
+.confirm-dialog h3 {
+    margin: 0 0 14px;
+    color: #111827;
+}
+
+.confirm-dialog p {
+    color: #4b5563;
+    margin-bottom: 20px;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+
+.btn-cancel,
+.btn-confirm {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-confirm {
+    background: #f44336;
+    color: #fff;
 }

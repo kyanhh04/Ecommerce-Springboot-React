@@ -17,9 +17,11 @@ public class ReviewDto {
     private Long id;
     private String content;
     private int rating; // 1-5
+    private String reply;
     private LocalDateTime createdAt;
 
     private Long productId;
+    private String productName;
     private Long userId;
     private String userName;
 }

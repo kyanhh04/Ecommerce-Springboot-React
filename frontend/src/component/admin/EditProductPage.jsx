@@ -21,11 +21,13 @@ const EditProductPage = () => {
 
         if (productId) {
             ApiService.getProductById(productId).then((response)=>{
-                setName(response.product.name);
-                setDescription(response.product.description);
-                setPrice(response.product.price);
-                setCategoryId(response.product.categoryId);
-                setImageUrl(response.product.imageUrl);
+                const p = response.product;
+                setName(p.name);
+                setDescription(p.description);
+                setPrice(p.price);
+                const extractedCategoryId = p?.category?.id || p?.categoryId || '';
+                setCategoryId(extractedCategoryId);
+                setImageUrl(p.imageUrl);
             })
         }
     }, [productId]);
@@ -44,7 +46,9 @@ const EditProductPage = () => {
                 formData.append('image', image);
             }
             formData.append('productId', productId);
-            formData.append('categoryId', categoryId);
+            if (categoryId) {
+                formData.append('categoryId', categoryId);
+            }
             formData.append('name', name);
             formData.append('description', description);
             formData.append('price', price);
@@ -65,7 +69,8 @@ const EditProductPage = () => {
 
     return(
         <form onSubmit={handleSubmit} className="product-form">
-            <h2>Edit Produc</h2>
+            <button type="button" className="back-btn" onClick={() => navigate('/admin/products')}>← Quay lại</button>
+            <h2>Edit Product</h2>
             {message && <div className="message">{message}</div>}
             <input type="file" onChange={handleImageChange}/>
             {imageUrl && <img src={imageUrl} alt={name} />}

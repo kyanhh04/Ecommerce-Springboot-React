@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute } from './service/Guard';
 import Navbar from './component/common/Navbar';
 import Footer from './component/common/footer';
@@ -17,6 +17,7 @@ import ProfilePage from './component/pages/ProfilePage';
 import AddressPage from './component/pages/AddressPage';
 
 import AdminPage from './component/admin/AdminPage';
+import AdminLayout from './component/admin/AdminLayout';
 import AdminCategoryPage from './component/admin/AdminCategoryPage';
 import AddCategory from './component/admin/AddCategory';
 import EditCategory from './component/admin/EditCategory';
@@ -28,6 +29,7 @@ import AdminOrderDetailsPage from './component/admin/AdminOrderDetailsPage';
 import AdminDiscountPage from './component/admin/AdminDiscountPage';
 import AddDiscountPage from './component/admin/AddDiscountPage';
 import EditDiscountPage from './component/admin/EditDiscountPage';
+import AdminReviewPage from './component/admin/AdminReviewPage';
 import PaymentPageWrapper from './component/pages/PaymentPageWrapper';
 import SecurePaymentPage from './component/payment/SecurePaymentPage';
 import PaymentDemo from './component/payment/PaymentDemo';
@@ -41,16 +43,15 @@ import Terms from './component/pages/Terms';
 import FAQs from './component/pages/FAQS';
 
 
-function App() {
-  return (
-  <CartProvider>
-    <BrowserRouter>
-      <ScrollToTop />
+function AppLayout() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
 
-        <div className="app-container">
-          <Navbar />
-          <div className="main-content">
-            <Routes>
+  return (
+    <div className="app-container">
+      {!isAdmin && <Navbar />}
+      <div className="main-content">
+        <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/product/:productId' element={<ProductDetailsPage />} />
               <Route path='/categories' element={<CategoryListPage />} />
@@ -72,25 +73,36 @@ function App() {
               <Route path='/wishlist' element={<ProtectedRoute element={<WishlistPage />} />} />
 
 
-              <Route path='/admin' element={<AdminRoute element={<AdminPage />} />} />
-              <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage />} />} />
-              <Route path='/admin/add-category' element={<AdminRoute element={<AddCategory />} />} />
-              <Route path='/admin/edit-category/:categoryId' element={<AdminRoute element={<EditCategory />} />} />
-              <Route path='/admin/products' element={<AdminRoute element={<AdminProductPage />} />} />
-              <Route path='/admin/add-product' element={<AdminRoute element={<AddProductPage />} />} />
-              <Route path='/admin/edit-product/:productId' element={<AdminRoute element={<EditProductPage />} />} />
-              <Route path='/admin/orders' element={<AdminRoute element={<AdminOrdersPage />} />} />
-              <Route path='/admin/order-details/:itemId' element={<AdminRoute element={<AdminOrderDetailsPage />} />} />
-              <Route path='/admin/discounts' element={<AdminRoute element={<AdminDiscountPage/>} />} />
-              <Route path='/admin/add-discount' element={<AdminRoute element={<AddDiscountPage/>} />} />
-              <Route path='/admin/edit-discount/:discountId' element={<AdminRoute element={<EditDiscountPage/>} />} />
+              <Route path='/admin' element={<AdminRoute element={<AdminLayout />} />}>
+                <Route index element={<AdminPage />} />
+                <Route path='categories' element={<AdminCategoryPage />} />
+                <Route path='add-category' element={<AddCategory />} />
+                <Route path='edit-category/:categoryId' element={<EditCategory />} />
+                <Route path='products' element={<AdminProductPage />} />
+                <Route path='add-product' element={<AddProductPage />} />
+                <Route path='edit-product/:productId' element={<EditProductPage />} />
+                <Route path='orders' element={<AdminOrdersPage />} />
+                <Route path='order-details/:itemId' element={<AdminOrderDetailsPage />} />
+                <Route path='discounts' element={<AdminDiscountPage />} />
+                <Route path='add-discount' element={<AddDiscountPage />} />
+                <Route path='edit-discount/:discountId' element={<EditDiscountPage />} />
+                <Route path='reviews' element={<AdminReviewPage />} />
+              </Route>
             </Routes>
           </div>
-          <Footer />
+          {!isAdmin && <Footer />}
         </div>
+  );
+}
 
-    </BrowserRouter>
-      </CartProvider>
+function App() {
+  return (
+    <CartProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <AppLayout />
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

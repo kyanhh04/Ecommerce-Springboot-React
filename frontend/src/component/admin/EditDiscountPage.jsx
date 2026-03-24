@@ -94,6 +94,7 @@ const EditDiscountPage = () => {
 
     return (
         <form onSubmit={handleSubmit} className="product-form">
+            <button type="button" className="back-btn" onClick={() => navigate('/admin/discounts')}>← Quay lại</button>
             <h2>Edit Discount Code</h2>
             {message && <div className="message success">{message}</div>}
             {error && <div className="message error">{error}</div>}

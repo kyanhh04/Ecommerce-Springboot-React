@@ -11,9 +11,11 @@ public class OrderItemSpecification {
 
     /**Specification to filter order items by status*/
     public static Specification<OrderItem> hasStatus(OrderStatus status){
-        return ((root, query, criteriaBuilder) ->
-                status != null ? criteriaBuilder.equal(root.get("status"), status) : null);
-
+        return ((root, query, criteriaBuilder) -> {
+            if (status == null) return null;
+            // status lives on the parent Order, not on OrderItem
+            return criteriaBuilder.equal(root.get("order").get("status"), status);
+        });
     }
 
     /**Specification to filter order items by data range*/

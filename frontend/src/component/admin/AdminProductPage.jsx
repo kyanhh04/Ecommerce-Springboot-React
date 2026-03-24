@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../style/adminProduct.css'
 import Pagination from "../common/Pagination";
+import ConfirmDialog from "../common/ConfirmDialog";
 import ApiService from "../../service/ApiService";
 
 const AdminProductPage = () => {
@@ -11,6 +12,7 @@ const AdminProductPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [confirmState, setConfirmState] = useState({ show: false, id: null });
     const itemsPerPage = 10;
 
 
@@ -33,21 +35,29 @@ const AdminProductPage = () => {
     const handleEdit = async (id) => {
         navigate(`/admin/edit-product/${id}`)
     }
-    const handleDelete = async(id) => {
-        const confirmed = window.confirm("Are your sure you want to delete this product? ")
-        if(confirmed){
-            try {
-                const response = await ApiService.deleteProduct(id);
-                setSuccess(response.message || "Xóa sản phẩm thành công");
-                setError(null);
-                fetchProducts();
-                setTimeout(() => setSuccess(null), 2000); // Ẩn thông báo sau 2s
-            } catch (error) {
-                setError(error.response?.data?.message || error.message || 'unable to delete product')
-                setSuccess(null);
-            }
+
+    const openDeleteDialog = (id) => {
+        setConfirmState({ show: true, id });
+    };
+
+    const closeDeleteDialog = () => {
+        setConfirmState({ show: false, id: null });
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            const response = await ApiService.deleteProduct(confirmState.id);
+            setSuccess(response.message || "Xóa sản phẩm thành công");
+            setError(null);
+            fetchProducts();
+            closeDeleteDialog();
+            setTimeout(() => setSuccess(null), 2000);
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'unable to delete product');
+            setSuccess(null);
+            closeDeleteDialog();
         }
-    }
+    };
 
     return(
         <div className="admin-product-list">
@@ -61,7 +71,7 @@ const AdminProductPage = () => {
                         <li key={product.id}>
                             <span>{product.name}</span>
                             <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
-                            <button className="product-btn-delete" onClick={()=> handleDelete(product.id)}>Delete</button>
+                            <button className="product-btn-delete" onClick={()=> openDeleteDialog(product.id)}>Delete</button>
                             </li>
                         ))}
                     </ul>
@@ -70,6 +80,14 @@ const AdminProductPage = () => {
                     totalPages={totalPages}
                     onPageChange={(page)=> setCurrentPage(page)}/>
                 </div>
+
+            <ConfirmDialog
+                show={confirmState.show}
+                title="Xác nhận xóa sản phẩm"
+                message="Bạn có chắc chắn muốn xóa sản phẩm này không?"
+                onConfirm={handleDeleteConfirm}
+                onCancel={closeDeleteDialog}
+            />
         </div>
     )
 }

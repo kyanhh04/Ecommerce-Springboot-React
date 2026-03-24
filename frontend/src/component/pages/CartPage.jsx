@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import { useCart } from "../context/CartContext";
@@ -14,6 +14,13 @@ const CartPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const hasUserInteractedRef = useRef(false);
   const navigate = useNavigate();
+
+  const selectedItems = useMemo(() => cart.filter((i) => selectedIds.includes(i.id)), [cart, selectedIds]);
+  const selectedTotalPrice = useMemo(() => selectedItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  ), [selectedItems]);
+  const isAllSelected = cart.length > 0 && selectedIds.length === cart.length;
 
   useEffect(() => {
     if (cart.length === 0) {
@@ -39,24 +46,37 @@ const CartPage = () => {
     }
   }, [cart]);
 
-  const selectedItems = cart.filter((i) => selectedIds.includes(i.id));
-  const selectedTotalPrice = selectedItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
-  const isAllSelected = cart.length > 0 && selectedIds.length === cart.length;
+  // Reset discount khi không còn sản phẩm được chọn
+  useEffect(() => {
+    if (selectedItems.length === 0) {
+      setDiscount(null);
+      setDiscountCode("");
+      setDiscountError("");
+    }
+  }, [selectedItems.length]);
 
   const toggleSelect = (id) => {
     hasUserInteractedRef.current = true;
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    setSelectedIds((prev) => {
+      const newSelected = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      // Nếu không còn item nào được chọn, reset discount
+      if (newSelected.length === 0) {
+        setDiscount(null);
+        setDiscountCode("");
+        setDiscountError("");
+      }
+      return newSelected;
+    });
   };
 
   const handleSelectAllChange = () => {
     hasUserInteractedRef.current = true; 
     if (isAllSelected) {
       setSelectedIds([]);
+      // Reset discount khi bỏ chọn tất cả
+      setDiscount(null);
+      setDiscountCode("");
+      setDiscountError("");
     } else {
       setSelectedIds(cart.map((i) => i.id));
     }
@@ -112,6 +132,10 @@ const CartPage = () => {
     dispatch({ type: "REMOVE_ITEMS", payload: { ids: selectedIds } });
     setSelectedIds([]);
     hasUserInteractedRef.current = true;
+    // Reset discount khi xóa tất cả selected items
+    setDiscount(null);
+    setDiscountCode("");
+    setDiscountError("");
   };
 
   const handleCheckout = async () => {

@@ -6,5 +6,7 @@ import com.phegondev.Phegon.Eccormerce.dto.Response;
 public interface ReviewService {
     Response createReview(CreateReviewRequest request);
     Response getReviewsByProduct(Long productId);
+    Response getAllReviews();
+    Response addReply(Long reviewId, String reply);
 }
 
