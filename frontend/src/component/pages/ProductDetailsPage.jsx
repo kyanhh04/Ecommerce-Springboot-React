@@ -93,8 +93,8 @@ const addToCart = () => {
 
 const buyNow = () => {
     // Add to cart
-    dispatch({ 
-        type: "ADD_ITEM", 
+    dispatch({
+        type: "ADD_ITEM",
         payload: { ...product, quantity }
     });
     // Store product ID for auto-selection in cart
@@ -158,13 +158,13 @@ if (!product) {
 return (
 
     <div className="product-detail-page">
-    
+
     {showToast && (
         <div className="toast-notification">
             ✓ Đã thêm {quantity} sản phẩm vào giỏ hàng
         </div>
     )}
-    
+
     <div className="product-detail">
 
         <div className="product-container">
@@ -218,7 +218,7 @@ return (
                             <span className="info-label">Cam kết</span>
                             <span className="info-value">Hàng chính hàng, chất lượng cao</span>
                         </div>
-                        
+
                         <div className="info-row">
                             <span className="info-label">Tồn kho</span>
                             <span className="info-value">
@@ -230,9 +230,9 @@ return (
 
                 <div className="quantity-selector">
                     <button onClick={decrementQuantity}>-</button>
-                    <input 
-                        type="number" 
-                        value={quantity} 
+                    <input
+                        type="number"
+                        value={quantity}
                         onChange={handleQuantityChange}
                         min="1"
                     />
@@ -290,7 +290,7 @@ return (
 
         <div className="review-section">
 
-            <h2>Customer Reviews</h2>
+            <h2>Đánh giá của khách hàng</h2>
 
             {reviews.length === 0 ? (
                 <p className="no-review">
@@ -325,7 +325,7 @@ return (
 
         <div className="write-review">
 
-            <h2>Write a Review</h2>
+            <h2>Viết đánh giá</h2>
 
             <div className="review-form">
                 {reviewError && <p style={{color: 'red', marginBottom: 8}}>{reviewError}</p>}
@@ -357,11 +357,11 @@ return (
                 </div>
 
                 <p className="rating-value">
-                    Your rating: {rating || 0} / 5
+                    Trải nghiệm của bạn: {rating || 0} / 5
                 </p>
 
                 <textarea
-                    placeholder="Write your review..."
+                    placeholder="Đánh giá của bạn ..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                 />
@@ -370,7 +370,7 @@ return (
                     className="submit-review-btn"
                     onClick={submitReview}
                 >
-                    Submit Review
+                    Gửi
                 </button>
 
             </div>

@@ -198,3 +198,59 @@
   color: #ef4444;
   transform: scale(1.1);
 }
+/* ===== USER MENU ===== */
+.user-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-icon {
+  font-size: 18px;
+}
+
+/* ===== DROPDOWN ===== */
+.user-dropdown {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: #fff;
+  width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  overflow: hidden;
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+.user-dropdown div {
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.8s;
+}
+
+.user-dropdown div:hover {
+  background: #a8e6a3;
+}
+
+/* animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.wishlist-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}

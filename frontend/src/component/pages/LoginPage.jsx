@@ -39,34 +39,41 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="register-page">
-      <h2>Login</h2>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>Email: </label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+    <div className="auth-wrapper">
+      <div className="register-page">
+        <form onSubmit={handleSubmit}>
+          <h2>Login</h2>
+          {message && <p className="message">{message}</p>}
+          
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
 
-        <label>Password: </label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
 
-        <button type="submit">Login</button>
+          <div className="forgot-password-link">
+            <a href="/forgot-password">Quên mật khẩu?</a>
+          </div>
 
-        <p className="register-link">
-          Don't have an account? <a href="/register">Register</a>
-        </p>
-      </form>
+          <button type="submit">Login</button>
+
+          <p className="register-link">
+            Chưa có tài khoản? <a href="/register">Đăng ký</a>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

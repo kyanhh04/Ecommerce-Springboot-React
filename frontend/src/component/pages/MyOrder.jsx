@@ -1,99 +1,136 @@
 import React, { useEffect, useState } from "react";
 import ApiService from "../../service/ApiService";
-import "../../style/myOrdersPage.css";
+import Pagination from "../common/Pagination";
 import { useNavigate } from "react-router-dom";
+import "../../style/myOrder.css";
 
 const MyOrdersPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const itemsPerPage = 5;
+  const navigate = useNavigate();
 
-    const [orders, setOrders] = useState([]);
-    const navigate = useNavigate();
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-    useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      const response = await ApiService.getLoggedInUserInfo();
+      setOrders(response.user.orderList || []);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to fetch orders"
+      );
+    }
+  };
 
-        const fetchOrders = async () => {
-            try {
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const paginatedOrders = orders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-                const res = await ApiService.getMyOrders();
-                setOrders(res.orders || []);
+  const toggleDetails = (orderId) => {
+    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+  };
 
-            } catch (err) {
-                console.log(err);
-            }
-        };
+  const getStatusText = (status) => {
+    switch (status) {
+      case "COMPLETED":
+        return "Hoàn thành";
+      case "PENDING":
+        return "Đang xử lý";
+      case "CANCELLED":
+        return "Đã hủy";
+      default:
+        return status;
+    }
+  };
 
-        fetchOrders();
+  return (
+    <div className="profile-page">
+      <h2>Đơn hàng của tôi</h2>
 
-    }, []);
+      {error && <p className="error-message">{error}</p>}
 
-    const goReview = (productId) => {
-        navigate(`/product/${productId}`);
-    };
+      <ul className="main-order-list">
+        {paginatedOrders.map((order) => (
+          <li key={order.id} className="order-card">
 
-    return (
+            {/* 🔥 DÒNG INFO */}
+            <div className="order-row">
+              <span>
+                Ngày: {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+              </span>
 
-        <div className="orders-page">
+              <span className="order-price">
+                Tổng tiền: {order.totalPrice?.toLocaleString("vi-VN")}đ
+              </span>
 
-            <h1>My Orders</h1>
+              <span className={`order-status ${order.status}`}>
+                Trạng thái: {getStatusText(order.status || "PENDING")}
+              </span>
+            </div>
 
-            {orders.length === 0 ? (
-                <p className="no-orders">Bạn chưa có đơn hàng nào</p>
-            ) : (
+            {/* 🔥 BUTTON */}
+            <div className="order-actions">
+              <button
+                className="order-btn"
+                onClick={() => toggleDetails(order.id)}
+              >
+                {expandedOrderId === order.id
+                  ? "Ẩn chi tiết"
+                  : "Xem chi tiết"}
+              </button>
 
-                orders.map((order) => (
+              <button
+                className="review-btn"
+                onClick={() =>
+                  navigate(
+                    `/product/${order.orderItemList?.[0]?.product?.id}`
+                  )
+                }
+              >
+                Đánh giá
+              </button>
+            </div>
 
-                    <div key={order.id} className="order-card">
+            {/* 🔥 CHI TIẾT */}
+            {expandedOrderId === order.id && (
+              <ul className="order-items-list">
+                {order.orderItemList?.map((item) => (
+                  <li key={item.id} className="order-item">
+                    <img
+                      src={item.product?.imageUrl}
+                      alt={item.product?.name}
+                    />
 
-                        <div className="order-header">
-
-                            <span>Order #{order.id}</span>
-                            <span className="order-date">
-                                {new Date(order.createdAt).toLocaleDateString()}
-                            </span>
-
-                        </div>
-
-                        {order.orderItemList.map((item) => (
-
-                            <div key={item.id} className="order-item">
-
-                                <img
-                                    src={item.product.imageUrl}
-                                    alt={item.product.name}
-                                />
-
-                                <div className="order-info">
-
-                                    <h3>{item.product.name}</h3>
-
-                                    <p>Quantity: {item.quantity}</p>
-
-                                    <p className="price">
-                                        {item.price.toLocaleString()} ₫
-                                    </p>
-
-                                </div>
-
-                                <button
-                                    className="review-btn"
-                                    onClick={() => goReview(item.product.id)}
-                                >
-                                    Review
-                                </button>
-
-                            </div>
-
-                        ))}
-
+                    <div className="order-item-info">
+                      <p><strong>{item.product?.name}</strong></p>
+                      <p>Số lượng: {item.quantity}</p>
+                      <p>Giá: {item.price?.toLocaleString("vi-VN")}đ</p>
                     </div>
 
-                ))
-
+                  </li>
+                ))}
+              </ul>
             )}
+          </li>
+        ))}
+      </ul>
 
-        </div>
-
-    );
-
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+    </div>
+  );
 };
 
 export default MyOrdersPage;
