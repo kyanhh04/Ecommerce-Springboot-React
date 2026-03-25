@@ -8,8 +8,7 @@ const AddressPage = () => {
     const [address, setAddress] = useState({
         street: '',
         city: '',
-        state: '',
-        zipCode: ''
+        state: ''
     });
 
     const [error, setError] = useState(null);
@@ -57,44 +56,47 @@ const AddressPage = () => {
 
     return(
         <div className="address-page">
-            <h2>{location.pathname === '/edit-address' ? 'Edit Address' : "Add Addresss"}</h2>
+            <h2>{location.pathname === '/edit-address' ? 'Chỉnh sửa địa chỉ' : "Thêm địa chỉ"}</h2>
             {error && <p className="error-message">{error}</p>}
             
             <form onSubmit={handSubmit}>
                 <label>
-                    Street:
-                    <input type="text"
-                    name="street"
-                    value={address.street}
-                    onChange={handleChange}
-                    required/>
+                    Địa chỉ:
+                    <input 
+                        type="text"
+                        name="street"
+                        value={address.street}
+                        onChange={handleChange}
+                        placeholder="Nhập số nhà, tên đường..."
+                        required
+                    />
                 </label>
                 <label>
-                    City:
-                    <input type="text"
-                    name="city"
-                    value={address.city}
-                    onChange={handleChange}
-                    required/>
+                    Thành phố:
+                    <input 
+                        type="text"
+                        name="city"
+                        value={address.city}
+                        onChange={handleChange}
+                        placeholder="Nhập tên thành phố..."
+                        required
+                    />
                 </label>
                 <label>
                     Quận/Huyện:
-                    <input type="text"
-                    name="state"
-                    value={address.state}
-                    onChange={handleChange}
-                    required/>
+                    <input 
+                        type="text"
+                        name="state"
+                        value={address.state}
+                        onChange={handleChange}
+                        placeholder="Nhập quận/huyện..."
+                        required
+                    />
                 </label>
 
-                <label>
-                    Zip Code:
-                    <input type="text"
-                    name="zipCode"
-                    value={address.zipCode}
-                    onChange={handleChange}
-                    required/>
-                </label>
-                <button type="submit">{location.pathname === '/edit-address' ? 'Edit Address' : "Save Addresss"}</button>
+                <button type="submit">
+                    {location.pathname === '/edit-address' ? 'Cập nhật địa chỉ' : "Lưu địa chỉ"}
+                </button>
 
             </form>
         </div>

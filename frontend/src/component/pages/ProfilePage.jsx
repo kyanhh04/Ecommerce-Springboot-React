@@ -6,6 +6,13 @@ import "../../style/profile.css";
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: ""
+  });
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,11 +23,63 @@ const ProfilePage = () => {
     try {
       const response = await ApiService.getLoggedInUserInfo();
       setUserInfo(response.user);
+      setFormData({
+        name: response.user.name || "",
+        email: response.user.email || "",
+        phoneNumber: response.user.phoneNumber || ""
+      });
     } catch (error) {
       setError(
         error.response?.data?.message ||
           error.message ||
           "Unable to fetch user info"
+      );
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    setMessage("");
+    if (!isEditing) {
+      setFormData({
+        name: userInfo.name || "",
+        email: userInfo.email || "",
+        phoneNumber: userInfo.phoneNumber || ""
+      });
+    }
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      const updateData = {
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber
+      };
+
+      const response = await ApiService.updateUser(updateData);
+      
+      if (response.status === 200) {
+        setMessage("Cập nhật thông tin thành công!");
+        setIsEditing(false);
+        fetchUserInfo();
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        setMessage(response.message || "Cập nhật thất bại");
+      }
+    } catch (error) {
+      setMessage(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi cập nhật thông tin"
       );
     }
   };
@@ -41,23 +100,78 @@ const ProfilePage = () => {
     <div className="profile-page">
       <h2>Xin chào, {userInfo.name}</h2>
 
+      {message && <p className="profile-message">{message}</p>}
       {error ? (
         <p className="error-message">{error}</p>
       ) : (
         <div>
           <div className="user-details">
-            <p>
-              <strong>Họ tên: </strong>
-              {userInfo.name}
-            </p>
-            <p>
-              <strong>Email: </strong>
-              {userInfo.email}
-            </p>
-            <p>
-              <strong>Số điện thoại: </strong>
-              {userInfo.phoneNumber}
-            </p>
+            {!isEditing ? (
+              <>
+                <p>
+                  <strong>Họ tên: </strong>
+                  {userInfo.name}
+                </p>
+                <p>
+                  <strong>Email: </strong>
+                  {userInfo.email}
+                </p>
+                <p>
+                  <strong>Số điện thoại: </strong>
+                  {userInfo.phoneNumber}
+                </p>
+                <div className="profile-act">
+                  <button className="profile-button" onClick={handleEditToggle}>
+                    Chỉnh sửa thông tin
+                  </button>
+                </div>
+              </>
+            ) : (
+              <form onSubmit={handleUpdateProfile} className="profile-edit-form">
+                <div className="form-group">
+                  <label>Họ tên:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Số điện thoại:</label>
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="profile-act">
+                  <button type="submit" className="profile-button">
+                    Lưu thay đổi
+                  </button>
+                  <button
+                    type="button"
+                    className="profile-button-cancel"
+                    onClick={handleEditToggle}
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </form>
+            )}
 
             <h3>Địa chỉ nhận hàng</h3>
             {userInfo.address ? (
@@ -78,19 +192,10 @@ const ProfilePage = () => {
             ) : (
               <p>Chưa có thông tin địa chỉ</p>
             )}
-           <div className="profile-act">
-            <button className="profile-button" onClick={handleAddressClick}>
-              {userInfo.address ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}
-            </button>
-
-            {/* 🔥 NÚT MỚI */}
-            <button
-              className="profile-button"
-              onClick={() => navigate("/my-orders")}
-              style={{ marginTop: "10px" }}
-            >
-              Xem đơn hàng của tôi
-            </button>
+            <div className="profile-act">
+              <button className="profile-button" onClick={handleAddressClick}>
+                {userInfo.address ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}
+              </button>
             </div>
           </div>
         </div>

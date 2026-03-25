@@ -139,6 +139,37 @@
     margin-bottom: 12px;
 }
 
+.reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reply-header p {
+    margin: 0;
+}
+
+.btn-edit {
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #22c55e;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #15803d;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-edit:hover {
+    background: #f0fdf4;
+    border-color: #15803d;
+}
+
 .review-reply p {
     margin: 0;
     font-size: 13px;
@@ -148,7 +179,6 @@
 
 .review-reply strong {
     display: block;
-    margin-bottom: 8px;
     color: #15803d;
     font-size: 12px;
     font-weight: 600;
@@ -160,6 +190,11 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.reply-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .reply-form textarea {
@@ -189,11 +224,172 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    align-self: flex-start;
 }
 
 .btn-reply:hover {
     background: #e07b10;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(246, 139, 30, 0.2);
+}
+
+.btn-cancel {
+    padding: 10px 18px;
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+/* Header Section */
+.review-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.review-stats {
+    font-size: 14px;
+    color: #6b7280;
+    padding: 8px 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.review-stats strong {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding: 20px 0;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.page-number {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-number:hover {
+    background: #f9fafb;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.page-number.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.page-dots {
+    padding: 0 4px;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+/* Review Header Actions */
+.review-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-delete {
+    padding: 8px;
+    background: white;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 18px;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.reply-actions-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-delete-reply {
+    padding: 6px 8px;
+    background: white;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-reply:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
 }

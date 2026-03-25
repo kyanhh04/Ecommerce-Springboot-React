@@ -323,7 +323,6 @@ export default class ApiService {
         return response.data;
     }
 
-    /**REVIEWS - ADMIN */
     static async getAllReviews() {
         const response = await axios.get(`${this.BASE_URL}/api/reviews/all`, {
             headers: this.getHeader()
@@ -335,6 +334,20 @@ export default class ApiService {
         const response = await axios.put(`${this.BASE_URL}/api/reviews/${reviewId}/reply`, {}, {
             headers: this.getHeader(),
             params: { reply }
+        });
+        return response.data;
+    }
+
+    static async deleteReview(reviewId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/reviews/${reviewId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async deleteReviewReply(reviewId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/reviews/${reviewId}/reply`, {
+            headers: this.getHeader()
         });
         return response.data;
     }

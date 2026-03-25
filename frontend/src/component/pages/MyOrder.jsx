@@ -8,7 +8,8 @@ const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedOrderId, setExpandedOrderId] = useState(null);
+
+  const [activeTab, setActiveTab] = useState("ALL");
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
@@ -29,32 +30,89 @@ const MyOrdersPage = () => {
     }
   };
 
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
-  const paginatedOrders = orders.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const toggleDetails = (orderId) => {
-    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
-  };
-
   const getStatusText = (status) => {
     switch (status) {
-      case "COMPLETED":
-        return "Hoàn thành";
       case "PENDING":
-        return "Đang xử lý";
+        return "Chờ xác nhận";
+      case "CONFIRMED":
+        return "Chờ vận chuyển";
+      case "SHIPPED":
+        return "Đã vận chuyển";
       case "CANCELLED":
         return "Đã hủy";
+      case "RETURNED":
+        return "Đã trả hàng";
       default:
         return status;
     }
   };
 
+  const filterOrders = () => {
+    switch (activeTab) {
+      case "ALL":
+        return orders;
+      case "PENDING":
+        return orders.filter(order => order.status === "PENDING");
+      case "CONFIRMED":
+        return orders.filter(order => order.status === "CONFIRMED");
+      case "REVIEW":
+        return orders.filter(order => order.status === "SHIPPED");
+      case "RETURN":
+        return orders.filter(order => order.status === "RETURNED");
+      default:
+        return orders;
+    }
+  };
+
+  const filteredOrders = filterOrders();
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="profile-page">
       <h2>Đơn hàng của tôi</h2>
+
+      {/* Tab Navigation */}
+      <div className="order-tabs">
+        <button
+          className={`order-tab ${activeTab === "ALL" ? "active" : ""}`}
+          onClick={() => handleTabChange("ALL")}
+        >
+          Tất cả
+        </button>
+        <button
+          className={`order-tab ${activeTab === "PENDING" ? "active" : ""}`}
+          onClick={() => handleTabChange("PENDING")}
+        >
+          Chờ xác nhận
+        </button>
+        <button
+          className={`order-tab ${activeTab === "CONFIRMED" ? "active" : ""}`}
+          onClick={() => handleTabChange("CONFIRMED")}
+        >
+          Chờ vận chuyển
+        </button>
+        <button
+          className={`order-tab ${activeTab === "REVIEW" ? "active" : ""}`}
+          onClick={() => handleTabChange("REVIEW")}
+        >
+          Đánh giá
+        </button>
+        <button
+          className={`order-tab ${activeTab === "RETURN" ? "active" : ""}`}
+          onClick={() => handleTabChange("RETURN")}
+        >
+          Trả hàng
+        </button>
+      </div>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -77,17 +135,26 @@ const MyOrdersPage = () => {
               </span>
             </div>
 
+            {/* 🔥 CHI TIẾT SẢN PHẨM */}
+            <ul className="order-items-list">
+              {order.orderItemList?.map((item) => (
+                <li key={item.id} className="order-item">
+                  <img
+                    src={item.product?.imageUrl}
+                    alt={item.product?.name}
+                  />
+
+                  <div className="order-item-info">
+                    <p><strong>{item.product?.name}</strong></p>
+                    <p>Số lượng: {item.quantity}</p>
+                    <p>Giá: {item.price?.toLocaleString("vi-VN")}đ</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
             {/* 🔥 BUTTON */}
             <div className="order-actions">
-              <button
-                className="order-btn"
-                onClick={() => toggleDetails(order.id)}
-              >
-                {expandedOrderId === order.id
-                  ? "Ẩn chi tiết"
-                  : "Xem chi tiết"}
-              </button>
-
               <button
                 className="review-btn"
                 onClick={() =>
@@ -99,27 +166,6 @@ const MyOrdersPage = () => {
                 Đánh giá
               </button>
             </div>
-
-            {/* 🔥 CHI TIẾT */}
-            {expandedOrderId === order.id && (
-              <ul className="order-items-list">
-                {order.orderItemList?.map((item) => (
-                  <li key={item.id} className="order-item">
-                    <img
-                      src={item.product?.imageUrl}
-                      alt={item.product?.name}
-                    />
-
-                    <div className="order-item-info">
-                      <p><strong>{item.product?.name}</strong></p>
-                      <p>Số lượng: {item.quantity}</p>
-                      <p>Giá: {item.price?.toLocaleString("vi-VN")}đ</p>
-                    </div>
-
-                  </li>
-                ))}
-              </ul>
-            )}
           </li>
         ))}
       </ul>

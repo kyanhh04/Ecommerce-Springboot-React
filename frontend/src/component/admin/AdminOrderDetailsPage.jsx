@@ -85,7 +85,6 @@ const AdminOrderDetailsPage = () => {
                             <p><span>Quận/Huyện:</span>{orderItem.user?.address?.state}</p>
                             <p><span>Thành phố:</span>{orderItem.user?.address?.city}</p>
                             <p><span>Đường:</span>{orderItem.user?.address?.street}</p>
-                            <p><span>Zip:</span>{orderItem.user?.address?.zipCode}</p>
                         </div>
                     </div>
 

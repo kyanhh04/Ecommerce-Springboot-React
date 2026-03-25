@@ -22,6 +22,8 @@ public class ReviewDto {
 
     private Long productId;
     private String productName;
+    private Long categoryId;
+    private String categoryName;
     private Long userId;
     private String userName;
 }

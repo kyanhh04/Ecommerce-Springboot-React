@@ -29,7 +29,6 @@
         </rollback>
     </changeSet>
 
-    <!-- Insert Admin Address -->
     <changeSet id="002-insert-admin-address" author="system">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="1">

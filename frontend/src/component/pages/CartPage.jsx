@@ -12,6 +12,7 @@ const CartPage = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [displayCount, setDisplayCount] = useState(5);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [isProcessing, setIsProcessing] = useState(false);
   const hasUserInteractedRef = useRef(false);
   const navigate = useNavigate();
 
@@ -144,27 +145,30 @@ const CartPage = () => {
       return;
     }
 
-    if (selectedItems.length === 0) {
+    if (selectedItems.length === 0 || isProcessing) {
       return;
     }
 
-    const orderItems = selectedItems.map((item) => ({
-      productId: item.id,
-      quantity: item.quantity,
-    }));
-    const orderRequest = {
-      totalPrice: finalPrice,
-      items: orderItems,
-      discountCode: discount?.code || null,
-      paymentMethod: paymentMethod,
-    };
+    setIsProcessing(true);
 
-    if (paymentMethod === "cash") {
-      try {
-        const response = await ApiService.createOrder(orderRequest);
-        if (response.status === 200 && response.order) {
-          const newOrderId = response.order.id;
-          
+    try {
+      const orderItems = selectedItems.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+      const orderRequest = {
+        totalPrice: finalPrice,
+        items: orderItems,
+        discountCode: discount?.code || null,
+        paymentMethod: paymentMethod,
+      };
+
+      const response = await ApiService.createOrder(orderRequest);
+      
+      if (response.status === 200 && response.order) {
+        const newOrderId = response.order.id;
+        
+        if (paymentMethod === "cash") {
           // Clear selected items from cart
           dispatch({ type: "REMOVE_ITEMS", payload: { ids: selectedIds } });
           
@@ -178,16 +182,8 @@ const CartPage = () => {
               }
             }
           });
-        }
-      } catch (error) {
-        console.error("Đặt hàng thất bại:", error);
-      }
-    } else {
-      // Chuyển khoản: chuyển đến trang thanh toán
-      try {
-        const response = await ApiService.createOrder(orderRequest);
-        if (response.status === 200 && response.order) {
-          const newOrderId = response.order.id;
+        } else {
+          // Chuyển khoản: chuyển đến trang thanh toán
           navigate("/payment", {
             state: {
               orderId: newOrderId,
@@ -197,10 +193,10 @@ const CartPage = () => {
             },
           });
         }
-        // Không hiển thị thông báo
-      } catch (error) {
-        // Không hiển thị thông báo
       }
+    } catch (error) {
+      console.error("Đặt hàng thất bại:", error);
+      setIsProcessing(false);
     }
   };
 
@@ -257,12 +253,28 @@ const CartPage = () => {
                 </div>
               </div>
               {displayedCart.map((item) => (
-                <div className="cart-item" key={item.id}>
+                <div 
+                  className="cart-item" 
+                  key={item.id}
+                  onClick={(e) => {
+                    // Không toggle nếu click vào button hoặc input
+                    if (
+                      e.target.tagName === 'BUTTON' || 
+                      e.target.tagName === 'INPUT' ||
+                      e.target.closest('button')
+                    ) {
+                      return;
+                    }
+                    toggleSelect(item.id);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="cart-select">
                     <input
                       type="checkbox"
                       checked={selectedIds.includes(item.id)}
                       onChange={() => toggleSelect(item.id)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
                   <img src={item.imageUrl} alt={item.name} />
@@ -271,9 +283,15 @@ const CartPage = () => {
                     <p>{item.description}</p>
                   </div>
                   <div className="quantity-controls">
-                    <button onClick={() => decrementItem(item)}>-</button>
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      decrementItem(item);
+                    }}>-</button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => incrementItem(item)}>+</button>
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      incrementItem(item);
+                    }}>+</button>
                   </div>
                   <div className="cart-price">
                     {item.price.toLocaleString()} ₫
@@ -357,6 +375,7 @@ const CartPage = () => {
                       value="cash"
                       checked={paymentMethod === "cash"}
                       onChange={() => setPaymentMethod("cash")}
+                      disabled={isProcessing}
                     />
                     Tiền mặt khi nhận hàng
                   </label>
@@ -367,6 +386,7 @@ const CartPage = () => {
                       value="bank"
                       checked={paymentMethod === "bank"}
                       onChange={() => setPaymentMethod("bank")}
+                      disabled={isProcessing}
                     />
                     Chuyển khoản ngân hàng
                   </label>
@@ -376,10 +396,10 @@ const CartPage = () => {
                 <button
                   className="checkout-button"
                   onClick={handleCheckout}
-                  disabled={selectedItems.length === 0}
+                  disabled={selectedItems.length === 0 || isProcessing}
                   type="button"
                 >
-                  Đặt hàng đã chọn
+                  {isProcessing ? "Đang xử lý..." : "Đặt hàng đã chọn"}
                 </button>
               </div>
             </div>

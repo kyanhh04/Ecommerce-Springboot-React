@@ -3,7 +3,7 @@ import "../../style/navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 
-import { FaUser, FaShoppingCart, FaHeart } from "react-icons/fa";
+import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
 import { FiSearch } from "react-icons/fi";
 import { useCart } from "../context/CartContext";
@@ -14,6 +14,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const userMenuRef = useRef();
   const navigate = useNavigate();
@@ -81,12 +82,18 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    const confirmLogout = window.confirm("Bạn có chắc muốn đăng xuất không?");
-    if (confirmLogout) {
-      ApiService.logout();
-      setShowUserMenu(false);
-      navigate("/login");
-    }
+    setShowLogoutModal(true);
+    setShowUserMenu(false);
+  };
+
+  const confirmLogout = () => {
+    ApiService.logout();
+    setShowLogoutModal(false);
+    navigate("/login");
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   // Click outside để đóng user menu
@@ -103,7 +110,10 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="logo">
-        <NavLink to="/">TechNova</NavLink>
+        <NavLink to="/">
+          <div className="logo-icon">TN</div>
+          <span className="logo-text">TechNova</span>
+        </NavLink>
       </div>
 
       <form className="search-box" onSubmit={handleSearchSubmit}>
@@ -136,27 +146,10 @@ const Navbar = () => {
       </form>
 
       <div className="menu">
-        <NavLink to="/">Trang chủ</NavLink>
-        <NavLink to="/categories">Danh mục</NavLink>
+        {/* Menu items removed - navigation through logo and icons */}
       </div>
 
       <div className="icons">
-        {isAuthenticated && (
-          <div className="user-menu" ref={userMenuRef}>
-            <FaUser
-              className="user-icon"
-              onClick={() => setShowUserMenu(!showUserMenu)}
-            />
-            {showUserMenu && (
-              <div className="user-dropdown">
-                <div onClick={() => { navigate("/profile"); setShowUserMenu(false); }}>Tài khoản cá nhân</div>
-                <div onClick={() => { navigate("/my-orders"); setShowUserMenu(false); }}>Đơn hàng của tôi</div>
-                <div onClick={handleLogout}>Đăng xuất</div>
-              </div>
-            )}
-          </div>
-        )}
-
         <NavLink to="/wishlist" className="wishlist">
           <FaHeart />
           {wishlistCount > 0 && (
@@ -172,7 +165,54 @@ const Navbar = () => {
         </NavLink>
 
         {isAdmin && <NavLink to="/admin"><RiAdminFill /></NavLink>}
+
+        {isAuthenticated ? (
+          <div className="user-menu" ref={userMenuRef}>
+            <button 
+              className="hamburger-user"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            {showUserMenu && (
+              <div className="user-dropdown">
+                <div onClick={() => { navigate("/profile"); setShowUserMenu(false); }}>Tài khoản cá nhân</div>
+                <div onClick={() => { navigate("/my-orders"); setShowUserMenu(false); }}>Đơn hàng của tôi</div>
+                <div onClick={handleLogout}>Đăng xuất</div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="auth-buttons">
+            <button className="login-btn" onClick={() => navigate("/login")}>
+              Đăng nhập
+            </button>
+            <button className="register-btn" onClick={() => navigate("/register")}>
+              Đăng ký
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="logout-modal-overlay" onClick={cancelLogout}>
+          <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Xác nhận đăng xuất</h3>
+            <p>Bạn có chắc muốn đăng xuất không?</p>
+            <div className="logout-modal-actions">
+              <button className="logout-btn-cancel" onClick={cancelLogout}>
+                Hủy
+              </button>
+              <button className="logout-btn-confirm" onClick={confirmLogout}>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

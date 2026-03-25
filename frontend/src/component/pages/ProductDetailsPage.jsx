@@ -31,6 +31,8 @@ const [rating, setRating] = useState(0);
 const [hover, setHover] = useState(0);
 const [content, setContent] = useState("");
 const [showToast, setShowToast] = useState(false);
+const [showLoginModal, setShowLoginModal] = useState(false);
+const [loginModalType, setLoginModalType] = useState("cart"); // "cart" or "wishlist"
 
 useEffect(() => {
 
@@ -68,7 +70,8 @@ useEffect(() => {
 
 const toggleWishlist = async () => {
     if (!ApiService.isAuthenticated()) {
-        alert("Vui lòng đăng nhập để thêm vào yêu thích");
+        setLoginModalType("wishlist");
+        setShowLoginModal(true);
         return;
     }
     try {
@@ -86,12 +89,22 @@ const toggleWishlist = async () => {
 };
 
 const addToCart = () => {
+    if (!ApiService.isAuthenticated()) {
+        setLoginModalType("cart");
+        setShowLoginModal(true);
+        return;
+    }
     dispatch({ type: "ADD_ITEM", payload: { ...product, quantity } });
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
 };
 
 const buyNow = () => {
+    if (!ApiService.isAuthenticated()) {
+        setLoginModalType("cart");
+        setShowLoginModal(true);
+        return;
+    }
     // Add to cart
     dispatch({
         type: "ADD_ITEM",
@@ -101,6 +114,14 @@ const buyNow = () => {
     localStorage.setItem("autoSelectProductId", product.id.toString());
     // Navigate to cart page
     navigate("/cart");
+};
+
+const handleLoginRedirect = () => {
+    navigate("/login", { state: { from: `/product/${productId}` } });
+};
+
+const handleRegisterRedirect = () => {
+    navigate("/register", { state: { from: `/product/${productId}` } });
 };
 
 const incrementQuantity = () => {
@@ -162,6 +183,41 @@ return (
     {showToast && (
         <div className="toast-notification">
             ✓ Đã thêm {quantity} sản phẩm vào giỏ hàng
+        </div>
+    )}
+
+    {showLoginModal && (
+        <div className="login-modal-overlay" onClick={() => setShowLoginModal(false)}>
+            <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+                <button 
+                    className="modal-close-btn"
+                    onClick={() => setShowLoginModal(false)}
+                    aria-label="Đóng"
+                >
+                    ✕
+                </button>
+                <div className="modal-icon">
+                    {loginModalType === "cart" ? "🛒" : "❤️"}
+                </div>
+                <h3>Yêu cầu đăng nhập</h3>
+                <p>
+                    {loginModalType === "cart" 
+                        ? "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng"
+                        : "Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích"
+                    }
+                </p>
+                <div className="modal-actions">
+                    <button className="modal-btn-login" onClick={handleLoginRedirect}>
+                        Đăng nhập
+                    </button>
+                    <button className="modal-btn-register" onClick={handleRegisterRedirect}>
+                        Đăng ký
+                    </button>
+                </div>
+                <button className="modal-btn-cancel" onClick={() => setShowLoginModal(false)}>
+                    Tiếp tục xem sản phẩm
+                </button>
+            </div>
         </div>
     )}
 

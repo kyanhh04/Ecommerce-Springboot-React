@@ -1,80 +1,299 @@
-/* ===== ORDER CARD ===== */
-.order-card {
-  border-bottom: 1px solid #ddd;
-  padding: 15px 0;
+/* ===== MY ORDERS PAGE - Following MASTER.md Design System ===== */
+
+/* Main Order List */
+.main-order-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* ===== ROW INFO ===== */
+/* Order Card - Glassmorphism Style */
+.order-card {
+  background: #F8FAFC;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 200ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.order-card:hover {
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+/* Order Row Info */
 .order-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
-  font-weight:500;
-}
-
-/* ===== PRICE ===== */
-.order-price {
-  color: #f68b1e;
   font-weight: 500;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #020617;
+  gap: 16px;
+  flex-wrap: wrap;
 }
-.order-btn, .review-btn{
-width:150px;
-background-color: #f68b1e;
-  padding: 10px 24px;
+
+/* Order Price - Using CTA Color */
+.order-price {
+  color: #0369A1;
   font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
-}
-.order-btn:hover,.review-btn:hover {
-  background-color: #d97706;
-  transform: translateY(-1px);
+  font-size: 18px;
 }
 
-/* ===== STATUS ===== */
-
-
-.order-status.COMPLETED {
-  color: green;
+/* Order Status */
+.order-status {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 .order-status.PENDING {
-  color: orange;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.order-status.CONFIRMED {
+  color: #0369A1;
+  background: rgba(3, 105, 161, 0.1);
+}
+
+.order-status.SHIPPED {
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.1);
 }
 
 .order-status.CANCELLED {
-  color: red;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
 }
 
-/* ===== ACTION BUTTONS ===== */
+.order-status.RETURNED {
+  color: #9333ea;
+  background: rgba(147, 51, 234, 0.1);
+}
+
+/* Action Buttons */
 .order-actions {
-  margin-top: 10px;
+  margin-top: 16px;
   display: flex;
-  gap: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-/* ===== EXPAND LIST ===== */
-.order-items-list {
-  margin-top: 15px;
-}
-
-.order-item {
-  display: flex; /* Ảnh trái, chữ phải */
-  align-items: center;
-  background-color: #f8fafc;
-  padding: 12px;
+/* Primary Button - Following MASTER.md */
+.order-btn {
+  background: #0369A1;
+  color: white;
+  padding: 12px 24px;
   border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  min-width: 150px;
+}
+
+.order-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Secondary Button - Following MASTER.md */
+.review-btn {
+  background: transparent;
+  color: #0F172A;
+  border: 2px solid #0F172A;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  min-width: 150px;
+}
+
+.review-btn:hover {
+  background: #0F172A;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Order Items List */
+.order-items-list {
+  margin-top: 24px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Order Item Card */
+.order-item {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 200ms ease;
+  border: 1px solid #E2E8F0;
+}
+
+.order-item:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .order-item img {
-  width: 250px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-right: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E2E8F0;
+  flex-shrink: 0;
+}
+
+/* Order Item Info */
+.order-item-info {
+  flex: 1;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.order-item-info p {
+  margin: 8px 0;
+  color: #334155;
+  font-size: 15px;
+}
+
+.order-item-info p strong {
+  color: #0F172A;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .order-actions {
+    width: 100%;
+  }
+
+  .order-btn,
+  .review-btn {
+    flex: 1;
+    min-width: auto;
+  }
+
+  .order-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .order-item img {
+    margin-right: 0;
+    margin-bottom: 12px;
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+  }
+}
+
+/* Accessibility - Focus States */
+.order-btn:focus,
+.review-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .order-card,
+  .order-btn,
+  .review-btn,
+  .order-item {
+    transition: none;
+  }
+}
+
+/* Order Tabs - TikTok Shop Style */
+.order-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 32px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+.order-tab {
+  flex: 1;
+  padding: 12px 24px;
+  background: transparent;
+  color: #334155;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  border-radius: 8px;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.order-tab:hover {
+  background: rgba(3, 105, 161, 0.1);
+  color: #0369A1;
+}
+
+.order-tab.active {
+  background: #0369A1;
+  color: white;
+  box-shadow: 0 2px 4px rgba(3, 105, 161, 0.3);
+}
+
+.order-tab:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
+}
+
+/* Responsive Tabs */
+@media (max-width: 768px) {
+  .order-tabs {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .order-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-tabs {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .order-tab {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-width: 90px;
+  }
 }

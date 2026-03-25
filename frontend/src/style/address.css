@@ -1,48 +1,115 @@
-.address-page{
+/* ===== ADDRESS PAGE - Following MASTER.md Design System ===== */
+
+.address-page {
     max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 1 0 10p rgba(0, 0, 0, 0.1);
+    margin: 40px auto;
+    padding: 32px;
+    background: #F8FAFC;
+    border-radius: 16px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.address-page h2{
+.address-page h2 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
+    margin-bottom: 32px;
+    font-size: 28px;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    color: #0F172A;
 }
-.address-page form{
+
+.address-page form {
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
-.address-page label{
-    margin-bottom: 10px;
-    font-weight: bold;
+
+.address-page label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #334155;
+    font-size: 15px;
+    gap: 8px;
 }
-.address-page input{
-    padding: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+
+/* Input Fields - Following MASTER.md */
+.address-page input {
+    padding: 12px 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
     font-size: 16px;
-    width: 99%;
+    font-family: 'Nunito Sans', sans-serif;
+    transition: all 200ms ease;
+    background: white;
+    color: #020617;
 }
-.address-page button{
-    padding: 10px 20px;
-    background-color: #f68b1e;
+
+.address-page input:focus {
+    border-color: #0F172A;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.address-page input:hover {
+    border-color: #cbd5e1;
+}
+
+/* Submit Button - Primary Style */
+.address-page button {
+    padding: 12px 24px;
+    background: #0369A1;
     color: white;
-    border-radius: 4px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     font-size: 16px;
-}
-.address-page button:hover{
-    background-color: #8c4d0e;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    transition: all 200ms ease;
+    margin-top: 8px;
 }
 
-.error-message{
-    color: red;
-    margin-bottom: 20px;
+.address-page button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.address-page button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
+}
+
+/* Error Message */
+.error-message {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+    padding: 12px 16px;
+    border-radius: 8px;
     text-align: center;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .address-page {
+        margin: 20px;
+        padding: 24px;
+    }
+
+    .address-page h2 {
+        font-size: 24px;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .address-page input,
+    .address-page button {
+        transition: none;
+    }
 }

@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
-import { FaLaptop, FaKeyboard, FaHeadphones, FaHdd } from "react-icons/fa";
+import { FaLaptop, FaKeyboard, FaHeadphones, FaHdd, FaCheckCircle } from "react-icons/fa";
 import { BsMouse } from "react-icons/bs";
+import { HiX } from "react-icons/hi";
 import "../../style/home.css";
 
 const Home = () => {
@@ -13,68 +14,62 @@ const Home = () => {
 
   const [products, setProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-
+  const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
   const [error, setError] = useState(null);
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [orderSuccessData, setOrderSuccessData] = useState(null);
 
   const itemsPerPage = 8;
 
-  // 🔥 SLIDER DATA (đã thêm categoryId)
   const slides = [
     {
-      title: "Tai nghe cao cấp",
-      img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800",
-      categoryId: 4,
+      title: "Chuột gaming",
+      subtitle: "Độ chính xác tuyệt đối",
+      img: "https://images.unsplash.com/photo-1527814050087-3793815479db",
+      categoryId: 2, // Chuột
     },
     {
       title: "Bàn phím cơ",
+      subtitle: "Nâng tầm trải nghiệm gõ phím",
       img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae",
-      categoryId: 3,
+      categoryId: 3, // Bàn phím
     },
     {
-      title: "Chuột gaming",
-      img: "https://images.unsplash.com/photo-1527814050087-3793815479db",
-      categoryId: 2,
+      title: "Tai nghe cao cấp",
+      subtitle: "Trải nghiệm âm thanh đỉnh cao",
+      img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800",
+      categoryId: 4, // Tai nghe
     },
     {
       title: "Ổ cứng SSD",
+      subtitle: "Tốc độ vượt trội",
       img: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1600",
-      categoryId: 5,
+      categoryId: 5, // Ổ cứng
     },
     {
       title: "Laptop Gaming",
-      img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800",
-      categoryId: 1,
+      subtitle: "Hiệu năng mạnh mẽ",
+      img: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1600",
+      categoryId: 1, // Laptop
     },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // 🔥 AUTO SLIDE
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 10000);
-
+    }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slides.length]);
 
-  // Check for order success notification
   useEffect(() => {
     if (location.state?.orderSuccess) {
       setOrderSuccessData(location.state.orderSuccess);
       setShowSuccessNotification(true);
-      
-      // Auto hide after 8 seconds
-      setTimeout(() => {
-        setShowSuccessNotification(false);
-      }, 8000);
-      
-      // Clear location state
+      setTimeout(() => setShowSuccessNotification(false), 8000);
       window.history.replaceState({}, document.title);
     }
   }, [location]);
@@ -87,7 +82,6 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         let allProducts = [];
-
         const queryParams = new URLSearchParams(location.search);
         const searchItem = queryParams.get("search");
 
@@ -101,7 +95,6 @@ const Home = () => {
 
         setFeaturedProducts(allProducts.slice(0, 4));
         setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-
         setProducts(
           allProducts.slice(
             (currentPage - 1) * itemsPerPage,
@@ -116,38 +109,59 @@ const Home = () => {
         );
       }
     };
-
     fetchProducts();
   }, [location.search, currentPage]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await ApiService.getAllCategory();
+        setCategories(response.categoryList || []);
+      } catch (error) {
+        console.error("Không thể tải danh mục:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <div className="home">
-      {/* Success Notification */}
       {showSuccessNotification && orderSuccessData && (
         <div className="success-notification">
-          <div className="success-content">
-            <div className="success-text">
-              <h3> Đặt hàng thành công!</h3>
-              <p>Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng của chúng tôi.</p>
-              <p>Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến tay bạn.</p>
-              <div className="order-details">
-                <span className="detail-item"> Mã đơn hàng: <strong>#{orderSuccessData.orderId}</strong></span>
-                <span className="detail-item"> Tổng tiền: <strong>{orderSuccessData.amount?.toLocaleString()}đ</strong></span>
-              </div>
-              {orderSuccessData.paymentMethod === "CASH" ? (
-                <p className="payment-note"> Vui lòng chuẩn bị tiền mặt khi nhận hàng</p>
-              ) : (
-                <p className="payment-note"> Thanh toán đã được xác nhận</p>
-              )}
-              <p className="tracking-note">Chúng tôi sẽ gửi email xác nhận sau khi đơn hàng được xác nhận.</p>
-              <p className="tracking-note">Bạn có thể theo dõi trạng thái đơn hàng trong mục "Đơn hàng của tôi".</p>
-            </div>
+          <div className="success-card">
             <button 
-              className="close-notification"
+              className="close-btn"
               onClick={() => setShowSuccessNotification(false)}
+              aria-label="Đóng thông báo"
             >
-              ✕
+              <HiX />
             </button>
+            
+            <div className="success-icon">
+              <FaCheckCircle />
+            </div>
+            
+            <h3>Đặt hàng thành công!</h3>
+            <p className="success-message">
+              Cảm ơn bạn đã tin tưởng. Đơn hàng đang được xử lý.
+            </p>
+            
+            <div className="order-info">
+              <div className="info-row">
+                <span className="label">Mã đơn hàng</span>
+                <span className="value">#{orderSuccessData.orderId}</span>
+              </div>
+              <div className="info-row">
+                <span className="label">Tổng tiền</span>
+                <span className="value">{orderSuccessData.amount?.toLocaleString()}đ</span>
+              </div>
+            </div>
+
+            {orderSuccessData.paymentMethod === "CASH" ? (
+              <p className="payment-note">Vui lòng chuẩn bị tiền mặt khi nhận hàng</p>
+            ) : (
+              <p className="payment-note">Thanh toán đã được xác nhận</p>
+            )}
           </div>
         </div>
       )}
@@ -159,101 +173,78 @@ const Home = () => {
               key={index}
               className={`hero-slide ${index === currentSlide ? "active" : ""}`}
             >
-              <img src={slide.img} alt="banner" className="hero-bg" />
-
+              <img src={slide.img} alt={slide.title} className="hero-bg" />
               <div className="hero-overlay">
-                <span className="hero-subtitle">BỘ SƯU TẬP MỚI</span>
-                <h1>{slide.title}</h1>
-                <button
-                  className="hero-btn primary"
-                  onClick={() => navigate(`/category/${slide.categoryId}`)}
-                >
-                  Khám phá ngay
-                </button>
+                <div className="hero-content">
+                  <span className="hero-label">Bộ sưu tập mới</span>
+                  <h1 className="hero-title">{slide.title}</h1>
+                  <p className="hero-subtitle">{slide.subtitle}</p>
+                  <button
+                    className="hero-btn"
+                    onClick={() => {
+                      const productSection = document.getElementById('product-section');
+                      if (productSection) {
+                        productSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                  >
+                    Khám phá ngay
+                  </button>
+                </div>
               </div>
             </div>
           ))}
 
-          {/* DOTS */}
           <div className="slider-dots">
             {slides.map((_, index) => (
-              <span
+              <button
                 key={index}
-                className={index === currentSlide ? "dot active" : "dot"}
+                className={`dot ${index === currentSlide ? "active" : ""}`}
                 onClick={() => setCurrentSlide(index)}
-              ></span>
+                aria-label={`Chuyển đến slide ${index + 1}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CATEGORY */}
-      <section className="category-section">
-        <h2>Mua sắm theo danh mục</h2>
-
+      <section className="category-section" id="category-section">
+        <div className="section-header">
+          <h2>Danh mục sản phẩm</h2>
+          <p>Khám phá các danh mục phổ biến</p>
+        </div>
         <div className="category-grid">
-          <div
-            className="category-card"
-            onClick={() => navigate("/category/1")}
-          >
-            <div className="category-icon">
-              <FaLaptop />
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className="category-card"
+              onClick={() => navigate(`/category/${category.id}`)}
+            >
+              <div className="category-icon">
+                {category.id === 1 && <FaLaptop />}
+                {category.id === 2 && <BsMouse />}
+                {category.id === 3 && <FaKeyboard />}
+                {category.id === 4 && <FaHeadphones />}
+                {category.id === 5 && <FaHdd />}
+              </div>
+              <h3>{category.name}</h3>
             </div>
-            <p>Laptop</p>
-          </div>
-
-          <div
-            className="category-card"
-            onClick={() => navigate("/category/2")}
-          >
-            <div className="category-icon">
-              <BsMouse />
-            </div>
-            <p>Chuột</p>
-          </div>
-
-          <div
-            className="category-card"
-            onClick={() => navigate("/category/3")}
-          >
-            <div className="category-icon">
-              <FaKeyboard />
-            </div>
-            <p>Bàn phím</p>
-          </div>
-
-          <div
-            className="category-card"
-            onClick={() => navigate("/category/4")}
-          >
-            <div className="category-icon">
-              <FaHeadphones />
-            </div>
-            <p>Tai nghe</p>
-          </div>
-
-          <div
-            className="category-card"
-            onClick={() => navigate("/category/5")}
-          >
-            <div className="category-icon">
-              <FaHdd />
-            </div>
-            <p>Ổ cứng</p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* FEATURED */}
       <section className="featured-section">
-        <h2>Sản phẩm nổi bật</h2>
-        <h4> Tuyển tập những sản phẩm hiện đại, hiệu năng cao</h4>
+        <div className="section-header">
+          <h2>Sản phẩm nổi bật</h2>
+          <p>Tuyển chọn những sản phẩm chất lượng cao</p>
+        </div>
         <ProductList products={featuredProducts} />
       </section>
 
-      {/* ALL PRODUCTS */}
-      <section className="product-section">
-        <h2>Tất cả sản phẩm</h2>
+      <section className="product-section" id="product-section">
+        <div className="section-header">
+          <h2>Tất cả sản phẩm</h2>
+        </div>
 
         {error ? (
           <p className="error-message">{error}</p>

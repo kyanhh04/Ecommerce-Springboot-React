@@ -8,5 +8,7 @@ public interface ReviewService {
     Response getReviewsByProduct(Long productId);
     Response getAllReviews();
     Response addReply(Long reviewId, String reply);
+    Response deleteReview(Long reviewId);
+    Response deleteReply(Long reviewId);
 }
 

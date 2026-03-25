@@ -260,23 +260,25 @@
 .summary-section {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 24px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  max-height: fit-content;
+  align-self: start;
 }
 
 .summary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 2px solid #ecf0f1;
 }
 
 .summary-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   color: #2c3e50;
   margin: 0;
   font-weight: 600;
@@ -287,12 +289,12 @@
 
 /* Payment Page Specific Styles */
 .payment-product-list {
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .payment-product-list::-webkit-scrollbar {
@@ -316,8 +318,8 @@
 .payment-product-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 12px;
+  gap: 12px;
+  padding: 10px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   background: white;
@@ -329,8 +331,8 @@
 }
 
 .payment-product-item .product-image {
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 8px;
   flex-shrink: 0;
@@ -343,11 +345,11 @@
 }
 
 .payment-product-item .product-info h4 {
-  margin: 0 0 6px 0;
-  font-size: 15px;
+  margin: 0 0 4px 0;
+  font-size: 14px;
   font-weight: 600;
   color: #1f2937;
-  line-height: 1.4;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -357,12 +359,12 @@
 
 .payment-product-item .product-info p {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
 }
 
 .payment-product-item .product-price {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #f68b1e;
   flex-shrink: 0;
@@ -376,7 +378,7 @@
   background: #f8f9fa;
   padding: 20px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .summary-row {
@@ -432,7 +434,7 @@
   padding: 15px;
   background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .security-icon {
@@ -576,6 +578,8 @@
 
   .summary-section {
     position: static;
+    min-height: auto;
+    padding: 30px;
   }
 
   .page-title {

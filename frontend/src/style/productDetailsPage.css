@@ -531,3 +531,212 @@
     margin-top:6px;
     font-weight:500;
 }
+
+/* Login Modal - Following MASTER.md Design System */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeInOverlay 200ms ease;
+}
+
+.login-modal {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+    max-width: 500px;
+    width: 90%;
+    animation: slideUpModal 200ms ease;
+    position: relative;
+    text-align: center;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #334155;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 200ms ease;
+}
+
+.modal-close-btn:hover {
+    background: #F8FAFC;
+    color: #0F172A;
+}
+
+.modal-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.login-modal h3 {
+    font-family: 'Rubik', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #0F172A;
+    margin: 0 0 12px 0;
+}
+
+.login-modal p {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 16px;
+    color: #334155;
+    margin: 0 0 32px 0;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-btn-login,
+.modal-btn-register {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    cursor: pointer;
+    transition: all 200ms ease;
+    font-size: 16px;
+    border: none;
+}
+
+/* Primary Button - CTA Color */
+.modal-btn-login {
+    background: #0369A1;
+    color: white;
+}
+
+.modal-btn-login:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Secondary Button */
+.modal-btn-register {
+    background: transparent;
+    color: #0F172A;
+    border: 2px solid #0F172A;
+}
+
+.modal-btn-register:hover {
+    background: #0F172A;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.modal-btn-cancel {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-family: 'Nunito Sans', sans-serif;
+    cursor: pointer;
+    transition: all 200ms ease;
+    font-size: 15px;
+    background: transparent;
+    color: #334155;
+    border: none;
+}
+
+.modal-btn-cancel:hover {
+    color: #0F172A;
+    background: #F8FAFC;
+}
+
+/* Focus States for Accessibility */
+.modal-btn-login:focus,
+.modal-btn-register:focus,
+.modal-btn-cancel:focus,
+.modal-close-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.2);
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpModal {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-modal {
+        padding: 24px;
+        max-width: 90%;
+    }
+
+    .login-modal h3 {
+        font-size: 24px;
+    }
+
+    .login-modal p {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .modal-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-btn-login,
+    .modal-btn-register {
+        width: 100%;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .login-modal-overlay,
+    .login-modal,
+    .modal-btn-login,
+    .modal-btn-register,
+    .modal-btn-cancel,
+    .modal-close-btn {
+        animation: none;
+        transition: none;
+    }
+}

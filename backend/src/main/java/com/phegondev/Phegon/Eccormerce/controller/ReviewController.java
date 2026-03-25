@@ -41,5 +41,19 @@ public class ReviewController {
         Response response = reviewService.addReply(reviewId, reply);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
+    @DeleteMapping("/{reviewId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> deleteReview(@PathVariable Long reviewId) {
+        Response response = reviewService.deleteReview(reviewId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/{reviewId}/reply")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> deleteReply(@PathVariable Long reviewId) {
+        Response response = reviewService.deleteReply(reviewId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }
 

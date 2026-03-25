@@ -174,6 +174,10 @@ public class EntityDtoMapper {
         if (review.getProduct() != null) {
             dto.setProductId(review.getProduct().getId());
             dto.setProductName(review.getProduct().getName());
+            if (review.getProduct().getCategory() != null) {
+                dto.setCategoryId(review.getProduct().getCategory().getId());
+                dto.setCategoryName(review.getProduct().getCategory().getName());
+            }
         }
         if (review.getUser() != null) {
             dto.setUserId(review.getUser().getId());

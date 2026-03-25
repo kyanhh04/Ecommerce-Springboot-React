@@ -53,9 +53,26 @@ public class OrderItemServiceImpl implements OrderItemService {
     public Response placeOrder(OrderRequest orderRequest) {
         try {
             User user = userService.getLoginUser();
+            
+            // Fetch all products in one query to avoid N+1 problem
+            List<Long> productIds = orderRequest.getItems().stream()
+                    .map(item -> item.getProductId())
+                    .collect(Collectors.toList());
+            List<Product> products = productRepository.findAllById(productIds);
+            
+            if (products.size() != productIds.size()) {
+                throw new NotFoundException("One or more products not found");
+            }
+            
+            // Create a map for quick lookup
+            var productMap = products.stream()
+                    .collect(Collectors.toMap(Product::getId, p -> p));
+            
             List<OrderItem> orderItems = orderRequest.getItems().stream().map(orderItemRequest -> {
-                Product product = productRepository.findById(orderItemRequest.getProductId())
-                        .orElseThrow(()-> new NotFoundException("Product Not Found"));
+                Product product = productMap.get(orderItemRequest.getProductId());
+                if (product == null) {
+                    throw new NotFoundException("Product Not Found: " + orderItemRequest.getProductId());
+                }
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProduct(product);
                 orderItem.setQuantity(orderItemRequest.getQuantity());
@@ -67,13 +84,15 @@ public class OrderItemServiceImpl implements OrderItemService {
             BigDecimal totalPrice = orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
             
             BigDecimal discountAmount = BigDecimal.ZERO;
+            Discount discount = null;
+            
             if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
                 Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
                 if (discountOpt.isEmpty()) {
                     throw new OurException("Mã giảm giá không tồn tại");
                 }
                 
-                Discount discount = discountOpt.get();
+                discount = discountOpt.get();
                 LocalDateTime now = LocalDateTime.now();
                 if (!discount.getIsActive()) {
                     throw new OurException("Mã giảm giá không còn hoạt động");
@@ -97,9 +116,9 @@ public class OrderItemServiceImpl implements OrderItemService {
                     }
                 }
             }
+            
             BigDecimal finalDiscountAmount = discountAmount;
             if (finalDiscountAmount.compareTo(BigDecimal.ZERO) > 0 && totalPrice.compareTo(BigDecimal.ZERO) > 0) {
-                // Discount is applied at Order level, not distributed to OrderItems
                 totalPrice = totalPrice.subtract(finalDiscountAmount);
             }
             
@@ -109,30 +128,21 @@ public class OrderItemServiceImpl implements OrderItemService {
             order.setDiscountAmount(discountAmount);
             order.setStatus(OrderStatus.PENDING);
             
-            if (orderRequest.getDiscountCode() != null && !orderRequest.getDiscountCode().isEmpty()) {
-                Optional<Discount> discountOpt = discountRepository.findByCode(orderRequest.getDiscountCode().toUpperCase());
-                if (discountOpt.isPresent()) {
-                    Discount discount = discountOpt.get();
-                    order.setDiscount(discount);
-                    order.setDiscountCode(discount.getCode());
-
-                    // Increment discount usage
-                    discount.setCurrentUsage(discount.getCurrentUsage() + 1);
-                    discount.setUpdatedAt(LocalDateTime.now());
-                    discountRepository.save(discount);
-                }
+            if (discount != null) {
+                order.setDiscount(discount);
+                order.setDiscountCode(discount.getCode());
+                
+                discount.setCurrentUsage(discount.getCurrentUsage() + 1);
+                discount.setUpdatedAt(LocalDateTime.now());
+                discountRepository.save(discount);
             }
 
             orderItems.forEach(orderItem -> orderItem.setOrder(order));
             orderRepo.save(order);
     
             if ("cash".equalsIgnoreCase(orderRequest.getPaymentMethod())) {
-                try {
-                    emailService.sendCODOrderConfirmationEmail(user, order);
-                    log.info("COD order confirmation email sent to: {}", user.getEmail());
-                } catch (Exception e) {
-                    log.error("Failed to send COD order confirmation email: {}", e.getMessage());
-                }
+                emailService.sendCODOrderConfirmationEmail(user, order);
+                log.info("COD order confirmation email queued for: {}", user.getEmail());
             }
     
             var orderDto = entityDtoMapper.mapOrderToDtoBasic(order);
