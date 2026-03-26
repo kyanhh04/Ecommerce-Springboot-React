@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import '../../style/adminReview.css';
 import ApiService from "../../service/ApiService";
 import ConfirmDialog from "../common/ConfirmDialog";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 const AdminReviewPage = () => {
     const [reviews, setReviews] = useState([]);
-    const [replyText, setReplyText] = useState({});
+    const [newReplyText, setNewReplyText] = useState({});
     const [editingReply, setEditingReply] = useState({});
+    const [showNewReplyForm, setShowNewReplyForm] = useState({});
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -32,22 +33,32 @@ const AdminReviewPage = () => {
         }
     };
 
-    const handleReplyChange = (reviewId, text) => {
-        setReplyText({ ...replyText, [reviewId]: text });
+    const handleNewReplyChange = (reviewId, text) => {
+        setNewReplyText({ ...newReplyText, [reviewId]: text });
     };
 
-    const handleSubmitReply = async (reviewId) => {
-        const reply = replyText[reviewId]?.trim();
-        if (!reply) {
-            setMessage('Vui lòng nhập trả lời');
+    const handleShowNewReplyForm = (reviewId) => {
+        setShowNewReplyForm({ ...showNewReplyForm, [reviewId]: true });
+    };
+
+    const handleCancelNewReply = (reviewId) => {
+        setShowNewReplyForm({ ...showNewReplyForm, [reviewId]: false });
+        setNewReplyText({ ...newReplyText, [reviewId]: '' });
+    };
+
+    const handleSubmitNewReply = async (reviewId) => {
+        const content = newReplyText[reviewId]?.trim();
+        if (!content) {
+            setMessage('Vui lòng nhập nội dung trả lời');
             setTimeout(() => setMessage(''), 3000);
             return;
         }
         try {
-            await ApiService.addReviewReply(reviewId, reply);
-            setMessage('Đã thêm trả lời');
+            await ApiService.addNewReply(reviewId, content);
+            setMessage('Đã thêm trả lời mới');
             setTimeout(() => setMessage(''), 3000);
-            setReplyText({ ...replyText, [reviewId]: '' });
+            setNewReplyText({ ...newReplyText, [reviewId]: '' });
+            setShowNewReplyForm({ ...showNewReplyForm, [reviewId]: false });
             fetchReviews();
         } catch (error) {
             setMessage(error.response?.data?.message || 'Không thể thêm trả lời');
@@ -55,26 +66,26 @@ const AdminReviewPage = () => {
         }
     };
 
-    const handleEditReply = (reviewId, currentReply) => {
-        setEditingReply({ ...editingReply, [reviewId]: currentReply });
+    const handleEditReply = (replyId, currentContent) => {
+        setEditingReply({ ...editingReply, [replyId]: currentContent });
     };
 
-    const handleCancelEdit = (reviewId) => {
-        setEditingReply({ ...editingReply, [reviewId]: null });
+    const handleCancelEdit = (replyId) => {
+        setEditingReply({ ...editingReply, [replyId]: null });
     };
 
-    const handleUpdateReply = async (reviewId) => {
-        const updatedReply = editingReply[reviewId]?.trim();
-        if (!updatedReply) {
+    const handleUpdateReply = async (replyId) => {
+        const updatedContent = editingReply[replyId]?.trim();
+        if (!updatedContent) {
             setMessage('Vui lòng nhập nội dung trả lời');
             setTimeout(() => setMessage(''), 3000);
             return;
         }
         try {
-            await ApiService.addReviewReply(reviewId, updatedReply);
+            await ApiService.updateReplyById(replyId, updatedContent);
             setMessage('Đã cập nhật trả lời');
             setTimeout(() => setMessage(''), 3000);
-            setEditingReply({ ...editingReply, [reviewId]: null });
+            setEditingReply({ ...editingReply, [replyId]: null });
             fetchReviews();
         } catch (error) {
             setMessage(error.response?.data?.message || 'Không thể cập nhật trả lời');
@@ -100,12 +111,12 @@ const AdminReviewPage = () => {
         setShowConfirmDialog(true);
     };
 
-    const handleDeleteReply = (reviewId) => {
+    const handleDeleteReply = (replyId) => {
         setConfirmTitle('Xóa trả lời');
         setConfirmMessage('Bạn có chắc muốn xóa trả lời này không?');
         setOnConfirmAction(() => async () => {
             try {
-                await ApiService.deleteReviewReply(reviewId);
+                await ApiService.deleteReplyById(replyId);
                 setMessage('Đã xóa trả lời');
                 setTimeout(() => setMessage(''), 3000);
                 fetchReviews();
@@ -189,68 +200,97 @@ const AdminReviewPage = () => {
                                 <p>{review.content}</p>
                             </div>
 
-                            {review.reply ? (
-                                editingReply[review.id] !== undefined && editingReply[review.id] !== null ? (
-                                    <div className="reply-form">
-                                        <textarea
-                                            placeholder="Chỉnh sửa trả lời..."
-                                            value={editingReply[review.id]}
-                                            onChange={(e) => setEditingReply({ ...editingReply, [review.id]: e.target.value })}
-                                            rows="3"
-                                        />
-                                        <div className="reply-actions">
-                                            <button 
-                                                className="btn-reply"
-                                                onClick={() => handleUpdateReply(review.id)}
-                                            >
-                                                Lưu thay đổi
-                                            </button>
-                                            <button 
-                                                className="btn-cancel"
-                                                onClick={() => handleCancelEdit(review.id)}
-                                            >
-                                                Hủy
-                                            </button>
+                            {/* Display multiple replies */}
+                            {review.replies && review.replies.length > 0 && (
+                                <div className="replies-section">
+                                    <p className="replies-title"><strong>Trả lời từ Admin:</strong></p>
+                                    {review.replies.map(reply => (
+                                        <div key={reply.id} className="reply-item">
+                                            {editingReply[reply.id] !== undefined && editingReply[reply.id] !== null ? (
+                                                <div className="reply-form">
+                                                    <textarea
+                                                        placeholder="Chỉnh sửa trả lời..."
+                                                        value={editingReply[reply.id]}
+                                                        onChange={(e) => setEditingReply({ ...editingReply, [reply.id]: e.target.value })}
+                                                        rows="3"
+                                                    />
+                                                    <div className="reply-actions">
+                                                        <button 
+                                                            className="btn-reply"
+                                                            onClick={() => handleUpdateReply(reply.id)}
+                                                        >
+                                                            Lưu thay đổi
+                                                        </button>
+                                                        <button 
+                                                            className="btn-cancel"
+                                                            onClick={() => handleCancelEdit(reply.id)}
+                                                        >
+                                                            Hủy
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="reply-header">
+                                                        <span className="reply-date">
+                                                            {new Date(reply.createdAt).toLocaleDateString('vi-VN')} {new Date(reply.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                            {reply.updatedAt && ' (đã chỉnh sửa)'}
+                                                        </span>
+                                                        <div className="reply-actions-header">
+                                                            <button 
+                                                                className="btn-edit"
+                                                                onClick={() => handleEditReply(reply.id, reply.content)}
+                                                            >
+                                                                <FiEdit2 /> Chỉnh sửa
+                                                            </button>
+                                                            <button 
+                                                                className="btn-delete-reply"
+                                                                onClick={() => handleDeleteReply(reply.id)}
+                                                                title="Xóa trả lời"
+                                                            >
+                                                                <FiTrash2 />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <p className="reply-content">{reply.content}</p>
+                                                </>
+                                            )}
                                         </div>
-                                    </div>
-                                ) : (
-                                    <div className="review-reply">
-                                        <div className="reply-header">
-                                            <p><strong>Trả lời từ Admin:</strong></p>
-                                            <div className="reply-actions-header">
-                                                <button 
-                                                    className="btn-edit"
-                                                    onClick={() => handleEditReply(review.id, review.reply)}
-                                                >
-                                                    <FiEdit2 /> Chỉnh sửa
-                                                </button>
-                                                <button 
-                                                    className="btn-delete-reply"
-                                                    onClick={() => handleDeleteReply(review.id)}
-                                                    title="Xóa trả lời"
-                                                >
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <p>{review.reply}</p>
-                                    </div>
-                                )
-                            ) : (
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* New reply form */}
+                            {showNewReplyForm[review.id] ? (
                                 <div className="reply-form">
                                     <textarea
-                                        placeholder="Nhập trả lời..."
-                                        value={replyText[review.id] || ''}
-                                        onChange={(e) => handleReplyChange(review.id, e.target.value)}
+                                        placeholder="Nhập trả lời mới..."
+                                        value={newReplyText[review.id] || ''}
+                                        onChange={(e) => handleNewReplyChange(review.id, e.target.value)}
                                         rows="3"
                                     />
-                                    <button 
-                                        className="btn-reply"
-                                        onClick={() => handleSubmitReply(review.id)}
-                                    >
-                                        Gửi trả lời
-                                    </button>
+                                    <div className="reply-actions">
+                                        <button 
+                                            className="btn-reply"
+                                            onClick={() => handleSubmitNewReply(review.id)}
+                                        >
+                                            Gửi trả lời
+                                        </button>
+                                        <button 
+                                            className="btn-cancel"
+                                            onClick={() => handleCancelNewReply(review.id)}
+                                        >
+                                            Hủy
+                                        </button>
+                                    </div>
                                 </div>
+                            ) : (
+                                <button 
+                                    className="btn-add-reply"
+                                    onClick={() => handleShowNewReplyForm(review.id)}
+                                >
+                                    <FiPlus /> Thêm trả lời
+                                </button>
                             )}
                         </div>
                     ))
@@ -270,7 +310,6 @@ const AdminReviewPage = () => {
                     <div className="page-numbers">
                         {[...Array(totalPages)].map((_, index) => {
                             const pageNumber = index + 1;
-                            // Hiển thị: trang đầu, trang cuối, trang hiện tại và 2 trang xung quanh
                             if (
                                 pageNumber === 1 ||
                                 pageNumber === totalPages ||

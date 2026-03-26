@@ -24,4 +24,5 @@ public class OrderItemDto {
     private  UserDto user;
     private ProductDto product;
     private LocalDateTime createdAt;
+    private Boolean hasReviewed; // Đã đánh giá sản phẩm này chưa
 }

@@ -256,4 +256,26 @@
         <addUniqueConstraint tableName="wishlists" columnNames="user_id,product_id" constraintName="uk_wishlists_user_product"/>
     </changeSet>
 
+    <!-- Create slides table -->
+    <changeSet id="000-create-slides-table" author="system">
+        <createTable tableName="slides">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="image_url" type="VARCHAR(500)"/>
+            <column name="link_url" type="VARCHAR(500)"/>
+            <column name="display_order" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

@@ -190,4 +190,127 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
     }
+
+    @Override
+    public Response getUserById(Long userId) {
+        try {
+            User user = userRepo.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+            UserDto userDto = entityDtoMapper.mapUserToDtoPlusAddress(user);
+            return Response.builder()
+                    .status(200)
+                    .user(userDto)
+                    .build();
+        } catch (NotFoundException e) {
+            return Response.builder()
+                    .status(404)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi lấy thông tin người dùng: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    public Response deleteUser(Long userId) {
+        try {
+            User user = userRepo.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+            
+            if (user.getRole() == UserRole.ADMIN) {
+                return Response.builder()
+                        .status(400)
+                        .message("Không thể xóa tài khoản ADMIN")
+                        .build();
+            }
+            
+            userRepo.delete(user);
+            return Response.builder()
+                    .status(200)
+                    .message("Xóa người dùng thành công")
+                    .build();
+        } catch (NotFoundException e) {
+            return Response.builder()
+                    .status(404)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi xóa người dùng: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    public Response adminUpdateUser(Long userId, UpdateUserDto updateUserDto) {
+        try {
+            User user = userRepo.findById(userId)
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+
+            if (updateUserDto.getName() != null && !updateUserDto.getName().trim().isEmpty()) {
+                user.setName(updateUserDto.getName());
+            }
+
+            if (updateUserDto.getEmail() != null && !updateUserDto.getEmail().trim().isEmpty()) {
+                if (!user.getEmail().equals(updateUserDto.getEmail()) && 
+                    userRepo.existsByEmail(updateUserDto.getEmail())) {
+                    return Response.builder()
+                            .status(400)
+                            .message("Email này đã được sử dụng")
+                            .build();
+                }
+                user.setEmail(updateUserDto.getEmail());
+            }
+
+            if (updateUserDto.getPhoneNumber() != null && !updateUserDto.getPhoneNumber().trim().isEmpty()) {
+                user.setPhoneNumber(updateUserDto.getPhoneNumber());
+            }
+
+            if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().trim().isEmpty()) {
+                if (updateUserDto.getPassword().length() < 6) {
+                    return Response.builder()
+                            .status(400)
+                            .message("Mật khẩu phải có ít nhất 6 ký tự")
+                            .build();
+                }
+                user.setPassword(passwordEncoder.encode(updateUserDto.getPassword()));
+            }
+
+            if (updateUserDto.getRole() != null && !updateUserDto.getRole().trim().isEmpty()) {
+                try {
+                    UserRole role = UserRole.valueOf(updateUserDto.getRole().toUpperCase());
+                    user.setRole(role);
+                } catch (IllegalArgumentException e) {
+                    return Response.builder()
+                            .status(400)
+                            .message("Role không hợp lệ")
+                            .build();
+                }
+            }
+
+            userRepo.save(user);
+
+            UserDto userDto = entityDtoMapper.mapUserToDtoBasic(user);
+            return Response.builder()
+                    .status(200)
+                    .message("Cập nhật người dùng thành công")
+                    .user(userDto)
+                    .build();
+
+        } catch (NotFoundException e) {
+            return Response.builder()
+                    .status(404)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi cập nhật người dùng: " + e.getMessage())
+                    .build();
+        }
+    }
 }

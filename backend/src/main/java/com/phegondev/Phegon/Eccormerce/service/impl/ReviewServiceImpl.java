@@ -4,6 +4,7 @@ import com.phegondev.Phegon.Eccormerce.dto.CreateReviewRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.Product;
 import com.phegondev.Phegon.Eccormerce.entity.Review;
+import com.phegondev.Phegon.Eccormerce.entity.ReviewReply;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
 import com.phegondev.Phegon.Eccormerce.exception.OurException;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -82,20 +84,30 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional(readOnly = true)
     @Override
-    public Response getReviewsByProduct(Long productId) {
+    public Response getReviewsByProduct(Long productId, int page, int size) {
         try {
             if (productId == null) throw new OurException("Thiếu productId");
 
-            List<Review> reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
-            double avg = reviews.isEmpty()
+            List<Review> allReviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
+            double avg = allReviews.isEmpty()
                     ? 0.0
-                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+                    : allReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+
+            int totalElements = allReviews.size();
+            int totalPages = (int) Math.ceil((double) totalElements / size);
+            int start = page * size;
+            int end = Math.min(start + size, totalElements);
+
+            List<Review> pagedReviews = start < totalElements 
+                    ? allReviews.subList(start, end) 
+                    : List.of();
 
             return Response.builder()
                     .status(200)
-                    .reviewList(reviews.stream().map(entityDtoMapper::mapReviewToDtoBasic).toList())
+                    .reviewList(pagedReviews.stream().map(entityDtoMapper::mapReviewToDtoBasic).toList())
                     .averageRating(avg)
-                    .totalElement(reviews.size())
+                    .totalElement(totalElements)
+                    .totalPage(totalPages)
                     .build();
         } catch (OurException e) {
             return Response.builder()
@@ -109,7 +121,6 @@ public class ReviewServiceImpl implements ReviewService {
                     .build();
         }
     }
-
 
     @Transactional(readOnly = true)
     @Override
@@ -139,7 +150,6 @@ public class ReviewServiceImpl implements ReviewService {
             Review review = reviewRepository.findById(reviewId)
                     .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
 
-            review.setReply(reply.trim());
             Review saved = reviewRepository.save(review);
 
             return Response.builder()
@@ -159,7 +169,6 @@ public class ReviewServiceImpl implements ReviewService {
                     .build();
         }
     }
-
 
     @Transactional
     @Override
@@ -189,7 +198,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-
     @Transactional
     @Override
     public Response deleteReply(Long reviewId) {
@@ -199,7 +207,118 @@ public class ReviewServiceImpl implements ReviewService {
             Review review = reviewRepository.findById(reviewId)
                     .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
 
-            review.setReply(null);
+            reviewRepository.save(review);
+
+            return Response.builder()
+                    .status(200)
+                    .message("Đã xóa trả lời")
+                    .build();
+        } catch (OurException | NotFoundException e) {
+            return Response.builder()
+                    .status(400)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi xóa trả lời: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    // Multiple replies support
+    @Transactional
+    @Override
+    public Response addNewReply(Long reviewId, String content) {
+        try {
+            if (reviewId == null) throw new OurException("Thiếu reviewId");
+            if (content == null || content.trim().isEmpty()) {
+                throw new OurException("Nội dung trả lời không được để trống");
+            }
+
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
+
+            ReviewReply reviewReply = new ReviewReply();
+            reviewReply.setContent(content.trim());
+            reviewReply.setReview(review);
+            reviewReply.setCreatedAt(LocalDateTime.now());
+
+            review.getReplies().add(reviewReply);
+            
+            reviewRepository.save(review);
+
+            return Response.builder()
+                    .status(200)
+                    .message("Đã thêm trả lời mới")
+                    .reviewReply(entityDtoMapper.mapReviewReplyToDto(reviewReply))
+                    .build();
+        } catch (OurException | NotFoundException e) {
+            return Response.builder()
+                    .status(400)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi thêm trả lời: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response updateReply(Long replyId, String content) {
+        try {
+            if (replyId == null) throw new OurException("Thiếu replyId");
+            if (content == null || content.trim().isEmpty()) {
+                throw new OurException("Nội dung trả lời không được để trống");
+            }
+
+            Review review = reviewRepository.findAll().stream()
+                    .filter(r -> r.getReplies().stream().anyMatch(reply -> reply.getId().equals(replyId)))
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
+
+            ReviewReply reviewReply = review.getReplies().stream()
+                    .filter(reply -> reply.getId().equals(replyId))
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("Trả lời không tìm thấy"));
+
+            reviewReply.setContent(content.trim());
+            reviewReply.setUpdatedAt(LocalDateTime.now());
+            reviewRepository.save(review);
+
+            return Response.builder()
+                    .status(200)
+                    .message("Đã cập nhật trả lời")
+                    .reviewReply(entityDtoMapper.mapReviewReplyToDto(reviewReply))
+                    .build();
+        } catch (OurException | NotFoundException e) {
+            return Response.builder()
+                    .status(400)
+                    .message(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.builder()
+                    .status(500)
+                    .message("Lỗi khi cập nhật trả lời: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response deleteReplyById(Long replyId) {
+        try {
+            if (replyId == null) throw new OurException("Thiếu replyId");
+
+            Review review = reviewRepository.findAll().stream()
+                    .filter(r -> r.getReplies().stream().anyMatch(reply -> reply.getId().equals(replyId)))
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
+
+            review.getReplies().removeIf(reply -> reply.getId().equals(replyId));
             reviewRepository.save(review);
 
             return Response.builder()

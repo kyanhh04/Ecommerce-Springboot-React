@@ -50,6 +50,12 @@ public class Response {
     private ReviewDto review;
     private List<ReviewDto> reviewList;
     private Double averageRating;
+    
+    private ReviewReplyDto reviewReply;
+    private List<ReviewReplyDto> reviewReplyList;
 
     private List<WishlistDto> wishlistList;
+
+    private SlideDto slide;
+    private List<SlideDto> slideList;
 }

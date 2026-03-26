@@ -9,5 +9,7 @@
     <include file="db/changelog/changesets/001-insert-admin-user.xml"/>
     <include file="db/changelog/changesets/002-add-reply-to-reviews.xml"/>
     <include file="db/changelog/changesets/003-insert-sample-reviews.xml"/>
+    <include file="db/changelog/changesets/005-insert-sample-users.xml"/>
+    <include file="db/changelog/changesets/004-insert-more-reviews.xml"/>
 
 </databaseChangeLog>

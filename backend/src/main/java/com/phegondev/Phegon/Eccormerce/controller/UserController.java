@@ -23,6 +23,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @GetMapping("/get-by-id/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> getUserById(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.getUserById(userId));
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> deleteUser(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.deleteUser(userId));
+    }
+
     @GetMapping("/my-info")
     public ResponseEntity<Response> getUserInfoAndOrderHistory(){
         return ResponseEntity.ok(userService.getUserInfoAndOrderHistory());
@@ -31,5 +43,11 @@ public class UserController {
     @PatchMapping("/update")
     public ResponseEntity<Response> updateUser(@RequestBody UpdateUserDto updateUserDto){
         return ResponseEntity.ok(userService.updateUser(updateUserDto));
+    }
+
+    @PatchMapping("/admin-update/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> adminUpdateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto){
+        return ResponseEntity.ok(userService.adminUpdateUser(userId, updateUserDto));
     }
 }

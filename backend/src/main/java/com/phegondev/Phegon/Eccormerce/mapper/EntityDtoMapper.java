@@ -2,12 +2,17 @@ package com.phegondev.Phegon.Eccormerce.mapper;
 
 import com.phegondev.Phegon.Eccormerce.dto.*;
 import com.phegondev.Phegon.Eccormerce.entity.*;
+import com.phegondev.Phegon.Eccormerce.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class EntityDtoMapper {
+
+    private final ReviewRepository reviewRepository;
 
 
     public UserDto mapUserToDtoBasic(User user){
@@ -92,6 +97,15 @@ public class EntityDtoMapper {
         if (orderItem.getProduct() != null) {
             ProductDto productDto = mapProductToDtoBasic(orderItem.getProduct());
             orderItemDto.setProduct(productDto);
+            
+            // Check if user has reviewed this product
+            if (orderItem.getUser() != null) {
+                boolean hasReviewed = reviewRepository.existsByProductIdAndUserId(
+                    orderItem.getProduct().getId(), 
+                    orderItem.getUser().getId()
+                );
+                orderItemDto.setHasReviewed(hasReviewed);
+            }
         }
         return orderItemDto;
     }
@@ -114,10 +128,35 @@ public class EntityDtoMapper {
         UserDto userDto = mapUserToDtoPlusAddress(user);
 
         if (user.getOrderItemList() != null && !user.getOrderItemList().isEmpty()) {
-            userDto.setOrderItemList(user.getOrderItemList()
-                    .stream()
-                    .map(this::mapOrderItemToDtoPlusProduct)
-                    .collect(Collectors.toList()));
+            // Nhóm orderItems theo Order
+            java.util.Map<Long, OrderDto> ordersMap = new java.util.HashMap<>();
+            
+            for (OrderItem orderItem : user.getOrderItemList()) {
+                if (orderItem.getOrder() == null) continue;
+                
+                Long orderId = orderItem.getOrder().getId();
+                OrderDto orderDto = ordersMap.get(orderId);
+                
+                if (orderDto == null) {
+                    orderDto = new OrderDto();
+                    orderDto.setId(orderId);
+                    orderDto.setTotalPrice(orderItem.getOrder().getTotalPrice());
+                    orderDto.setCreatedAt(orderItem.getOrder().getCreatedAt());
+                    orderDto.setDiscountCode(orderItem.getOrder().getDiscountCode());
+                    orderDto.setDiscountAmount(orderItem.getOrder().getDiscountAmount());
+                    orderDto.setStatus(orderItem.getOrder().getStatus() != null ? 
+                        orderItem.getOrder().getStatus().name() : null);
+                    orderDto.setOrderItemList(new java.util.ArrayList<>());
+                    
+                    ordersMap.put(orderId, orderDto);
+                }
+                
+                // Thêm orderItem vào order
+                OrderItemDto itemDto = mapOrderItemToDtoPlusProduct(orderItem);
+                orderDto.getOrderItemList().add(itemDto);
+            }
+            
+            userDto.setOrderList(new java.util.ArrayList<>(ordersMap.values()));
         }
         return userDto;
 
@@ -146,6 +185,7 @@ public class EntityDtoMapper {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
         orderDto.setTotalPrice(order.getTotalPrice());
+        orderDto.setStatus(order.getStatus() != null ? order.getStatus().name() : null);
         orderDto.setCreatedAt(order.getCreatedAt());
         orderDto.setDiscountCode(order.getDiscountCode());
         orderDto.setDiscountAmount(order.getDiscountAmount());
@@ -169,8 +209,15 @@ public class EntityDtoMapper {
         dto.setId(review.getId());
         dto.setContent(review.getContent());
         dto.setRating(review.getRating());
-        dto.setReply(review.getReply());
         dto.setCreatedAt(review.getCreatedAt());
+        
+        // Map multiple replies
+        if (review.getReplies() != null && !review.getReplies().isEmpty()) {
+            dto.setReplies(review.getReplies().stream()
+                    .map(this::mapReviewReplyToDto)
+                    .collect(Collectors.toList()));
+        }
+        
         if (review.getProduct() != null) {
             dto.setProductId(review.getProduct().getId());
             dto.setProductName(review.getProduct().getName());
@@ -183,6 +230,28 @@ public class EntityDtoMapper {
             dto.setUserId(review.getUser().getId());
             dto.setUserName(review.getUser().getName());
         }
+        return dto;
+    }
+    
+    public ReviewReplyDto mapReviewReplyToDto(com.phegondev.Phegon.Eccormerce.entity.ReviewReply reply) {
+        ReviewReplyDto dto = new ReviewReplyDto();
+        dto.setId(reply.getId());
+        dto.setContent(reply.getContent());
+        dto.setCreatedAt(reply.getCreatedAt());
+        dto.setUpdatedAt(reply.getUpdatedAt());
+        return dto;
+    }
+
+    public SlideDto mapSlideToDto(Slide slide) {
+        SlideDto dto = new SlideDto();
+        dto.setId(slide.getId());
+        dto.setTitle(slide.getTitle());
+        dto.setDescription(slide.getDescription());
+        dto.setImageUrl(slide.getImageUrl());
+        dto.setLinkUrl(slide.getLinkUrl());
+        dto.setDisplayOrder(slide.getDisplayOrder());
+        dto.setIsActive(slide.getIsActive());
+        dto.setCreatedAt(slide.getCreatedAt());
         return dto;
     }
 

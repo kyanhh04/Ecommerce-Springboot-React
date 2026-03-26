@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,8 +19,8 @@ public class Review {
     private String content;
     private int rating; // assuming it is in 1 to 10
 
-    @Column(columnDefinition = "TEXT")
-    private String reply;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReviewReply> replies = new ArrayList<>(); // Multiple replies support
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -35,7 +37,7 @@ public class Review {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;  // Using instanceof for subclass comparison
+        if (o == null || getClass() != o.getClass()) return false;
         Review review = (Review) o;
         return rating == review.rating &&
                 Objects.equals(id, review.id) &&
@@ -47,11 +49,11 @@ public class Review {
     // hashCode method
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, rating, product, user);  // Excluding createdAt from hashCode calculation
+        return Objects.hash(id, content, rating, product, user);
     }
 
     // canEqual method
     public boolean canEqual(Object other) {
-        return other instanceof Review;  // Allow comparison only between Review instances or its subclasses
+        return other instanceof Review;
     }
 }

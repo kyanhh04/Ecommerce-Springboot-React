@@ -188,6 +188,27 @@ export default class ApiService {
         return response.data;
     }
 
+    static async getUserById(userId) {
+        const response = await axios.get(`${this.BASE_URL}/user/get-by-id/${userId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async deleteUser(userId) {
+        const response = await axios.delete(`${this.BASE_URL}/user/delete/${userId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async adminUpdateUser(userId, updateData) {
+        const response = await axios.patch(`${this.BASE_URL}/user/admin-update/${userId}`, updateData, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
     /**DISCOUNT APIS */
     static async createDiscount(discountDTO) {
         const response = await axios.post(`${this.BASE_URL}/api/discounts/create`, discountDTO, {
@@ -284,8 +305,15 @@ export default class ApiService {
     }
 
     /**REVIEWS */
-    static async getProductReviews(productId) {
-        const response = await axios.get(`${this.BASE_URL}/api/reviews/product/${productId}`);
+    static async getProductReviews(productId, page, size) {
+        const params = {};
+        if (page !== undefined && page !== null) {
+            params.page = page;
+        }
+        if (size !== undefined && size !== null) {
+            params.size = size;
+        }
+        const response = await axios.get(`${this.BASE_URL}/api/reviews/product/${productId}`, { params });
         return response.data;
     }
 
@@ -352,6 +380,29 @@ export default class ApiService {
         return response.data;
     }
 
+    static async addNewReply(reviewId, content) {
+        const response = await axios.post(`${this.BASE_URL}/api/reviews/${reviewId}/replies`, {}, {
+            headers: this.getHeader(),
+            params: { content }
+        });
+        return response.data;
+    }
+
+    static async updateReplyById(replyId, content) {
+        const response = await axios.put(`${this.BASE_URL}/api/reviews/replies/${replyId}`, {}, {
+            headers: this.getHeader(),
+            params: { content }
+        });
+        return response.data;
+    }
+
+    static async deleteReplyById(replyId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/reviews/replies/${replyId}`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
     /***AUTHENTICATION CHECKER */
     static logout(){
         localStorage.removeItem('token')
@@ -366,6 +417,36 @@ export default class ApiService {
     static isAdmin(){
         const role = localStorage.getItem('role')
         return role === 'ADMIN'
+    }
+
+    /**EXCEL IMPORT/EXPORT */
+    static async downloadProductTemplate() {
+        const response = await axios.get(`${this.BASE_URL}/product/download-template`, {
+            headers: this.getHeader(),
+            responseType: 'blob'
+        });
+        return response;
+    }
+
+    static async exportProductsToExcel() {
+        const response = await axios.get(`${this.BASE_URL}/product/export-excel`, {
+            headers: this.getHeader(),
+            responseType: 'blob'
+        });
+        return response;
+    }
+
+    static async importProductsFromExcel(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await axios.post(`${this.BASE_URL}/product/import-excel`, formData, {
+            headers: {
+                ...this.getHeader(),
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
     }
 
 }

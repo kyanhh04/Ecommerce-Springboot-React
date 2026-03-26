@@ -143,6 +143,8 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: all 200ms ease;
   border: 1px solid #E2E8F0;
+  gap: 16px;
+  position: relative;
 }
 
 .order-item:hover {
@@ -154,7 +156,6 @@
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 20px;
   border: 1px solid #E2E8F0;
   flex-shrink: 0;
 }
@@ -175,6 +176,50 @@
   color: #0F172A;
   font-weight: 600;
   font-size: 16px;
+}
+
+/* Review Button for Individual Item - Following MASTER.md */
+.review-btn-item {
+  background: #0369A1;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.review-btn-item:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(3, 105, 161, 0.3);
+}
+
+.review-btn-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
+}
+
+/* Reviewed Badge - Success State */
+.reviewed-badge {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 2px solid rgba(22, 163, 74, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* Responsive Design */
@@ -198,20 +243,29 @@
   .order-item {
     flex-direction: column;
     text-align: center;
+    gap: 12px;
   }
 
   .order-item img {
-    margin-right: 0;
-    margin-bottom: 12px;
     width: 100%;
     max-width: 250px;
     height: auto;
+  }
+
+  .review-btn-item {
+    width: 100%;
+  }
+
+  .reviewed-badge {
+    width: 100%;
+    justify-content: center;
   }
 }
 
 /* Accessibility - Focus States */
 .order-btn:focus,
-.review-btn:focus {
+.review-btn:focus,
+.review-btn-item:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
 }
@@ -221,6 +275,7 @@
   .order-card,
   .order-btn,
   .review-btn,
+  .review-btn-item,
   .order-item {
     transition: none;
   }

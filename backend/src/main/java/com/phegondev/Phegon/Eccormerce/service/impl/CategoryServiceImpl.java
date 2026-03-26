@@ -50,12 +50,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Response getAllCategories() {
+        log.info("Đang lấy danh sách tất cả danh mục");
+        
         List<Category> categories = categoryRepo.findAll();
         List<CategoryDto> categoryDtoList = categories.stream()
                 .map(entityDtoMapper::mapCategoryToDtoBasic)
                 .collect(Collectors.toList());
 
-        return  Response.builder()
+        log.info("Đã lấy {} danh mục", categoryDtoList.size());
+        
+        return Response.builder()
                 .status(200)
                 .categoryList(categoryDtoList)
                 .build();

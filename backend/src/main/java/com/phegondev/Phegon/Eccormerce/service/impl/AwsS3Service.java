@@ -35,6 +35,8 @@ public class AwsS3Service {
 
 
     public String saveImageToS3(MultipartFile photo){
+        long startTime = System.currentTimeMillis();
+        
         // Check if AWS S3 configuration is available
         if (!StringUtils.hasText(awsS3AccessKey) || !StringUtils.hasText(awsS3SecreteKey)
                 || !StringUtils.hasText(bucketName) || !StringUtils.hasText(awsS3Region)) {
@@ -43,8 +45,14 @@ public class AwsS3Service {
         }
 
         try {
-            String s3FileName = photo.getOriginalFilename();
-            log.info("Uploading file to S3: {} to bucket: {} in region: {}", s3FileName, bucketName, awsS3Region);
+            // Tạo tên file unique để tránh conflict
+            String originalFilename = photo.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".") 
+                ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                : ".jpg";
+            String s3FileName = System.currentTimeMillis() + "_" + originalFilename;
+            
+            log.info("Bắt đầu upload file {} ({} bytes) lên S3", s3FileName, photo.getSize());
 
             //create aes credentials using the access and secrete key
             BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsS3AccessKey, awsS3SecreteKey);
@@ -60,15 +68,19 @@ public class AwsS3Service {
 
             //set metedata for the onject
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("image/jpeg");
+            metadata.setContentType(photo.getContentType() != null ? photo.getContentType() : "image/jpeg");
             metadata.setContentLength(photo.getSize());
+            metadata.setCacheControl("public, max-age=31536000"); // Cache 1 năm
 
             //create a put request to upload the image to s3
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3FileName, inputStream, metadata);
             s3Client.putObject(putObjectRequest);
 
             String imageUrl = "https://" + bucketName + ".s3." + awsS3Region + ".amazonaws.com/" + s3FileName;
-            log.info("Successfully uploaded file to S3: {}", imageUrl);
+            
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("Upload thành công trong {}ms: {}", duration, imageUrl);
+            
             return imageUrl;
 
         }catch (IOException e){

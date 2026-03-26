@@ -27,12 +27,15 @@ import EditCategory from './component/admin/EditCategory';
 import AdminProductPage from './component/admin/AdminProductPage';
 import AddProductPage from './component/admin/AddProductPage';
 import EditProductPage from './component/admin/EditProductPage';
+import ProductExcelManager from './component/admin/ProductExcelManager';
 import AdminOrdersPage from './component/admin/AdminOrderPage';
 import AdminOrderDetailsPage from './component/admin/AdminOrderDetailsPage';
 import AdminDiscountPage from './component/admin/AdminDiscountPage';
 import AddDiscountPage from './component/admin/AddDiscountPage';
 import EditDiscountPage from './component/admin/EditDiscountPage';
 import AdminReviewPage from './component/admin/AdminReviewPage';
+import AdminSlideManagement from './component/admin/AdminSlideManagement';
+import AdminUserManagement from './component/admin/AdminUserManagement';
 import SecurePaymentPage from './component/payment/SecurePaymentPage';
 import OrderDetailPage from './component/pages/OrderDetailPage';
 import WishlistPage from './component/pages/WishlistPage';
@@ -82,12 +85,15 @@ function AppLayout() {
                 <Route path='products' element={<AdminProductPage />} />
                 <Route path='add-product' element={<AddProductPage />} />
                 <Route path='edit-product/:productId' element={<EditProductPage />} />
+                <Route path='products-excel' element={<ProductExcelManager />} />
                 <Route path='orders' element={<AdminOrdersPage />} />
                 <Route path='order-details/:itemId' element={<AdminOrderDetailsPage />} />
                 <Route path='discounts' element={<AdminDiscountPage />} />
                 <Route path='add-discount' element={<AddDiscountPage />} />
                 <Route path='edit-discount/:discountId' element={<EditDiscountPage />} />
                 <Route path='reviews' element={<AdminReviewPage />} />
+                <Route path='slides' element={<AdminSlideManagement />} />
+                <Route path='users' element={<AdminUserManagement />} />
               </Route>
             </Routes>
           </div>

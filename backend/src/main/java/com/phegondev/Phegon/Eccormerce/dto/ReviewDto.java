@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -17,7 +18,8 @@ public class ReviewDto {
     private Long id;
     private String content;
     private int rating; // 1-5
-    private String reply;
+    private String reply; // Backward compatibility - single reply
+    private List<ReviewReplyDto> replies; // Multiple replies support
     private LocalDateTime createdAt;
 
     private Long productId;
@@ -27,4 +29,3 @@ public class ReviewDto {
     private Long userId;
     private String userName;
 }
-

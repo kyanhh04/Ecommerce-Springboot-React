@@ -12,4 +12,6 @@ public interface OrderItemRepo extends JpaRepository<OrderItem, Long>, JpaSpecif
 
     @EntityGraph(attributePaths = {"order", "product", "user", "user.address"})
     Page<OrderItem> findAll(Specification<OrderItem> spec, Pageable pageable);
+    
+    boolean existsByProductId(Long productId);
 }

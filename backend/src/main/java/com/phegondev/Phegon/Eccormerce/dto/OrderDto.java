@@ -19,6 +19,7 @@ public class OrderDto {
 
     private Long id;
     private BigDecimal totalPrice;
+    private String status;
     private LocalDateTime createdAt;
     private List<OrderItemDto> orderItemList;
     private String discountCode;

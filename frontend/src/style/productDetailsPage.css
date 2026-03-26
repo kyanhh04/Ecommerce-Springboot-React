@@ -456,80 +456,96 @@
     margin-top:6px;
 }
 
+/* Admin Replies */
+.admin-replies {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.admin-reply {
+    background: #f0f9ff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 3px solid #0369A1;
+    margin-bottom: 12px;
+}
+
+.admin-reply:last-child {
+    margin-bottom: 0;
+}
+
+.admin-reply .reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.admin-reply .reply-header strong {
+    color: #0369A1;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-reply .reply-date {
+    font-size: 11px;
+    color: #64748B;
+}
+
+.admin-reply .reply-content {
+    color: #334155;
+    line-height: 1.6;
+    font-size: 14px;
+    margin: 0;
+}
+
 .no-review{
     color:#999;
     font-style:italic;
 }
 
-/* WRITE REVIEW */
-
-.write-review{
-    margin-top:60px;
+/* Load More Reviews Section */
+.load-more-reviews {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 16px;
 }
 
-.review-form{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
+.load-more-btn {
+    background: #0369A1;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 200ms ease;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 16px;
 }
 
-.review-form select{
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ddd;
+.load-more-btn:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(3, 105, 161, 0.3);
 }
 
-.review-form textarea{
-    padding:12px;
-    border-radius:6px;
-    border:1px solid #ddd;
-    min-height:100px;
-    resize:none;
+.load-more-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
-.submit-review-btn{
-    padding:12px;
-    border:none;
-    border-radius:6px;
-    background:#f68b1e;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-}
-
-.submit-review-btn:hover{
-    background:#d9730d;
+.load-more-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
 }
 
 .loading{
     text-align:center;
     font-size:20px;
     margin-top:120px;
-}
-
-.star-rating{
-    display:flex;
-    gap:8px;
-    font-size:30px;
-    cursor:pointer;
-}
-
-.star{
-    color:#ccc;
-    transition:0.2s;
-}
-
-.star.active{
-    color:#ffc107;
-}
-
-.star:hover{
-    transform:scale(1.2);
-}
-
-.rating-value{
-    margin-top:6px;
-    font-weight:500;
 }
 
 /* Login Modal - Following MASTER.md Design System */

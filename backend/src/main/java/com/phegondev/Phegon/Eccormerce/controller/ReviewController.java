@@ -16,8 +16,11 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<Response> getReviewsByProduct(@PathVariable Long productId) {
-        Response response = reviewService.getReviewsByProduct(productId);
+    public ResponseEntity<Response> getReviewsByProduct(
+            @PathVariable Long productId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Response response = reviewService.getReviewsByProduct(productId, page, size);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -35,17 +38,11 @@ public class ReviewController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    // Single reply endpoints (backward compatibility)
     @PutMapping("/{reviewId}/reply")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> addReply(@PathVariable Long reviewId, @RequestParam String reply) {
         Response response = reviewService.addReply(reviewId, reply);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-    @DeleteMapping("/{reviewId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> deleteReview(@PathVariable Long reviewId) {
-        Response response = reviewService.deleteReview(reviewId);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -55,5 +52,33 @@ public class ReviewController {
         Response response = reviewService.deleteReply(reviewId);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-}
 
+    // Multiple replies endpoints
+    @PostMapping("/{reviewId}/replies")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> addNewReply(@PathVariable Long reviewId, @RequestParam String content) {
+        Response response = reviewService.addNewReply(reviewId, content);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/replies/{replyId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> updateReply(@PathVariable Long replyId, @RequestParam String content) {
+        Response response = reviewService.updateReply(replyId, content);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/replies/{replyId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> deleteReplyById(@PathVariable Long replyId) {
+        Response response = reviewService.deleteReplyById(replyId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response> deleteReview(@PathVariable Long reviewId) {
+        Response response = reviewService.deleteReview(reviewId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+}

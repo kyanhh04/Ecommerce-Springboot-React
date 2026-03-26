@@ -14,4 +14,7 @@ public interface ProductService {
     Response getAllProducts();
     Response getProductsByCategory(Long categoryId);
     Response searchProduct(String searchValue);
+    byte[] exportProductsToExcel();
+    Response importProductsFromExcel(MultipartFile file);
+    byte[] downloadProductTemplate();
 }

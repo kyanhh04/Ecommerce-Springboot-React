@@ -10,6 +10,9 @@ public interface UserService {
     Response registerUser(UserDto registrationRequest);
     Response loginUser(LoginRequest loginRequest);
     Response getAllUsers();
+    Response getUserById(Long userId);
+    Response deleteUser(Long userId);
+    Response adminUpdateUser(Long userId, UpdateUserDto updateUserDto);
     User getLoginUser();
     Response getUserInfoAndOrderHistory();
     Response updateUser(UpdateUserDto updateUserDto);

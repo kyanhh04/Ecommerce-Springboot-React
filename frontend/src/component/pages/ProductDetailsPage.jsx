@@ -21,18 +21,20 @@ const { dispatch } = useCart();
 const [product, setProduct] = useState(null);
 const [reviews, setReviews] = useState([]);
 const [averageRating, setAverageRating] = useState(0);
+const [totalReviews, setTotalReviews] = useState(0);
 const [isWishlisted, setIsWishlisted] = useState(false);
 const [wishlistCount, setWishlistCount] = useState(0);
 const [quantity, setQuantity] = useState(1);
 
-const [reviewError, setReviewError] = useState("");
-const [reviewSuccess, setReviewSuccess] = useState("");
-const [rating, setRating] = useState(0);
-const [hover, setHover] = useState(0);
-const [content, setContent] = useState("");
 const [showToast, setShowToast] = useState(false);
 const [showLoginModal, setShowLoginModal] = useState(false);
 const [loginModalType, setLoginModalType] = useState("cart"); // "cart" or "wishlist"
+
+// Reviews pagination (load more)
+const [reviewsPage, setReviewsPage] = useState(0);
+const reviewsPageSize = 5; // Hiển thị 5 đánh giá mỗi lần
+const [canLoadMoreReviews, setCanLoadMoreReviews] = useState(false);
+const [isLoadingReviews, setIsLoadingReviews] = useState(false);
 
 useEffect(() => {
 
@@ -43,9 +45,14 @@ useEffect(() => {
             const productRes = await ApiService.getProductById(productId);
             setProduct(productRes.product);
 
-            const reviewRes = await ApiService.getProductReviews(productId);
+            const reviewRes = await ApiService.getProductReviews(productId, 0, reviewsPageSize);
             setReviews(reviewRes.reviewList || []);
             setAverageRating(reviewRes.averageRating || 0);
+            setTotalReviews(reviewRes.totalElement || 0);
+            
+            // Check if there are more reviews to load
+            const total = reviewRes.totalElement || 0;
+            setCanLoadMoreReviews(total > reviewsPageSize);
 
             const countRes = await ApiService.getWishlistCount(productId);
             setWishlistCount(parseInt(countRes.message) || 0);
@@ -148,27 +155,24 @@ const scrollToReviews = () => {
     }
 };
 
-const submitReview = async () => {
-    if (!rating || !content) {
-        setReviewError("Vui lòng nhập đánh giá và nội dung");
-        return;
-    }
-    setReviewError("");
-    setReviewSuccess("");
+const loadMoreReviews = async () => {
+    if (isLoadingReviews || !canLoadMoreReviews) return;
+    setIsLoadingReviews(true);
     try {
-        const res = await ApiService.createReview({ productId, rating, content });
-        if (res.status !== 200) {
-            setReviewError(res.message || "Gửi đánh giá thất bại");
-            return;
-        }
-        setReviewSuccess("Đã gửi đánh giá thành công!");
-        setRating(0);
-        setContent("");
-        const reviewRes = await ApiService.getProductReviews(productId);
-        setReviews(reviewRes.reviewList || []);
-        setAverageRating(reviewRes.averageRating || 0);
+        const nextPage = reviewsPage + 1;
+        const reviewRes = await ApiService.getProductReviews(productId, nextPage, reviewsPageSize);
+        const nextReviews = reviewRes.reviewList || [];
+
+        setReviews((prev) => [...prev, ...nextReviews]);
+        setReviewsPage(nextPage);
+
+        const total = reviewRes.totalElement || totalReviews;
+        const currentLoaded = reviews.length + nextReviews.length;
+        setCanLoadMoreReviews(currentLoaded < total);
     } catch (err) {
-        setReviewError(err.response?.data?.message || err.message || "Gửi đánh giá thất bại");
+        console.log(err);
+    } finally {
+        setIsLoadingReviews(false);
     }
 };
 
@@ -353,85 +357,61 @@ return (
                     Chưa có review nào
                 </p>
             ) : (
-                reviews.map((review) => (
+                <>
+                    {reviews.map((review) => (
 
-                    <div
-                        className="review-card"
-                        key={review.id}
-                    >
+                        <div
+                            className="review-card"
+                            key={review.id}
+                        >
 
-                        <div className="review-stars">
-                            {"⭐".repeat(review.rating)}
+                            <div className="review-stars">
+                                {"⭐".repeat(review.rating)}
+                            </div>
+
+                            <p className="review-content">{review.content}</p>
+
+                            <div className="review-date">
+                                {review.userName ? `${review.userName} · ` : ''}
+                                {new Date(review.createdAt).toLocaleDateString('vi-VN')} {new Date(review.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+
+                            {review.replies && review.replies.length > 0 && (
+                                <div className="admin-replies">
+                                    {review.replies.map((reply) => (
+                                        <div key={reply.id} className="admin-reply">
+                                            <div className="reply-header">
+                                                <strong>Phản hồi từ Admin</strong>
+                                                <span className="reply-date">
+                                                    {new Date(reply.createdAt).toLocaleDateString('vi-VN')} {new Date(reply.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                                            <p className="reply-content">{reply.content}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                         </div>
 
-                        <p className="review-content">{review.content}</p>
+                    ))}
 
-                        <div className="review-date">
-                            {review.userName ? `${review.userName} · ` : ''}
-                            {new Date(review.createdAt).toLocaleDateString()}
+                    {canLoadMoreReviews && (
+                        <div className="load-more-reviews">
+                            <button 
+                                className="load-more-btn" 
+                                onClick={loadMoreReviews}
+                                disabled={isLoadingReviews}
+                            >
+                                {isLoadingReviews ? 'Đang tải...' : 'Tải thêm đánh giá'}
+                            </button>
                         </div>
-
-                    </div>
-
-                ))
+                    )}
+                </>
             )}
 
         </div>
 
-
-        <div className="write-review">
-
-            <h2>Viết đánh giá</h2>
-
-            <div className="review-form">
-                {reviewError && <p style={{color: 'red', marginBottom: 8}}>{reviewError}</p>}
-                {reviewSuccess && <p style={{color: 'green', marginBottom: 8}}>{reviewSuccess}</p>}
-
-                <div className="star-rating">
-
-                    {[1,2,3,4,5].map((star) => (
-
-                        <span
-                            key={star}
-                            className={
-                                star <= (hover || rating)
-                                ? "star active"
-                                : "star"
-                            }
-
-                            onClick={() => setRating(star)}
-
-                            onMouseEnter={() => setHover(star)}
-
-                            onMouseLeave={() => setHover(0)}
-                        >
-                            ★
-                        </span>
-
-                    ))}
-
-                </div>
-
-                <p className="rating-value">
-                    Trải nghiệm của bạn: {rating || 0} / 5
-                </p>
-
-                <textarea
-                    placeholder="Đánh giá của bạn ..."
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
-
-                <button
-                    className="submit-review-btn"
-                    onClick={submitReview}
-                >
-                    Gửi
-                </button>
-
-            </div>
-
-        </div>
 
     </div>
     </div>

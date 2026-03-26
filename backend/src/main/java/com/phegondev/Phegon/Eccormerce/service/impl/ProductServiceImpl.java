@@ -30,14 +30,37 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepo categoryRepo;
     private final EntityDtoMapper entityDtoMapper;
     private final AwsS3Service awsS3Service;
+    private final ExcelService excelService;
+    private final ExcelTemplateService excelTemplateService;
+    private final com.phegondev.Phegon.Eccormerce.repository.WishlistRepository wishlistRepository;
+    private final com.phegondev.Phegon.Eccormerce.repository.ReviewRepository reviewRepository;
+    private final com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo orderItemRepo;
 
 
 
     @Override
     public Response createProduct(Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category not found"));
+        long startTime = System.currentTimeMillis();
+        log.info("Bắt đầu tạo sản phẩm: {}", name);
+        
+        // Validate input
+        if (image == null || image.isEmpty()) {
+            throw new OurException("Ảnh sản phẩm là bắt buộc");
+        }
+        
+        if (image.getSize() > 5 * 1024 * 1024) { // 5MB
+            throw new OurException("Kích thước ảnh không được vượt quá 5MB");
+        }
+        
+        // Validate category
+        Category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Danh mục không tồn tại"));
+        
+        // Upload ảnh lên S3
+        log.info("Đang upload ảnh lên S3...");
         String productImageUrl = awsS3Service.saveImageToS3(image);
 
+        // Tạo product
         Product product = new Product();
         product.setCategory(category);
         product.setPrice(price);
@@ -46,48 +69,106 @@ public class ProductServiceImpl implements ProductService {
         product.setImageUrl(productImageUrl);
 
         productRepository.save(product);
+        
+        long duration = System.currentTimeMillis() - startTime;
+        log.info("Tạo sản phẩm thành công trong {}ms: ID={}", duration, product.getId());
+        
         return Response.builder()
                 .status(200)
-                .message("Product successfully created")
+                .message("Tạo sản phẩm thành công")
                 .build();
     }
 
     @Override
     public Response updateProduct(Long productId, Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
-        Product product = productRepository.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        log.info("Bắt đầu update product ID: {}", productId);
+        
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
 
-        Category category = null;
-        String productImageUrl = null;
-
-        if(categoryId != null ){
-             category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category not found"));
+        // Chỉ update category nếu có thay đổi
+        if (categoryId != null && !categoryId.equals(product.getCategory().getId())) {
+            Category category = categoryRepo.findById(categoryId)
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
+            product.setCategory(category);
         }
-        if (image != null && !image.isEmpty()){
-            productImageUrl = awsS3Service.saveImageToS3(image);
+        
+        // Chỉ upload ảnh mới nếu có file được gửi lên
+        if (image != null && !image.isEmpty()) {
+            log.info("Đang upload ảnh mới lên S3...");
+            String productImageUrl = awsS3Service.saveImageToS3(image);
+            product.setImageUrl(productImageUrl);
+            log.info("Upload ảnh thành công");
         }
 
-        if (category != null) product.setCategory(category);
-        if (name != null) product.setName(name);
+        // Update các field khác
+        if (name != null && !name.isEmpty()) product.setName(name);
         if (price != null) product.setPrice(price);
-        if (description != null) product.setDescription(description);
-        if (productImageUrl != null) product.setImageUrl(productImageUrl);
+        if (description != null && !description.isEmpty()) product.setDescription(description);
 
         productRepository.save(product);
+        log.info("Đã update product ID: {}", productId);
+        
         return Response.builder()
                 .status(200)
-                .message("Product updated successfully")
+                .message("Cập nhật sản phẩm thành công")
                 .build();
-
     }
 
     @Override
+    @Transactional
     public Response deleteProduct(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(()-> new OurException("Product Not Found"));
-        productRepository.delete(product);
-        return Response.builder()
-                .status(200)
-                .message("Product deleted successfully")
-                .build();
+        try {
+            log.info("Bắt đầu xóa sản phẩm ID: {}", productId);
+            
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new OurException("Product Not Found"));
+            
+            // Kiểm tra xem product có trong OrderItem không
+            boolean hasOrders = orderItemRepo.existsByProductId(productId);
+            log.info("Product {} có đơn hàng: {}", productId, hasOrders);
+            
+            if (hasOrders) {
+                return Response.builder()
+                        .status(400)
+                        .message("Không thể xóa sản phẩm này vì đã có đơn hàng. Bạn có thể ẩn sản phẩm thay vì xóa.")
+                        .build();
+            }
+            
+            // Xóa tất cả wishlist liên quan
+            List<com.phegondev.Phegon.Eccormerce.entity.Wishlist> wishlists = wishlistRepository.findByProductId(productId);
+            log.info("Tìm thấy {} wishlist cần xóa", wishlists.size());
+            if (!wishlists.isEmpty()) {
+                wishlistRepository.deleteAll(wishlists);
+                wishlistRepository.flush();
+                log.info("Đã xóa {} wishlist", wishlists.size());
+            }
+            
+            // Xóa tất cả review liên quan
+            List<com.phegondev.Phegon.Eccormerce.entity.Review> reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
+            log.info("Tìm thấy {} review cần xóa", reviews.size());
+            if (!reviews.isEmpty()) {
+                reviewRepository.deleteAll(reviews);
+                reviewRepository.flush();
+                log.info("Đã xóa {} review", reviews.size());
+            }
+            
+            log.info("Đang xóa product ID: {}", productId);
+            productRepository.deleteProductById(productId);
+            log.info("Đã xóa product ID: {} - Transaction sẽ commit", productId);
+            
+            Response response = Response.builder()
+                    .status(200)
+                    .message("Sản phẩm đã được xóa thành công")
+                    .build();
+            
+            log.info("Trả về response thành công");
+            return response;
+            
+        } catch (Exception e) {
+            log.error("Lỗi khi xóa product ID {}: {}", productId, e.getMessage(), e);
+            throw new OurException("Không thể xóa sản phẩm: " + e.getMessage());
+        }
     }
 
     @Override
@@ -104,16 +185,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getAllProducts() {
-        List<ProductDto> productList = productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
+        log.info("Đang lấy danh sách tất cả sản phẩm");
+        
+        List<ProductDto> productList = productRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()
                 .map(entityDtoMapper::mapProductToDtoBasic)
                 .collect(Collectors.toList());
 
+        log.info("Đã lấy {} sản phẩm", productList.size());
+        
         return Response.builder()
                 .status(200)
                 .productList(productList)
                 .build();
-
     }
 
     @Override
@@ -149,5 +233,34 @@ public class ProductServiceImpl implements ProductService {
                 .status(200)
                 .productList(productDtoList)
                 .build();
+    }
+
+    @Override
+    public byte[] exportProductsToExcel() {
+        return excelService.exportProductsToExcel();
+    }
+
+    @Override
+    public Response importProductsFromExcel(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new OurException("File không được để trống");
+        }
+
+        String filename = file.getOriginalFilename();
+        if (filename == null || !filename.endsWith(".xlsx")) {
+            throw new OurException("Chỉ chấp nhận file Excel (.xlsx)");
+        }
+
+        List<Product> importedProducts = excelService.importProductsFromExcel(file);
+
+        return Response.builder()
+                .status(200)
+                .message("Đã nhập thành công " + importedProducts.size() + " sản phẩm")
+                .build();
+    }
+
+    @Override
+    public byte[] downloadProductTemplate() {
+        return excelTemplateService.generateProductTemplate();
     }
 }

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ApiService from "../../service/ApiService";
 import Pagination from "../common/Pagination";
+import ReviewModal from "../common/ReviewModal";
 import { useNavigate } from "react-router-dom";
 import "../../style/myOrder.css";
 
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [activeTab, setActiveTab] = useState("ALL");
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
@@ -20,7 +23,17 @@ const MyOrdersPage = () => {
   const fetchOrders = async () => {
     try {
       const response = await ApiService.getLoggedInUserInfo();
-      setOrders(response.user.orderList || []);
+      const orderList = response.user.orderList || [];
+      console.log("Orders fetched:", orderList);
+      
+      // Debug: Check hasReviewed field
+      orderList.forEach(order => {
+        order.orderItemList?.forEach(item => {
+          console.log(`Product ${item.product?.name}: hasReviewed = ${item.hasReviewed}`);
+        });
+      });
+      
+      setOrders(orderList);
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -57,6 +70,8 @@ const MyOrdersPage = () => {
         return orders.filter(order => order.status === "CONFIRMED");
       case "REVIEW":
         return orders.filter(order => order.status === "SHIPPED");
+      case "CANCELLED":
+        return orders.filter(order => order.status === "CANCELLED");
       case "RETURN":
         return orders.filter(order => order.status === "RETURNED");
       default:
@@ -74,6 +89,31 @@ const MyOrdersPage = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setCurrentPage(1);
+  };
+
+  const handleReviewClick = (product) => {
+    setSelectedProduct(product);
+    setShowReviewModal(true);
+  };
+
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      const response = await ApiService.createReview({
+        productId: selectedProduct.id,
+        rating: reviewData.rating,
+        content: reviewData.content
+      });
+      
+      setSuccess(response.message || "Đánh giá thành công!");
+      setTimeout(() => setSuccess(null), 3000);
+      setShowReviewModal(false);
+      
+      // Refresh orders to update review status
+      fetchOrders();
+    } catch (error) {
+      setError(error.response?.data?.message || error.message || "Không thể gửi đánh giá");
+      setTimeout(() => setError(null), 3000);
+    }
   };
 
   return (
@@ -107,6 +147,12 @@ const MyOrdersPage = () => {
           Đánh giá
         </button>
         <button
+          className={`order-tab ${activeTab === "CANCELLED" ? "active" : ""}`}
+          onClick={() => handleTabChange("CANCELLED")}
+        >
+          Đã hủy
+        </button>
+        <button
           className={`order-tab ${activeTab === "RETURN" ? "active" : ""}`}
           onClick={() => handleTabChange("RETURN")}
         >
@@ -115,6 +161,7 @@ const MyOrdersPage = () => {
       </div>
 
       {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
 
       <ul className="main-order-list">
         {paginatedOrders.map((order) => (
@@ -149,23 +196,26 @@ const MyOrdersPage = () => {
                     <p>Số lượng: {item.quantity}</p>
                     <p>Giá: {item.price?.toLocaleString("vi-VN")}đ</p>
                   </div>
+
+                  {/* Nút đánh giá cho sản phẩm đã vận chuyển */}
+                  {order.status === "SHIPPED" && (
+                    <>
+                      {console.log(`Rendering item ${item.product?.name}: hasReviewed=${item.hasReviewed}, type=${typeof item.hasReviewed}`)}
+                      {item.hasReviewed ? (
+                        <span className="reviewed-badge">✓ Đã đánh giá</span>
+                      ) : (
+                        <button
+                          className="review-btn-item"
+                          onClick={() => handleReviewClick(item.product)}
+                        >
+                          Đánh giá
+                        </button>
+                      )}
+                    </>
+                  )}
                 </li>
               ))}
             </ul>
-
-            {/* 🔥 BUTTON */}
-            <div className="order-actions">
-              <button
-                className="review-btn"
-                onClick={() =>
-                  navigate(
-                    `/product/${order.orderItemList?.[0]?.product?.id}`
-                  )
-                }
-              >
-                Đánh giá
-              </button>
-            </div>
           </li>
         ))}
       </ul>
@@ -174,6 +224,14 @@ const MyOrdersPage = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
+      />
+
+      {/* Review Modal */}
+      <ReviewModal
+        show={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        product={selectedProduct}
+        onSubmit={handleReviewSubmit}
       />
     </div>
   );

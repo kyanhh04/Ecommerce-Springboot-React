@@ -1,0 +1,316 @@
+/* ===== REVIEW MODAL - Following MASTER.md Design System ===== */
+
+/* Modal Overlay - Glassmorphism */
+.review-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 200ms ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.review-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 200ms ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.review-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.review-modal-header h2 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0F172A;
+  margin: 0;
+}
+
+.review-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 32px;
+  color: #334155;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 200ms ease;
+}
+
+.review-modal-close:hover {
+  background: #F8FAFC;
+  color: #0F172A;
+}
+
+/* Product Info */
+.review-modal-product {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #F8FAFC;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.review-modal-product img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.review-modal-product-info h3 {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172A;
+  margin: 0;
+}
+
+/* Form */
+.review-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Rating Section */
+.review-rating-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-rating-section label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.review-stars {
+  display: flex;
+  gap: 8px;
+}
+
+.star-btn {
+  background: transparent;
+  border: none;
+  font-size: 40px;
+  color: #E2E8F0;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  color: #FFA500;
+  transform: scale(1.1);
+}
+
+.rating-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* Content Section */
+.review-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-content-section label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.review-content-section textarea {
+  padding: 12px 16px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  color: #0F172A;
+  transition: border-color 200ms ease;
+  resize: vertical;
+}
+
+.review-content-section textarea:focus {
+  border-color: #0369A1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
+}
+
+.review-content-section textarea::placeholder {
+  color: #94A3B8;
+}
+
+/* Modal Actions */
+.review-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Cancel Button - Secondary */
+.review-cancel-btn {
+  background: transparent;
+  color: #0F172A;
+  border: 2px solid #0F172A;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+}
+
+.review-cancel-btn:hover {
+  background: #0F172A;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.review-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Submit Button - Primary */
+.review-submit-btn {
+  background: #0369A1;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+}
+
+.review-submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(3, 105, 161, 0.3);
+}
+
+.review-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Focus States */
+.review-cancel-btn:focus,
+.review-submit-btn:focus,
+.star-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .review-modal {
+    padding: 24px;
+    margin: 16px;
+  }
+
+  .review-modal-header h2 {
+    font-size: 20px;
+  }
+
+  .review-modal-product {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .review-modal-product img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .star-btn {
+    font-size: 32px;
+  }
+
+  .review-modal-actions {
+    flex-direction: column;
+  }
+
+  .review-cancel-btn,
+  .review-submit-btn {
+    width: 100%;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .review-modal-overlay,
+  .review-modal,
+  .star-btn,
+  .review-cancel-btn,
+  .review-submit-btn {
+    animation: none;
+    transition: none;
+  }
+}

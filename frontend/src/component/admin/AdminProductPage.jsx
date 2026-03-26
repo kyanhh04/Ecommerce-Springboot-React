@@ -12,25 +12,35 @@ const AdminProductPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [confirmState, setConfirmState] = useState({ show: false, id: null });
     const itemsPerPage = 10;
 
 
     const fetchProducts = async() => {
+        setLoading(true);
         try {
             const response = await ApiService.getAllProducts();
             const productList = response.productList || [];
-            setTotalPages(Math.ceil(productList.length/itemsPerPage));
-            setProducts(productList.slice((currentPage -1) * itemsPerPage, currentPage * itemsPerPage));
+            setProducts(productList);
+            setTotalPages(Math.ceil(productList.length / itemsPerPage));
+            setError(null);
         } catch (error) {
             setError(error.response?.data?.message || error.message || 'unable to fetch products')
-            
+        } finally {
+            setLoading(false);
         }
     }
 
     useEffect(()=>{
         fetchProducts();
-    }, [currentPage]);
+    }, []);
+
+    // Tính toán products hiển thị dựa trên currentPage
+    const displayedProducts = products.slice(
+        (currentPage - 1) * itemsPerPage, 
+        currentPage * itemsPerPage
+    );
 
     const handleEdit = async (id) => {
         navigate(`/admin/edit-product/${id}`)
@@ -66,20 +76,28 @@ const AdminProductPage = () => {
             <div>
                 <h2>Products</h2>
                 <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Add product</button>
-                <ul>
-                    {products.map((product)=>(
-                        <li key={product.id}>
-                            <span>{product.name}</span>
-                            <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
-                            <button className="product-btn-delete" onClick={()=> openDeleteDialog(product.id)}>Delete</button>
-                            </li>
-                        ))}
-                    </ul>
-                    <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={(page)=> setCurrentPage(page)}/>
-                </div>
+                
+                {loading ? (
+                    <p>Đang tải...</p>
+                ) : (
+                    <>
+                        <ul>
+                            {displayedProducts.map((product)=>(
+                                <li key={product.id}>
+                                    <span>{product.name}</span>
+                                    <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
+                                    <button className="product-btn-delete" onClick={()=> openDeleteDialog(product.id)}>Delete</button>
+                                </li>
+                            ))}
+                        </ul>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page)=> setCurrentPage(page)}
+                        />
+                    </>
+                )}
+            </div>
 
             <ConfirmDialog
                 show={confirmState.show}
