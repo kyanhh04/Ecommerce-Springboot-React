@@ -16,7 +16,9 @@ import java.util.Objects;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_user_email", columnList = "email")
+})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

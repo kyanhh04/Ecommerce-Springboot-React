@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute } from './service/Guard';
 import Navbar from './component/common/Navbar';
-import Footer from './component/common/footer';
+import Footer from './component/common/Footer';
 import ScrollToTop from "./component/common/ScrollToTop";
 import { CartProvider } from './component/context/CartContext';
 

@@ -32,4 +32,4 @@ return(
 </div>
 )
 }
-export default Faqs
+export default Faqs;

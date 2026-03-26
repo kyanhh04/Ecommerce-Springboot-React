@@ -10,6 +10,7 @@ const LoginPage = () => {
   });
 
   const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,6 +24,7 @@ const LoginPage = () => {
       const response = await ApiService.loginUser(formData);
       if (response.status === 200) {
         setMessage("Đăng nhập thành công!");
+        setIsError(false);
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
         setTimeout(() => {
@@ -35,6 +37,7 @@ const LoginPage = () => {
           error.message ||
           "unable to Login a user",
       );
+      setIsError(true);
     }
   };
 
@@ -42,24 +45,26 @@ const LoginPage = () => {
     <div className="auth-wrapper">
       <div className="register-page">
         <form onSubmit={handleSubmit}>
-          <h2>Login</h2>
-          {message && <p className="message">{message}</p>}
+          <h2>Đăng nhập</h2>
+          {message && <p className={`message ${isError ? 'error' : ''}`}>{message}</p>}
           
-          <label>Email</label>
+          <label>Tài khoản</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="Nhập tài khoản của bạn"
             required
           />
 
-          <label>Password</label>
+          <label>Mật khẩu</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Nhập mật khẩu"
             required
           />
 
@@ -67,7 +72,7 @@ const LoginPage = () => {
             <a href="/forgot-password">Quên mật khẩu?</a>
           </div>
 
-          <button type="submit">Login</button>
+          <button type="submit">Đăng nhập</button>
 
           <p className="register-link">
             Chưa có tài khoản? <a href="/register">Đăng ký</a>

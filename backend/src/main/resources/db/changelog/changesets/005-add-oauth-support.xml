@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-add-oauth-columns" author="system">
+        <!-- Thêm cột provider để phân biệt LOCAL, GOOGLE, FACEBOOK... -->
+        <addColumn tableName="users">
+            <column name="provider" type="VARCHAR(50)" defaultValue="LOCAL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Thêm cột provider_id để lưu Google ID, Facebook ID... -->
+        <addColumn tableName="users">
+            <column name="provider_id" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Cho phép password nullable vì user đăng nhập Google không cần password -->
+        <dropNotNullConstraint tableName="users" columnName="password" columnDataType="VARCHAR(255)"/>
+
+        <!-- Cho phép phone_number nullable vì Google không bắt buộc có SĐT -->
+        <dropNotNullConstraint tableName="users" columnName="phone_number" columnDataType="VARCHAR(50)"/>
+
+        <!-- Tạo index cho provider_id để tìm kiếm nhanh -->
+        <createIndex indexName="idx_user_provider_id" tableName="users">
+            <column name="provider_id"/>
+        </createIndex>
+
+        <!-- Tạo unique constraint cho provider + provider_id -->
+        <addUniqueConstraint 
+            tableName="users" 
+            columnNames="provider,provider_id" 
+            constraintName="uk_users_provider_provider_id"/>
+
+        <rollback>
+            <dropUniqueConstraint tableName="users" constraintName="uk_users_provider_provider_id"/>
+            <dropIndex indexName="idx_user_provider_id" tableName="users"/>
+            <addNotNullConstraint tableName="users" columnName="phone_number" columnDataType="VARCHAR(50)"/>
+            <addNotNullConstraint tableName="users" columnName="password" columnDataType="VARCHAR(255)"/>
+            <dropColumn tableName="users" columnName="provider_id"/>
+            <dropColumn tableName="users" columnName="provider"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

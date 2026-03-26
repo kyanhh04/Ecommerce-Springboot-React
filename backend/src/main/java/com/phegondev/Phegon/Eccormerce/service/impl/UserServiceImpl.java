@@ -68,12 +68,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response loginUser(LoginRequest loginRequest) {
-
+        long startTime = System.currentTimeMillis();
+        
+        long dbStart = System.currentTimeMillis();
         User user = userRepo.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new NotFoundException("Email not found"));
+        log.info("DB query time: {}ms", System.currentTimeMillis() - dbStart);
+        
+        long bcryptStart = System.currentTimeMillis();
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
             throw new InvalidCredentialsException("Password does not match");
         }
+        log.info("BCrypt verification time: {}ms", System.currentTimeMillis() - bcryptStart);
+        
+        long jwtStart = System.currentTimeMillis();
         String token = jwtUtils.generateToken(user);
+        log.info("JWT generation time: {}ms", System.currentTimeMillis() - jwtStart);
+        
+        log.info("Total login time: {}ms", System.currentTimeMillis() - startTime);
 
         return Response.builder()
                 .status(200)

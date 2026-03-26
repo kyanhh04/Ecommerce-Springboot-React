@@ -38,7 +38,9 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        // Sử dụng strength = 8 để tăng tốc độ xử lý (nhanh hơn ~4 lần so với mặc định 10)
+        // Vẫn đảm bảo bảo mật tốt cho môi trường development/production
+        return new BCryptPasswordEncoder(8);
     }
 
     @Bean
