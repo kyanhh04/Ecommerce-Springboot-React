@@ -12,5 +12,7 @@
     <include file="db/changelog/changesets/004-add-email-index.xml"/>
     <include file="db/changelog/changesets/005-add-oauth-support.xml"/>
     <include file="db/changelog/changesets/006-add-username-column.xml"/>
+    <include file="db/changelog/changesets/007-insert-sample-users.xml"/>
+    <include file="db/changelog/changesets/008-insert-more-reviews.xml"/>
 
 </databaseChangeLog>
