@@ -5,14 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <include file="db/changelog/changesets/000-create-tables.xml"/>
-    <include file="db/changelog/changesets/001-insert-admin-user.xml"/>
-    <include file="db/changelog/changesets/002-add-reply-to-reviews.xml"/>
-    <include file="db/changelog/changesets/003-insert-sample-reviews.xml"/>
-    <include file="db/changelog/changesets/004-add-email-index.xml"/>
-    <include file="db/changelog/changesets/005-add-oauth-support.xml"/>
-    <include file="db/changelog/changesets/006-add-username-column.xml"/>
-    <include file="db/changelog/changesets/007-insert-sample-users.xml"/>
-    <include file="db/changelog/changesets/008-insert-more-reviews.xml"/>
+    <include file="db/changelog/changesets/001-create-all-tables.xml"/>
+    <include file="db/changelog/changesets/002-insert-sample-data.xml"/>
+    <include file="db/changelog/changesets/003-modify-otp-table.xml"/>
+    <include file="db/changelog/changesets/004-update-admin-password.xml"/>
 
 </databaseChangeLog>

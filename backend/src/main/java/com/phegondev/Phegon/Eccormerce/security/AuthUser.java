@@ -15,6 +15,8 @@ import java.util.List;
 public class AuthUser implements UserDetails {
 
     private User user;
+    private String password; // Password từ UserCredential
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(user.getRole().name()));
@@ -22,7 +24,7 @@ public class AuthUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override

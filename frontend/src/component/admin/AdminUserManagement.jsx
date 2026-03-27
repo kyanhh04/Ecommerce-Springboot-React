@@ -179,6 +179,7 @@ const AdminUserManagement = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-input"
+                    autoComplete="off"
                 />
                 <select
                     value={filterRole}
@@ -240,7 +241,7 @@ const AdminUserManagement = () => {
                                 {message}
                             </div>
                         )}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} autoComplete="off">
                             <div className="form-group">
                                 <label>Tên:</label>
                                 <input
@@ -294,6 +295,8 @@ const AdminUserManagement = () => {
                                     value={currentUser.password}
                                     onChange={handleInputChange}
                                     placeholder="Nhập mật khẩu mới"
+                                    autoComplete="off"
+                                    data-form-type="other"
                                 />
                             </div>
 

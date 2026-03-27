@@ -142,36 +142,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public Response addReply(Long reviewId, String reply) {
-        try {
-            if (reviewId == null) throw new OurException("Thiếu reviewId");
-            if (reply == null || reply.trim().isEmpty()) throw new OurException("Trả lời không được để trống");
-
-            Review review = reviewRepository.findById(reviewId)
-                    .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
-
-            Review saved = reviewRepository.save(review);
-
-            return Response.builder()
-                    .status(200)
-                    .message("Đã thêm trả lời")
-                    .review(entityDtoMapper.mapReviewToDtoBasic(saved))
-                    .build();
-        } catch (OurException e) {
-            return Response.builder()
-                    .status(400)
-                    .message(e.getMessage())
-                    .build();
-        } catch (Exception e) {
-            return Response.builder()
-                    .status(500)
-                    .message("Lỗi khi thêm trả lời: " + e.getMessage())
-                    .build();
-        }
-    }
-
-    @Transactional
-    @Override
     public Response deleteReview(Long reviewId) {
         try {
             if (reviewId == null) throw new OurException("Thiếu reviewId");
@@ -194,34 +164,6 @@ public class ReviewServiceImpl implements ReviewService {
             return Response.builder()
                     .status(500)
                     .message("Lỗi khi xóa đánh giá: " + e.getMessage())
-                    .build();
-        }
-    }
-
-    @Transactional
-    @Override
-    public Response deleteReply(Long reviewId) {
-        try {
-            if (reviewId == null) throw new OurException("Thiếu reviewId");
-
-            Review review = reviewRepository.findById(reviewId)
-                    .orElseThrow(() -> new NotFoundException("Review không tìm thấy"));
-
-            reviewRepository.save(review);
-
-            return Response.builder()
-                    .status(200)
-                    .message("Đã xóa trả lời")
-                    .build();
-        } catch (OurException | NotFoundException e) {
-            return Response.builder()
-                    .status(400)
-                    .message(e.getMessage())
-                    .build();
-        } catch (Exception e) {
-            return Response.builder()
-                    .status(500)
-                    .message("Lỗi khi xóa trả lời: " + e.getMessage())
                     .build();
         }
     }

@@ -16,8 +16,11 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "comment")
     private String content;
-    private int rating; // assuming it is in 1 to 10
+    
+    private int rating;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReviewReply> replies = new ArrayList<>(); // Multiple replies support

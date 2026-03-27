@@ -4,7 +4,8 @@ import com.phegondev.Phegon.Eccormerce.entity.Order;
 import com.phegondev.Phegon.Eccormerce.entity.User;
 
 public interface EmailService {
-    void sendOTPEmail(User user, String otp);
+    void sendRegistrationOTP(String email, String otp);
+    void sendForgotPasswordOTP(String email, String otp);
     void sendOrderConfirmationEmail(User user, Order order);
     void sendCODOrderConfirmationEmail(User user, Order order);
 }

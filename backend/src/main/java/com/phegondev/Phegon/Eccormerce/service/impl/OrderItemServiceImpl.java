@@ -54,6 +54,14 @@ public class OrderItemServiceImpl implements OrderItemService {
         try {
             User user = userService.getLoginUser();
             
+            // Kiểm tra user phải có số điện thoại
+            if (user.getPhoneNumber() == null || user.getPhoneNumber().trim().isEmpty()) {
+                return Response.builder()
+                        .status(400)
+                        .message("Vui lòng cập nhật số điện thoại trước khi đặt hàng")
+                        .build();
+            }
+            
             // Fetch all products in one query to avoid N+1 problem
             List<Long> productIds = orderRequest.getItems().stream()
                     .map(item -> item.getProductId())

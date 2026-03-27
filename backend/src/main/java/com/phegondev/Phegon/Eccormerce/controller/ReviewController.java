@@ -38,21 +38,6 @@ public class ReviewController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    // Single reply endpoints (backward compatibility)
-    @PutMapping("/{reviewId}/reply")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> addReply(@PathVariable Long reviewId, @RequestParam String reply) {
-        Response response = reviewService.addReply(reviewId, reply);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-    @DeleteMapping("/{reviewId}/reply")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> deleteReply(@PathVariable Long reviewId) {
-        Response response = reviewService.deleteReply(reviewId);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
     // Multiple replies endpoints
     @PostMapping("/{reviewId}/replies")
     @PreAuthorize("hasAuthority('ADMIN')")

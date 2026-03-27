@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Insert admin user -->
+    <changeSet id="002-insert-admin-user" author="system">
+        <insert tableName="users">
+            <column name="name" value="Admin"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="phone_number" value="0123456789"/>
+            <column name="role" value="ADMIN"/>
+        </insert>
+
+        <!-- Insert admin credential với password: admin123 -->
+        <sql>
+            INSERT INTO user_credentials (user_id, provider, provider_id, password, created_at)
+            SELECT id, 'LOCAL', 'admin@gmail.com', '$2a$10$YourHashedPasswordHere', CURRENT_TIMESTAMP
+            FROM users WHERE email='admin@gmail.com';
+        </sql>
+    </changeSet>
+
+    <!-- Insert sample categories -->
+    <changeSet id="002-insert-sample-categories" author="system">
+        <insert tableName="categories">
+            <column name="name" value="Laptop"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name" value="Tai nghe"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name" value="Bàn phím"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name" value="Ổ cứng"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name" value="Chuột máy tính"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

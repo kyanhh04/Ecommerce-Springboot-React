@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute } from './service/Guard';
 import Navbar from './component/common/Navbar';
-import Footer from './component/common/Footer';
+import Footer from './component/common/footer';
 import ScrollToTop from "./component/common/ScrollToTop";
 import { CartProvider } from './component/context/CartContext';
 
@@ -12,9 +12,14 @@ import ProductDetailsPage from './component/pages/ProductDetailsPage';
 import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
-import RegisterPage from './component/pages/RegisterPage';
+import RegisterMethodPage from './component/pages/RegisterMethodPage';
+import RegisterEmailPage from './component/pages/RegisterEmailPage';
+import RegisterOTPPage from './component/pages/RegisterOTPPage';
+import RegisterPasswordPage from './component/pages/RegisterPasswordPage';
 import LoginPage from './component/pages/LoginPage';
 import ForgotPasswordPage from './component/pages/ForgotPasswordPage';
+import ForgotPasswordOTPPage from './component/pages/ForgotPasswordOTPPage';
+import ResetPasswordPage from './component/pages/ResetPasswordPage';
 import ProfilePage from './component/pages/ProfilePage';
 import AddressPage from './component/pages/AddressPage';
 import MyOrdersPage from './component/pages/MyOrder';
@@ -60,9 +65,14 @@ function AppLayout() {
               <Route path='/product/:productId' element={<ProductDetailsPage />} />
               <Route path='/category/:categoryId' element={<CategoryProductsPage />} />
               <Route path='/cart' element={<CartPage />} />
-              <Route path='/register' element={<RegisterPage />} />
+              <Route path='/register' element={<RegisterMethodPage />} />
+              <Route path='/register/email' element={<RegisterEmailPage />} />
+              <Route path='/register/otp' element={<RegisterOTPPage />} />
+              <Route path='/register/password' element={<RegisterPasswordPage />} />
               <Route path='/login' element={<LoginPage />} />
               <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+              <Route path='/forgot-password/otp' element={<ForgotPasswordOTPPage />} />
+              <Route path='/forgot-password/reset' element={<ResetPasswordPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

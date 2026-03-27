@@ -1,0 +1,151 @@
+.register-method-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 40px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.auth-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #F8FAFC;
+  z-index: 9999;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.register-method-page h2 {
+  font-family: 'Rubik', sans-serif;
+  text-align: center;
+  color: #0F172A;
+  margin-bottom: 8px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.register-method-page .subtitle {
+  text-align: center;
+  color: #334155;
+  margin-bottom: 32px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.method-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.method-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid #dadce0 !important;
+  border-radius: 24px !important;
+  background: white !important;
+  color: #5f6368 !important;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-family: 'Google Sans', 'Roboto', 'Arial', sans-serif;
+  height: 40px;
+  line-height: 40px;
+  letter-spacing: 0.25px;
+  min-width: 0;
+  width: 100%;
+}
+
+.method-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #4285f4 !important;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15) !important;
+}
+
+.method-btn:active {
+  background: #f1f3f4 !important;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.3) !important;
+}
+
+.method-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.method-btn span {
+  flex: 1;
+  text-align: center;
+}
+
+/* Google Sign-In Button styling */
+#googleSignInDiv {
+  width: 100%;
+}
+
+#googleSignInDiv > div {
+  width: 100% !important;
+}
+
+#googleSignInDiv iframe {
+  width: 100% !important;
+  border-radius: 50px !important;
+}
+
+/* Try to override Google button styles */
+#googleSignInDiv div[role="button"] {
+  border-radius: 50px !important;
+}
+
+#googleSignInDiv > div > div {
+  border-radius: 50px !important;
+}
+
+.login-link {
+  text-align: center;
+  color: #334155;
+  font-size: 14px;
+  margin-top: 24px;
+}
+
+.login-link a {
+  color: #0369A1;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 200ms ease;
+  cursor: pointer;
+}
+
+.login-link a:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .register-method-page {
+    padding: 36px 24px;
+    max-width: 100%;
+    margin: 20px;
+  }
+
+  .register-method-page h2 {
+    font-size: 28px;
+  }
+
+  .method-btn {
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+}

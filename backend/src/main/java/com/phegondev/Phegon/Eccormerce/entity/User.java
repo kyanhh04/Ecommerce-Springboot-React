@@ -35,15 +35,15 @@ public class User {
     @NotBlank(message = "Email is required")
     private String email;
 
-    @NotBlank(message = "Password number is required")
-    private String password;
-
     @Column(name = "phone_number")
-    @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UserCredential> credentials;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -53,32 +53,26 @@ public class User {
     private Address address;
 
     @Column(name = "created_at")
-    private final LocalDateTime createdAt = LocalDateTime.now();  // This will be excluded from hashCode and equals
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-    // equals method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;  // Using instanceof for subclass comparison
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password) &&
                 Objects.equals(phoneNumber, user.phoneNumber) &&
-                role == user.role &&
-                Objects.equals(orderItemList, user.orderItemList) &&
-                Objects.equals(address, user.address);
+                role == user.role;
     }
 
-    // hashCode method
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password, phoneNumber, role, orderItemList, address);  // Excluding createdAt from hashCode
+        return Objects.hash(id, name, email, phoneNumber, role);
     }
 
-    // canEqual method
     public boolean canEqual(Object other) {
-        return other instanceof User;  // Allow comparison only between User instances or its subclasses
+        return other instanceof User;
     }
 }

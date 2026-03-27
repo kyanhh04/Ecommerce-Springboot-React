@@ -24,6 +24,41 @@ export default class ApiService {
         return response.data;
     }
 
+    static async googleLogin(token) {
+        const response = await axios.post(`${this.BASE_URL}/auth/oauth2/google`, { token });
+        return response.data;
+    }
+
+    static async checkEmailExists(email) {
+        const response = await axios.get(`${this.BASE_URL}/auth/check-email?email=${encodeURIComponent(email)}`);
+        return response.data;
+    }
+
+    static async sendRegistrationOTP(email) {
+        const response = await axios.post(`${this.BASE_URL}/auth/otp/send?email=${encodeURIComponent(email)}`);
+        return response.data;
+    }
+
+    static async verifyRegistrationOTP(email, code) {
+        const response = await axios.post(`${this.BASE_URL}/auth/otp/verify?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`);
+        return response.data;
+    }
+
+    static async sendForgotPasswordOTP(email) {
+        const response = await axios.post(`${this.BASE_URL}/auth/otp/forgot-password/send?email=${encodeURIComponent(email)}`);
+        return response.data;
+    }
+
+    static async verifyForgotPasswordOTP(email, code) {
+        const response = await axios.post(`${this.BASE_URL}/auth/otp/forgot-password/verify?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`);
+        return response.data;
+    }
+
+    static async resetPassword(email, newPassword, otpCode) {
+        const response = await axios.post(`${this.BASE_URL}/auth/reset-password?email=${encodeURIComponent(email)}&newPassword=${encodeURIComponent(newPassword)}&otpCode=${encodeURIComponent(otpCode)}`);
+        return response.data;
+    }
+
 
     static async getLoggedInUserInfo() {
         const response = await axios.get(`${this.BASE_URL}/user/my-info`, {
@@ -358,23 +393,8 @@ export default class ApiService {
         return response.data;
     }
 
-    static async addReviewReply(reviewId, reply) {
-        const response = await axios.put(`${this.BASE_URL}/api/reviews/${reviewId}/reply`, {}, {
-            headers: this.getHeader(),
-            params: { reply }
-        });
-        return response.data;
-    }
-
     static async deleteReview(reviewId) {
         const response = await axios.delete(`${this.BASE_URL}/api/reviews/${reviewId}`, {
-            headers: this.getHeader()
-        });
-        return response.data;
-    }
-
-    static async deleteReviewReply(reviewId) {
-        const response = await axios.delete(`${this.BASE_URL}/api/reviews/${reviewId}/reply`, {
             headers: this.getHeader()
         });
         return response.data;

@@ -44,8 +44,8 @@ const Footer = () => {
         {/* Contact */}
         <div className="footer-col">
           <h3>Contact Info</h3>
-          <p>Email: support@laptopstore.com</p>
-          <p>Phone: 0123 456 789</p>
+          <p>Zalo: 0913932812</p>
+          <p>Email: hoangky.a3th.2k4@gmail.com</p>
           <p>Address: Hà Nội, Việt Nam</p>
         </div>
       </div>

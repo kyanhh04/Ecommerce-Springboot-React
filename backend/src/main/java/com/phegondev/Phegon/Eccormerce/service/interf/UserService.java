@@ -1,5 +1,6 @@
 package com.phegondev.Phegon.Eccormerce.service.interf;
 
+import com.phegondev.Phegon.Eccormerce.dto.AddPasswordRequest;
 import com.phegondev.Phegon.Eccormerce.dto.LoginRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.dto.UpdateUserDto;
@@ -16,4 +17,7 @@ public interface UserService {
     User getLoginUser();
     Response getUserInfoAndOrderHistory();
     Response updateUser(UpdateUserDto updateUserDto);
+    Response addPasswordToExistingUser(AddPasswordRequest request);
+    Response resetPassword(String email, String newPassword, String otpCode);
+    boolean checkEmailExists(String email);
 }

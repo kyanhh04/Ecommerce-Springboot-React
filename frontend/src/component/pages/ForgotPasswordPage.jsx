@@ -1,22 +1,47 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ApiService from "../../service/ApiService";
 import "../../style/register.css";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Placeholder for forgot password logic
     try {
-      // TODO: Implement forgot password API call
-      setMessage("Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư của bạn.");
-      setIsError(false);
+      // Kiểm tra email có tồn tại không
+      const checkResponse = await ApiService.checkEmailExists(email);
+      
+      if (!checkResponse.exists) {
+        setMessage("Email này chưa được đăng ký trong hệ thống");
+        setIsError(true);
+        setTimeout(() => setMessage(null), 3000);
+        return;
+      }
+      
+      // Gửi OTP
+      const response = await ApiService.sendForgotPasswordOTP(email);
+      
+      if (response.status === 200) {
+        setMessage("Đã gửi mã OTP đến email của bạn");
+        setIsError(false);
+        
+        setTimeout(() => {
+          navigate("/forgot-password/otp", { state: { email } });
+        }, 1500);
+      } else {
+        setMessage(response.message || "Không thể gửi mã OTP");
+        setIsError(true);
+        setTimeout(() => setMessage(null), 3000);
+      }
     } catch (error) {
-      setMessage("Không thể gửi email khôi phục. Vui lòng thử lại.");
+      setMessage(error.response?.data?.message || "Không thể gửi email khôi phục. Vui lòng thử lại.");
       setIsError(true);
+      setTimeout(() => setMessage(null), 3000);
     }
   };
 
@@ -24,9 +49,19 @@ const ForgotPasswordPage = () => {
     <div className="auth-wrapper">
       <div className="register-page">
         <form onSubmit={handleSubmit}>
+          <div className="back-button-container">
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => navigate("/login")}
+            >
+              ← Quay lại
+            </button>
+          </div>
+
           <h2>Quên mật khẩu</h2>
           <p className="forgot-description">
-            Nhập email của bạn để nhận liên kết khôi phục mật khẩu
+            Nhập email của bạn để nhận mã OTP khôi phục mật khẩu
           </p>
           
           {message && <p className={`message ${isError ? 'error' : ''}`}>{message}</p>}
@@ -41,11 +76,7 @@ const ForgotPasswordPage = () => {
             required
           />
 
-          <button type="submit">Gửi email khôi phục</button>
-          
-          <p className="register-link">
-            Nhớ mật khẩu? <a href="/login">Đăng nhập</a>
-          </p>
+          <button type="submit">Gửi mã OTP</button>
         </form>
       </div>
     </div>

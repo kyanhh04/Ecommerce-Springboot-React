@@ -18,8 +18,7 @@ public class ReviewDto {
     private Long id;
     private String content;
     private int rating; // 1-5
-    private String reply; // Backward compatibility - single reply
-    private List<ReviewReplyDto> replies; // Multiple replies support
+    private List<ReviewReplyDto> replies;
     private LocalDateTime createdAt;
 
     private Long productId;

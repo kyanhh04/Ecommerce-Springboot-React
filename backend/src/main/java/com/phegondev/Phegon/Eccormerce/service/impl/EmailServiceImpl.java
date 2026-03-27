@@ -20,17 +20,21 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendOTPEmail(User user, String otp) {
+    public void sendRegistrationOTP(String email, String otp) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(user.getEmail());
-            message.setSubject("Mã OTP của bạn - Ecommerce");
-            message.setText("Mã OTP xác thực của bạn là: " + otp +
-                    "\n\nMã này có hiệu lực trong 10 phút.\n" +
-                    "Nếu bạn không yêu cầu, vui lòng bỏ qua email này.");
-            javaMailSender.send(message);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject("Mã OTP đăng ký tài khoản - Ecommerce");
+            
+            String html = buildRegistrationOTPEmailHtml(email, otp);
+            helper.setText(html, true);
+            
+            javaMailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Lỗi khi gửi email OTP: " + e.getMessage());
+            System.err.println("Lỗi khi gửi email OTP đăng ký: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -215,5 +219,93 @@ public class EmailServiceImpl implements EmailService {
         html.append("</body></html>");
 
         return html.toString();
+    }
+
+    private String buildRegistrationOTPEmailHtml(String email, String otp) {
+        StringBuilder html = new StringBuilder();
+        
+        html.append("<!DOCTYPE html>");
+        html.append("<html><head>");
+        html.append("<meta charset='UTF-8'>");
+        html.append("<style>");
+        html.append("body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }");
+        html.append(".container { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }");
+        html.append(".header { background: #0369A1; color: #fff; padding: 30px; text-align: center; }");
+        html.append(".header h1 { margin: 0; font-size: 24px; }");
+        html.append(".content { padding: 30px; }");
+        html.append(".otp-box { background: #f0f9ff; border: 2px dashed #0369A1; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }");
+        html.append(".otp-code { font-size: 32px; font-weight: bold; color: #0369A1; letter-spacing: 8px; }");
+        html.append(".info { color: #666; font-size: 14px; line-height: 1.6; margin: 15px 0; }");
+        html.append(".warning { background: #fef3c7; border-left: 4px solid #fbbf24; padding: 15px; margin: 20px 0; color: #92400e; font-size: 13px; }");
+        html.append(".footer { text-align: center; padding: 20px; background: #f8f9fa; color: #999; font-size: 12px; }");
+        html.append("</style></head><body>");
+        
+        html.append("<div class='container'>");
+        html.append("<div class='header'><h1>Xác nhận đăng ký tài khoản</h1></div>");
+        html.append("<div class='content'>");
+        html.append("<p>Xin chào,</p>");
+        html.append("<p class='info'>Bạn đã yêu cầu đăng ký tài khoản với email: <strong>").append(email).append("</strong></p>");
+        html.append("<p class='info'>Vui lòng sử dụng mã OTP dưới đây để hoàn tất đăng ký:</p>");
+        
+        html.append("<div class='otp-box'>");
+        html.append("<div class='otp-code'>").append(otp).append("</div>");
+        html.append("</div>");
+        
+        html.append("<p class='info'>Mã OTP này có hiệu lực trong <strong>10 phút</strong>.</p>");
+        
+        html.append("<div class='warning'>");
+        html.append("<strong> Lưu ý bảo mật:</strong><br>");
+        html.append("Không chia sẻ mã OTP này với bất kỳ ai. Nếu bạn không yêu cầu đăng ký, vui lòng bỏ qua email này.");
+        html.append("</div>");
+        
+        html.append("<p class='info'>Trân trọng,<br><strong>Đội ngũ Ecommerce</strong></p>");
+        html.append("</div>");
+        html.append("<div class='footer'>© 2026 Ecommerce. All rights reserved.</div>");
+        html.append("</div>");
+        html.append("</body></html>");
+        
+        return html.toString();
+    }
+
+    @Async
+    @Override
+    public void sendForgotPasswordOTP(String email, String otp) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject("Mã OTP khôi phục mật khẩu - Ecommerce");
+            
+            String html = buildForgotPasswordOTPEmailHtml(email, otp);
+            helper.setText(html, true);
+            
+            javaMailSender.send(mimeMessage);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi gửi email OTP khôi phục mật khẩu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private String buildForgotPasswordOTPEmailHtml(String email, String otp) {
+        return "<!DOCTYPE html>" +
+                "<html>" +
+                "<head><meta charset='UTF-8'></head>" +
+                "<body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>" +
+                "<div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>" +
+                "<h2 style='color: #0369A1; text-align: center;'>Khôi phục mật khẩu</h2>" +
+                "<p>Xin chào,</p>" +
+                "<p>Bạn đã yêu cầu khôi phục mật khẩu cho tài khoản: <strong>" + email + "</strong></p>" +
+                "<p>Mã OTP của bạn là:</p>" +
+                "<div style='background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; border-radius: 5px;'>" +
+                otp +
+                "</div>" +
+                "<p style='color: #dc2626;'><strong>Lưu ý:</strong> Mã OTP này có hiệu lực trong 10 phút.</p>" +
+                "<p>Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua email này.</p>" +
+                "<hr style='margin: 30px 0; border: none; border-top: 1px solid #ddd;'>" +
+                "<p style='font-size: 12px; color: #666; text-align: center;'>Email này được gửi tự động, vui lòng không trả lời.</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
     }
 }

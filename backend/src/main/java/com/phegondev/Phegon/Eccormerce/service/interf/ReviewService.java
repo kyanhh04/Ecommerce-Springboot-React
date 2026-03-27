@@ -7,15 +7,10 @@ public interface ReviewService {
     Response createReview(CreateReviewRequest request);
     Response getReviewsByProduct(Long productId, int page, int size);
     Response getAllReviews();
-    
-    // Single reply (backward compatibility)
-    Response addReply(Long reviewId, String reply);
-    Response deleteReply(Long reviewId);
+    Response deleteReview(Long reviewId);
     
     // Multiple replies support
     Response addNewReply(Long reviewId, String content);
     Response updateReply(Long replyId, String content);
     Response deleteReplyById(Long replyId);
-    
-    Response deleteReview(Long reviewId);
 }
