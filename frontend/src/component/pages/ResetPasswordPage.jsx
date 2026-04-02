@@ -93,8 +93,10 @@ const ResetPasswordPage = () => {
         setIsError(false);
         
         setTimeout(() => {
-          navigate("/login");
-        }, 1500);
+          // Clear history và navigate về login
+          window.history.replaceState(null, '', '/login');
+          navigate("/login", { replace: true, state: { fromResetPassword: true } });
+        }, 800);
       } else {
         setMessage(response.message || "Không thể đặt lại mật khẩu");
         setIsError(true);

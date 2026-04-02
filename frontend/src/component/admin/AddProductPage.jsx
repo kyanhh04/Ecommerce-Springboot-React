@@ -137,11 +137,9 @@ const AddProductPage = () => {
 
             const response = await ApiService.addProduct(formData);
             if (response.status === 200) {
-                setMessage(response.message || 'Tạo sản phẩm thành công')
-                setTimeout(() => {
-                    setMessage('')
-                    navigate('/admin/products')
-                }, 2000);
+                navigate('/admin/products', { 
+                    state: { message: response.message || 'Tạo sản phẩm thành công' } 
+                });
             }
 
         } catch (error) {
@@ -155,7 +153,7 @@ const AddProductPage = () => {
         <div>
             <form onSubmit={handleSubmit} className="product-form">
                 <button type="button" className="back-btn" onClick={() => navigate('/admin/products')}>← Quay lại</button>
-                <h2>Add Product</h2>
+                <h2>Thêm Sản Phẩm</h2>
                 {message && <div className="message">{message}</div>}
                 
                 <div className="image-upload-section">
@@ -178,7 +176,7 @@ const AddProductPage = () => {
                     disabled={loading}
                     required
                 >
-                    <option value="">Select Category</option>
+                    <option value="">Chọn danh mục</option>
                     {categories.map((cat)=>(
                         <option value={cat.id} key={cat.id}>{cat.name}</option>
                     ))}
@@ -186,7 +184,7 @@ const AddProductPage = () => {
                 
                 <input 
                     type="text" 
-                    placeholder="Product name"
+                    placeholder="Tên sản phẩm"
                     value={name}
                     onChange={(e)=> setName(e.target.value)}
                     disabled={loading}
@@ -194,7 +192,7 @@ const AddProductPage = () => {
                 />
 
                 <textarea 
-                    placeholder="Description"
+                    placeholder="Mô tả"
                     value={description}
                     onChange={(e)=> setDescription(e.target.value)}
                     disabled={loading}
@@ -202,7 +200,7 @@ const AddProductPage = () => {
 
                 <input 
                     type="number" 
-                    placeholder="price"
+                    placeholder="Giá"
                     value={price}
                     onChange={(e)=> setPrice(e.target.value)}
                     disabled={loading}
@@ -212,7 +210,7 @@ const AddProductPage = () => {
                 />
 
                 <button type="submit" disabled={loading}>
-                    {loading ? 'Đang tạo sản phẩm...' : 'Add Product'}
+                    {loading ? 'Đang tạo sản phẩm...' : 'Thêm Sản Phẩm'}
                 </button>
             </form>
         </div>

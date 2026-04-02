@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="006-add-discount-features" author="system">
+        <comment>Add discount category mapping and user discount features</comment>
+        
+        <!-- Add auto_assign_new_user column to discounts table -->
+        <addColumn tableName="discounts">
+            <column name="auto_assign_new_user" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        
+        <!-- Add min_order_amount column to discounts table -->
+        <addColumn tableName="discounts">
+            <column name="min_order_amount" type="DECIMAL(10,2)" defaultValueNumeric="0">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        
+        <!-- Add max_discount_amount column to discounts table -->
+        <addColumn tableName="discounts">
+            <column name="max_discount_amount" type="DECIMAL(10,2)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        
+        <!-- Create discount_categories junction table -->
+        <createTable tableName="discount_categories">
+            <column name="discount_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey tableName="discount_categories" 
+                       columnNames="discount_id, category_id" 
+                       constraintName="pk_discount_categories"/>
+        
+        <addForeignKeyConstraint baseTableName="discount_categories"
+                                 baseColumnNames="discount_id"
+                                 constraintName="fk_discount_categories_discount"
+                                 referencedTableName="discounts"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        
+        <addForeignKeyConstraint baseTableName="discount_categories"
+                                 baseColumnNames="category_id"
+                                 constraintName="fk_discount_categories_category"
+                                 referencedTableName="categories"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        
+        <!-- Create user_discounts table -->
+        <createTable tableName="user_discounts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="used_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="assigned_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint baseTableName="user_discounts"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_discounts_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        
+        <addForeignKeyConstraint baseTableName="user_discounts"
+                                 baseColumnNames="discount_id"
+                                 constraintName="fk_user_discounts_discount"
+                                 referencedTableName="discounts"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        
+        <addUniqueConstraint tableName="user_discounts"
+                             columnNames="user_id, discount_id"
+                             constraintName="uk_user_discount"/>
+        
+        <createIndex tableName="user_discounts" indexName="idx_user_discounts_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        
+        <createIndex tableName="user_discounts" indexName="idx_user_discounts_is_used">
+            <column name="is_used"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import { useCart } from "../context/CartContext";
+import DiscountModal from "../common/DiscountModal";
 import "../../style/cart.css";
 const CartPage = () => {
   const { cart, dispatch } = useCart();
@@ -13,6 +14,7 @@ const CartPage = () => {
   const [displayCount, setDisplayCount] = useState(5);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const hasUserInteractedRef = useRef(false);
   const navigate = useNavigate();
 
@@ -117,9 +119,19 @@ const CartPage = () => {
     setDiscount(null);
     setDiscountCode("");
   };
+
+  const handleSelectDiscountFromModal = (selectedDiscount) => {
+    setDiscount(selectedDiscount);
+    setDiscountCode(selectedDiscount.code);
+    setDiscountError("");
+  };
+
   const discountAmount = discount
     ? discount.discountType === "PERCENTAGE"
-      ? (selectedTotalPrice * (discount.discountValue || 0)) / 100
+      ? Math.min(
+          (selectedTotalPrice * (discount.discountValue || 0)) / 100,
+          discount.maxDiscountAmount || Infinity
+        )
       : discount.discountValue || 0
     : 0;
   const shippingFee = selectedItems.length > 0 ? 25000 : 0;
@@ -336,17 +348,31 @@ const CartPage = () => {
                   <span className="voucher-name">{discount ? discount.code : "Chưa áp dụng"}</span>
                 </div>
                 {!discount ? (
-                  <div className="discount-input-group">
-                    <input
-                      type="text"
-                      placeholder="Nhập mã giảm giá"
-                      value={discountCode}
-                      onChange={(e) =>
-                        setDiscountCode(e.target.value.toUpperCase())
-                      }
-                    />
-                    <button onClick={applyDiscount}>Áp dụng</button>
-                  </div>
+                  <>
+                    <div className="discount-input-group">
+                      <input
+                        type="text"
+                        placeholder="Nhập mã giảm giá"
+                        value={discountCode}
+                        onChange={(e) =>
+                          setDiscountCode(e.target.value.toUpperCase())
+                        }
+                      />
+                      <button onClick={applyDiscount}>Áp dụng</button>
+                    </div>
+                    {ApiService.isAuthenticated() && selectedItems.length > 0 && (
+                      <button 
+                        className="select-discount-btn"
+                        onClick={() => setShowDiscountModal(true)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 22V12M12 12L3 7M12 12l9-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Chọn mã giảm giá của tôi
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <div className="discount-applied-group">
                     <button className="remove-discount-btn" onClick={removeDiscount}>Xóa</button>
@@ -406,6 +432,13 @@ const CartPage = () => {
           </div>
         )}
       </div>
+
+      <DiscountModal
+        isOpen={showDiscountModal}
+        onClose={() => setShowDiscountModal(false)}
+        onSelectDiscount={handleSelectDiscountFromModal}
+        totalAmount={selectedTotalPrice}
+      />
     </div>
   );
 };

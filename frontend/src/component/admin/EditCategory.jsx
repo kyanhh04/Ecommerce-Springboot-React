@@ -32,11 +32,9 @@ const EditCategory = () => {
         try {
             const response = await ApiService.updateCategory(categoryId, { name });
             if (response.status === 200) {
-                setMessage(response.message);
-                setTimeout(() => {
-                    setMessage('');
-                    navigate("/admin/categories")
-                }, 3000)
+                navigate("/admin/categories", { 
+                    state: { message: response.message || 'Cập nhật danh mục thành công' } 
+                });
             }
         } catch (error) {
             setMessage(error.response?.data?.message || error.message || "Failed to save a category")
@@ -48,13 +46,13 @@ const EditCategory = () => {
             {message && <p className="message">{message}</p>}
             <form onSubmit={handleSubmit} className="category-form">
                 <button type="button" className="back-btn" onClick={() => navigate('/admin/categories')}>← Quay lại</button>
-                <h2>Edit Category</h2>
+                <h2>Chỉnh Sửa Danh Mục</h2>
                 <input type="text"
-                    placeholder="Category Name"
+                    placeholder="Tên danh mục"
                     value={name}
                     onChange={(e) => setName(e.target.value)} />
 
-                <button type="submit">Update</button>
+                <button type="submit">Cập Nhật</button>
             </form>
         </div>
     )

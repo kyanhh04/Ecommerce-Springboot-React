@@ -9,5 +9,11 @@
     <include file="db/changelog/changesets/002-insert-sample-data.xml"/>
     <include file="db/changelog/changesets/003-modify-otp-table.xml"/>
     <include file="db/changelog/changesets/004-update-admin-password.xml"/>
+    <include file="db/changelog/changesets/005-add-unique-phone-number.xml"/>
+    <include file="db/changelog/changesets/006-add-discount-features.xml"/>
+    <include file="db/changelog/changesets/007-add-sample-products.xml"/>
+    <include file="db/changelog/changesets/008-add-welcome-discount.xml"/>
+    <include file="db/changelog/changesets/009-add-sample-reviews.xml"/>
+    <include file="db/changelog/changesets/010-add-updated-at-to-review-replies.xml"/>
 
 </databaseChangeLog>

@@ -35,7 +35,7 @@ public class User {
     @NotBlank(message = "Email is required")
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)

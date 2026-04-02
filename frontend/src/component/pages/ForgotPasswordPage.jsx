@@ -13,16 +13,6 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     
     try {
-      // Kiểm tra email có tồn tại không
-      const checkResponse = await ApiService.checkEmailExists(email);
-      
-      if (!checkResponse.exists) {
-        setMessage("Email này chưa được đăng ký trong hệ thống");
-        setIsError(true);
-        setTimeout(() => setMessage(null), 3000);
-        return;
-      }
-      
       // Gửi OTP
       const response = await ApiService.sendForgotPasswordOTP(email);
       
@@ -32,7 +22,7 @@ const ForgotPasswordPage = () => {
         
         setTimeout(() => {
           navigate("/forgot-password/otp", { state: { email } });
-        }, 1500);
+        }, 800);
       } else {
         setMessage(response.message || "Không thể gửi mã OTP");
         setIsError(true);

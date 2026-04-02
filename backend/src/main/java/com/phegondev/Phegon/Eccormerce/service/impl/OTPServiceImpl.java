@@ -2,7 +2,11 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 
 import com.phegondev.Phegon.Eccormerce.dto.Response;
 import com.phegondev.Phegon.Eccormerce.entity.OTP;
+import com.phegondev.Phegon.Eccormerce.entity.User;
+import com.phegondev.Phegon.Eccormerce.entity.UserCredential;
 import com.phegondev.Phegon.Eccormerce.repository.OTPRepository;
+import com.phegondev.Phegon.Eccormerce.repository.UserCredentialRepo;
+import com.phegondev.Phegon.Eccormerce.repository.UserRepo;
 import com.phegondev.Phegon.Eccormerce.service.interf.OTPService;
 import com.phegondev.Phegon.Eccormerce.service.interf.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -18,6 +23,8 @@ public class OTPServiceImpl implements OTPService {
 
     private final OTPRepository otpRepository;
     private final EmailService emailService;
+    private final UserRepo userRepo;
+    private final UserCredentialRepo userCredentialRepo;
 
     @Override
     @Transactional
@@ -101,6 +108,40 @@ public class OTPServiceImpl implements OTPService {
     @Transactional
     public Response sendForgotPasswordOTP(String email) {
         try {
+            // Kiểm tra user có tồn tại không
+            User user = userRepo.findByEmail(email).orElse(null);
+            if (user == null) {
+                return Response.builder()
+                        .status(404)
+                        .message("Email này chưa được đăng ký trong hệ thống")
+                        .build();
+            }
+            
+            // Kiểm tra xem user có LOCAL credential không
+            boolean hasLocalCredential = userCredentialRepo.findByProviderAndProviderId("LOCAL", email)
+                    .isPresent();
+            
+            if (!hasLocalCredential) {
+                // Không có LOCAL credential, kiểm tra có provider nào khác không
+                List<UserCredential> userCredentials = userCredentialRepo.findByUserId(user.getId());
+                
+                if (!userCredentials.isEmpty()) {
+                    UserCredential firstCredential = userCredentials.get(0);
+                    String provider = firstCredential.getProvider();
+                    
+                    String providerName = switch (provider) {
+                        case "GOOGLE" -> "Google";
+                        case "FACEBOOK" -> "Facebook";
+                        default -> provider;
+                    };
+                    
+                    return Response.builder()
+                            .status(400)
+                            .message("Tài khoản này được đăng nhập bằng " + providerName + ". Vui lòng sử dụng Đăng nhập với " + providerName + ".")
+                            .build();
+                }
+            }
+            
             // Delete any existing OTP for this email
             otpRepository.deleteByEmail(email);
 

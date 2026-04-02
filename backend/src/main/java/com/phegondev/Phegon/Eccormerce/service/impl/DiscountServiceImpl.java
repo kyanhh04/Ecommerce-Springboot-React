@@ -2,26 +2,32 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 
 import com.phegondev.Phegon.Eccormerce.dto.DiscountDTO;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
+import com.phegondev.Phegon.Eccormerce.entity.Category;
 import com.phegondev.Phegon.Eccormerce.entity.Discount;
 import com.phegondev.Phegon.Eccormerce.enums.DiscountType;
 import com.phegondev.Phegon.Eccormerce.exception.OurException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
+import com.phegondev.Phegon.Eccormerce.repository.CategoryRepo;
 import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.DiscountService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DiscountServiceImpl implements DiscountService {
 
     private final DiscountRepository discountRepository;
+    private final CategoryRepo categoryRepo;
     private final EntityDtoMapper entityDtoMapper;
 
     @Override
@@ -56,6 +62,7 @@ public class DiscountServiceImpl implements DiscountService {
         if (discountDTO.getStartDate().isAfter(discountDTO.getEndDate())) {
             throw new OurException("Ngày bắt đầu không thể sau ngày kết thúc");
         }
+        
         Discount discount = new Discount();
         discount.setCode(discountDTO.getCode().toUpperCase());
         discount.setDescription(discountDTO.getDescription());
@@ -66,9 +73,40 @@ public class DiscountServiceImpl implements DiscountService {
         discount.setStartDate(discountDTO.getStartDate());
         discount.setEndDate(discountDTO.getEndDate());
         discount.setIsActive(true);
+        
+        // Set new fields
+        discount.setMinOrderAmount(discountDTO.getMinOrderAmount() != null ? discountDTO.getMinOrderAmount() : BigDecimal.ZERO);
+        discount.setMaxDiscountAmount(discountDTO.getMaxDiscountAmount());
+        discount.setAutoAssignNewUser(discountDTO.getAutoAssignNewUser() != null ? discountDTO.getAutoAssignNewUser() : false);
+        
+        // Handle applicable categories
+        List<Category> categoriesToSet;
+        if (discountDTO.getApplicableCategoryIds() != null && !discountDTO.getApplicableCategoryIds().isEmpty()) {
+            log.info("Setting specific categories: {}", discountDTO.getApplicableCategoryIds());
+            categoriesToSet = categoryRepo.findAllById(discountDTO.getApplicableCategoryIds());
+            if (categoriesToSet.size() != discountDTO.getApplicableCategoryIds().size()) {
+                throw new OurException("Một hoặc nhiều danh mục không tồn tại");
+            }
+            log.info("Found {} specific categories", categoriesToSet.size());
+        } else {
+            // null hoặc empty = áp dụng cho tất cả danh mục
+            log.info("Applying to all categories");
+            categoriesToSet = categoryRepo.findAll();
+            log.info("Found {} categories in system", categoriesToSet.size());
+            if (categoriesToSet.isEmpty()) {
+                throw new OurException("Không có danh mục nào trong hệ thống");
+            }
+        }
+        
+        // Initialize the list and add all categories
+        discount.setApplicableCategories(new ArrayList<>(categoriesToSet));
+        log.info("Set {} categories for discount", discount.getApplicableCategories().size());
+        
         discount.setCreatedAt(LocalDateTime.now());
         discount.setUpdatedAt(LocalDateTime.now());
-        discountRepository.save(discount);
+        Discount savedDiscount = discountRepository.save(discount);
+        log.info("Saved discount with {} categories", 
+                 savedDiscount.getApplicableCategories() != null ? savedDiscount.getApplicableCategories().size() : 0);
 
         return Response.builder()
                 .status(HttpStatus.CREATED.value())
@@ -127,10 +165,38 @@ public class DiscountServiceImpl implements DiscountService {
         if (discountDTO.getIsActive() != null) {
             discount.setIsActive(discountDTO.getIsActive());
         }
+        
+        // Update new fields
+        if (discountDTO.getMinOrderAmount() != null) {
+            discount.setMinOrderAmount(discountDTO.getMinOrderAmount());
+        }
+        
+        if (discountDTO.getMaxDiscountAmount() != null) {
+            discount.setMaxDiscountAmount(discountDTO.getMaxDiscountAmount());
+        }
+        
+        if (discountDTO.getAutoAssignNewUser() != null) {
+            discount.setAutoAssignNewUser(discountDTO.getAutoAssignNewUser());
+        }
+
+        List<Category> categoriesToSet;
+        if (discountDTO.getApplicableCategoryIds() == null || discountDTO.getApplicableCategoryIds().isEmpty()) {
+
+            categoriesToSet = categoryRepo.findAll();
+            if (categoriesToSet.isEmpty()) {
+                throw new OurException("Không có danh mục nào trong hệ thống");
+            }
+        } else {
+            categoriesToSet = categoryRepo.findAllById(discountDTO.getApplicableCategoryIds());
+            if (categoriesToSet.size() != discountDTO.getApplicableCategoryIds().size()) {
+                throw new OurException("Một hoặc nhiều danh mục không tồn tại");
+            }
+        }
+
+        discount.setApplicableCategories(new ArrayList<>(categoriesToSet));
 
         discount.setUpdatedAt(LocalDateTime.now());
         discountRepository.save(discount);
-
         return Response.builder()
                 .status(HttpStatus.OK.value())
                 .message("Cập nhật mã giảm giá thành công")

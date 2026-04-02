@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import '../../style/adminProduct.css'
 import Pagination from "../common/Pagination";
 import ConfirmDialog from "../common/ConfirmDialog";
@@ -7,6 +7,7 @@ import ApiService from "../../service/ApiService";
 
 const AdminProductPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -15,6 +16,16 @@ const AdminProductPage = () => {
     const [loading, setLoading] = useState(false);
     const [confirmState, setConfirmState] = useState({ show: false, id: null });
     const itemsPerPage = 10;
+
+    // Hiển thị message từ navigate state
+    useEffect(() => {
+        if (location.state?.message) {
+            setSuccess(location.state.message);
+            setTimeout(() => setSuccess(null), 3000);
+            // Clear state để không hiển thị lại khi refresh
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
 
     const fetchProducts = async() => {
@@ -74,8 +85,8 @@ const AdminProductPage = () => {
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
             <div>
-                <h2>Products</h2>
-                <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Add product</button>
+                <h2>Sản Phẩm</h2>
+                <button className="product-btn" onClick={()=> {navigate('/admin/add-product'); }}>Thêm Sản Phẩm</button>
                 
                 {loading ? (
                     <p>Đang tải...</p>
@@ -85,8 +96,8 @@ const AdminProductPage = () => {
                             {displayedProducts.map((product)=>(
                                 <li key={product.id}>
                                     <span>{product.name}</span>
-                                    <button className="product-btn" onClick={()=> handleEdit(product.id)}>Edit</button>
-                                    <button className="product-btn-delete" onClick={()=> openDeleteDialog(product.id)}>Delete</button>
+                                    <button className="product-btn" onClick={()=> handleEdit(product.id)}>Sửa</button>
+                                    <button className="product-btn-delete" onClick={()=> openDeleteDialog(product.id)}>Xóa</button>
                                 </li>
                             ))}
                         </ul>

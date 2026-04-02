@@ -6,6 +6,7 @@ import com.phegondev.Phegon.Eccormerce.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -170,11 +171,23 @@ public class EntityDtoMapper {
         discountDTO.setDescription(discount.getDescription());
         discountDTO.setDiscountType(discount.getDiscountType().name());
         discountDTO.setDiscountValue(discount.getDiscountValue());
+        discountDTO.setMinOrderAmount(discount.getMinOrderAmount());
+        discountDTO.setMaxDiscountAmount(discount.getMaxDiscountAmount());
         discountDTO.setUsageLimit(discount.getUsageLimit());
         discountDTO.setCurrentUsage(discount.getCurrentUsage());
         discountDTO.setStartDate(discount.getStartDate());
         discountDTO.setEndDate(discount.getEndDate());
         discountDTO.setIsActive(discount.getIsActive());
+        discountDTO.setAutoAssignNewUser(discount.getAutoAssignNewUser());
+        
+        // Map applicable categories
+        if (discount.getApplicableCategories() != null && !discount.getApplicableCategories().isEmpty()) {
+            List<Long> categoryIds = discount.getApplicableCategories().stream()
+                    .map(Category::getId)
+                    .collect(Collectors.toList());
+            discountDTO.setApplicableCategoryIds(categoryIds);
+        }
+        
         discountDTO.setCreatedAt(discount.getCreatedAt());
         discountDTO.setUpdatedAt(discount.getUpdatedAt());
         return discountDTO;

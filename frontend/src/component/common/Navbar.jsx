@@ -179,6 +179,7 @@ const Navbar = () => {
             {showUserMenu && (
               <div className="user-dropdown">
                 <div onClick={() => { navigate("/profile"); setShowUserMenu(false); }}>Tài khoản cá nhân</div>
+                <div onClick={() => { navigate("/my-discounts"); setShowUserMenu(false); }}>Mã giảm giá của tôi</div>
                 <div onClick={() => { navigate("/my-orders"); setShowUserMenu(false); }}>Lịch sử đơn hàng</div>
                 <div onClick={handleLogout}>Đăng xuất</div>
               </div>

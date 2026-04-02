@@ -23,6 +23,7 @@ import ResetPasswordPage from './component/pages/ResetPasswordPage';
 import ProfilePage from './component/pages/ProfilePage';
 import AddressPage from './component/pages/AddressPage';
 import MyOrdersPage from './component/pages/MyOrder';
+import MyDiscountsPage from './component/pages/MyDiscountsPage';
 
 import AdminPage from './component/admin/AdminPage';
 import AdminLayout from './component/admin/AdminLayout';
@@ -78,6 +79,7 @@ function AppLayout() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/faqs" element={<FAQs />} />
               <Route path="/my-orders" element={<ProtectedRoute element={<MyOrdersPage />} />} />
+              <Route path="/my-discounts" element={<ProtectedRoute element={<MyDiscountsPage />} />} />
               <Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />} />
               <Route path='/add-address' element={<ProtectedRoute element={<AddressPage />} />} />
               <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage />} />} />

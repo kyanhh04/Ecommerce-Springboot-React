@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="008-add-welcome-discount" author="system">
+        <comment>Add welcome discount for new users</comment>
+
+
+        <!-- Insert Welcome Discount -->
+        <insert tableName="discounts">
+            <column name="code" value="WELCOME2024"/>
+            <column name="description" value="Chào mừng thành viên mới - Giảm 10% cho đơn hàng đầu tiên"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="10"/>
+            <column name="min_order_amount" valueNumeric="500000"/>
+            <column name="max_discount_amount" valueNumeric="200000"/>
+            <column name="start_date" valueDate="2024-01-01T00:00:00"/>
+            <column name="end_date" valueDate="2025-12-31T23:59:59"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="auto_assign_new_user" valueBoolean="true"/>
+            <column name="usage_limit" valueNumeric="1000"/>
+        </insert>
+
+        <!-- Insert another discount for specific categories -->
+        <insert tableName="discounts">
+            <column name="code" value="LAPTOP50K"/>
+            <column name="description" value="Giảm 50K cho đơn hàng Laptop từ 10 triệu"/>
+            <column name="discount_type" value="FIXED_AMOUNT"/>
+            <column name="discount_value" valueNumeric="50000"/>
+            <column name="min_order_amount" valueNumeric="10000000"/>
+            <column name="max_discount_amount" valueNumeric="50000"/>
+            <column name="start_date" valueDate="2024-01-01T00:00:00"/>
+            <column name="end_date" valueDate="2025-12-31T23:59:59"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="auto_assign_new_user" valueBoolean="true"/>
+            <column name="usage_limit" valueNumeric="500"/>
+        </insert>
+
+        <!-- Link LAPTOP50K discount to Laptop category -->
+        <insert tableName="discount_categories">
+            <column name="discount_id" valueComputed="(SELECT id FROM discounts WHERE code = 'LAPTOP50K' LIMIT 1)"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+
+        <!-- Insert discount for keyboard category -->
+        <insert tableName="discounts">
+            <column name="code" value="KEYBOARD20"/>
+            <column name="description" value="Giảm 20% cho Bàn phím - Tối đa 100K"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="20"/>
+            <column name="min_order_amount" valueNumeric="1000000"/>
+            <column name="max_discount_amount" valueNumeric="100000"/>
+            <column name="start_date" valueDate="2024-01-01T00:00:00"/>
+            <column name="end_date" valueDate="2025-12-31T23:59:59"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="auto_assign_new_user" valueBoolean="false"/>
+            <column name="usage_limit" valueNumeric="300"/>
+        </insert>
+
+        <!-- Link KEYBOARD20 discount to Bàn phím category -->
+        <insert tableName="discount_categories">
+            <column name="discount_id" valueComputed="(SELECT id FROM discounts WHERE code = 'KEYBOARD20' LIMIT 1)"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

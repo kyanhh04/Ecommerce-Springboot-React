@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ApiService from "../../service/ApiService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ConfirmDialog from "../common/ConfirmDialog";
 import '../../style/adminCategory.css'
 
@@ -11,7 +11,17 @@ const AdminCategoryPage = () => {
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
+    // Hiển thị message từ navigate state
+    useEffect(() => {
+        if (location.state?.message) {
+            setSuccess(location.state.message);
+            setTimeout(() => setSuccess(null), 3000);
+            // Clear state để không hiển thị lại khi refresh
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
     useEffect(()=>{
         fetchCategories();
@@ -56,17 +66,17 @@ const AdminCategoryPage = () => {
     return(
         <div className="admin-category-page">
             <div className="admin-category-list">
-                <h2>Categories</h2>
+                <h2>Danh Mục</h2>
                 {success && <p className="success-message">{success}</p>}
                 {error && <p className="error-message">{error}</p>}
-                <button onClick={()=> navigate('/admin/add-category')}>Add Category</button>
+                <button onClick={()=> navigate('/admin/add-category')}>Thêm Danh Mục</button>
                 <ul>
                     {categories.map((category) => (
                         <li key={category.id}>
                             <span>{category.name}</span>
                             <div className="admin-bt">
-                                    <button className="admin-btn-edit" onClick={()=> handleEdit(category.id)}>Edit</button>
-                                    <button  onClick={()=> openDeleteDialog(category.id)}>Delete</button>
+                                    <button className="admin-btn-edit" onClick={()=> handleEdit(category.id)}>Sửa</button>
+                                    <button  onClick={()=> openDeleteDialog(category.id)}>Xóa</button>
                             </div>
                         </li>
                     ))}

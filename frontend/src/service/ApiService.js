@@ -427,6 +427,8 @@ export default class ApiService {
     static logout(){
         localStorage.removeItem('token')
         localStorage.removeItem('role')
+        // Trigger cart reload to switch to guest cart
+        window.dispatchEvent(new Event('userChanged'));
     }
 
     static isAuthenticated(){
@@ -465,6 +467,21 @@ export default class ApiService {
                 ...this.getHeader(),
                 'Content-Type': 'multipart/form-data'
             }
+        });
+        return response.data;
+    }
+
+    /**USER DISCOUNTS */
+    static async getMyDiscounts() {
+        const response = await axios.get(`${this.BASE_URL}/api/user-discounts/my-discounts`, {
+            headers: this.getHeader()
+        });
+        return response.data;
+    }
+
+    static async assignDiscountToUser(userId, discountId) {
+        const response = await axios.post(`${this.BASE_URL}/api/user-discounts/assign?userId=${userId}&discountId=${discountId}`, {}, {
+            headers: this.getHeader()
         });
         return response.data;
     }

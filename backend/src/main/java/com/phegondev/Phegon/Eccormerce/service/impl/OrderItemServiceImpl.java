@@ -3,12 +3,9 @@ package com.phegondev.Phegon.Eccormerce.service.impl;
 import com.phegondev.Phegon.Eccormerce.dto.OrderItemDto;
 import com.phegondev.Phegon.Eccormerce.dto.OrderRequest;
 import com.phegondev.Phegon.Eccormerce.dto.Response;
-import com.phegondev.Phegon.Eccormerce.entity.Discount;
-import com.phegondev.Phegon.Eccormerce.entity.Order;
-import com.phegondev.Phegon.Eccormerce.entity.OrderItem;
-import com.phegondev.Phegon.Eccormerce.entity.Product;
-import com.phegondev.Phegon.Eccormerce.entity.User;
+import com.phegondev.Phegon.Eccormerce.entity.*;
 import com.phegondev.Phegon.Eccormerce.enums.OrderStatus;
+import com.phegondev.Phegon.Eccormerce.enums.PaymentStatus;
 import com.phegondev.Phegon.Eccormerce.exception.NotFoundException;
 import com.phegondev.Phegon.Eccormerce.exception.OurException;
 import com.phegondev.Phegon.Eccormerce.mapper.EntityDtoMapper;
@@ -16,6 +13,7 @@ import com.phegondev.Phegon.Eccormerce.repository.DiscountRepository;
 import com.phegondev.Phegon.Eccormerce.repository.OrderItemRepo;
 import com.phegondev.Phegon.Eccormerce.repository.OrderRepo;
 import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
+import com.phegondev.Phegon.Eccormerce.repository.PaymentRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.EmailService;
 import com.phegondev.Phegon.Eccormerce.service.interf.OrderItemService;
 import com.phegondev.Phegon.Eccormerce.service.interf.UserService;
@@ -46,6 +44,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final EntityDtoMapper entityDtoMapper;
     private final DiscountRepository discountRepository;
     private final EmailService emailService;
+    private final PaymentRepository paymentRepository;
 
 
     @Transactional
@@ -53,16 +52,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     public Response placeOrder(OrderRequest orderRequest) {
         try {
             User user = userService.getLoginUser();
-            
-            // Kiểm tra user phải có số điện thoại
+
             if (user.getPhoneNumber() == null || user.getPhoneNumber().trim().isEmpty()) {
                 return Response.builder()
                         .status(400)
                         .message("Vui lòng cập nhật số điện thoại trước khi đặt hàng")
                         .build();
             }
-            
-            // Fetch all products in one query to avoid N+1 problem
+
             List<Long> productIds = orderRequest.getItems().stream()
                     .map(item -> item.getProductId())
                     .collect(Collectors.toList());
@@ -71,8 +68,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (products.size() != productIds.size()) {
                 throw new NotFoundException("One or more products not found");
             }
-            
-            // Create a map for quick lookup
+
             var productMap = products.stream()
                     .collect(Collectors.toMap(Product::getId, p -> p));
             
@@ -114,9 +110,31 @@ public class OrderItemServiceImpl implements OrderItemService {
                 if (discount.getCurrentUsage() >= discount.getUsageLimit()) {
                     throw new OurException("Mã giảm giá đã hết lượt sử dụng");
                 }
-                
+
+                if (discount.getMinOrderAmount() != null && totalPrice.compareTo(discount.getMinOrderAmount()) < 0) {
+                    throw new OurException("Đơn hàng tối thiểu để áp dụng mã này là " + discount.getMinOrderAmount() + " VND");
+                }
+
+                if (discount.getApplicableCategories() != null && !discount.getApplicableCategories().isEmpty()) {
+                    List<Long> applicableCategoryIds = discount.getApplicableCategories().stream()
+                            .map(Category::getId)
+                            .toList();
+
+                    boolean hasApplicableProduct = orderItems.stream()
+                            .anyMatch(item -> item.getProduct().getCategory() != null && 
+                                    applicableCategoryIds.contains(item.getProduct().getCategory().getId()));
+                    
+                    if (!hasApplicableProduct) {
+                        throw new OurException("Mã giảm giá này không áp dụng cho các sản phẩm trong giỏ hàng của bạn");
+                    }
+                }
+
                 if (discount.getDiscountType().equals(com.phegondev.Phegon.Eccormerce.enums.DiscountType.PERCENTAGE)) {
                     discountAmount = totalPrice.multiply(discount.getDiscountValue()).divide(BigDecimal.valueOf(100));
+
+                    if (discount.getMaxDiscountAmount() != null && discountAmount.compareTo(discount.getMaxDiscountAmount()) > 0) {
+                        discountAmount = discount.getMaxDiscountAmount();
+                    }
                 } else {
                     discountAmount = discount.getDiscountValue();
                     if (discountAmount.compareTo(totalPrice) > 0) {
@@ -147,8 +165,17 @@ public class OrderItemServiceImpl implements OrderItemService {
 
             orderItems.forEach(orderItem -> orderItem.setOrder(order));
             orderRepo.save(order);
-    
+
             if ("cash".equalsIgnoreCase(orderRequest.getPaymentMethod())) {
+                // Tạo Payment cho COD
+                Payment payment = Payment.builder()
+                        .amount(totalPrice)
+                        .method("CASH")
+                        .status(PaymentStatus.COMPLETED)
+                        .order(order)
+                        .build();
+                paymentRepository.save(payment);
+                
                 emailService.sendCODOrderConfirmationEmail(user, order);
                 log.info("COD order confirmation email queued for: {}", user.getEmail());
             }

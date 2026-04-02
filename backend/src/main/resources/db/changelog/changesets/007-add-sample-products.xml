@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="007-add-sample-products" author="system">
+        <comment>Add sample products using existing categories</comment>
+        
+
+        <!-- Insert Products - Laptop (10 products) -->
+        <insert tableName="products">
+            <column name="name" value="MacBook Pro 14 M3"/>
+            <column name="description" value="Laptop cao cấp với chip M3, màn hình Retina 14 inch"/>
+            <column name="price" valueNumeric="45990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Dell XPS 15"/>
+            <column name="description" value="Laptop Dell XPS 15 9530, Intel Core i7, RAM 16GB"/>
+            <column name="price" valueNumeric="42990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="HP Pavilion 15"/>
+            <column name="description" value="Laptop HP Pavilion 15, AMD Ryzen 5, RAM 8GB"/>
+            <column name="price" valueNumeric="15990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Asus ROG Strix G16"/>
+            <column name="description" value="Laptop gaming Asus ROG, Intel Core i7, RTX 4060"/>
+            <column name="price" valueNumeric="38990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Lenovo ThinkPad X1"/>
+            <column name="description" value="Laptop doanh nhân Lenovo ThinkPad X1 Carbon Gen 11"/>
+            <column name="price" valueNumeric="52990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Acer Aspire 5"/>
+            <column name="description" value="Laptop Acer Aspire 5, Intel Core i5, RAM 8GB"/>
+            <column name="price" valueNumeric="13990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="MSI Gaming GF63"/>
+            <column name="description" value="Laptop gaming MSI GF63, Intel Core i5, GTX 1650"/>
+            <column name="price" valueNumeric="18990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="LG Gram 17"/>
+            <column name="description" value="Laptop LG Gram 17 inch, siêu nhẹ chỉ 1.35kg"/>
+            <column name="price" valueNumeric="48990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Surface Laptop 5"/>
+            <column name="description" value="Microsoft Surface Laptop 5, Intel Core i7, 13.5 inch"/>
+            <column name="price" valueNumeric="35990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Gigabyte Gaming G5"/>
+            <column name="description" value="Laptop gaming Gigabyte G5, Intel Core i5, RTX 4050"/>
+            <column name="price" valueNumeric="24990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Laptop' LIMIT 1)"/>
+        </insert>
+
+        <!-- Insert Products - Bàn phím (10 products) -->
+        <insert tableName="products">
+            <column name="name" value="iPhone 15 Pro Max"/>
+            <column name="description" value="iPhone 15 Pro Max 256GB, chip A17 Pro, camera 48MP"/>
+            <column name="price" valueNumeric="34990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Keychron K2 V2"/>
+            <column name="description" value="Bàn phím cơ Keychron K2 V2, RGB, Hot-swap"/>
+            <column name="price" valueNumeric="2490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Logitech MX Keys"/>
+            <column name="description" value="Bàn phím không dây Logitech MX Keys, đèn nền thông minh"/>
+            <column name="price" valueNumeric="2990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1595225476474-87563907a212?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Razer BlackWidow V3"/>
+            <column name="description" value="Bàn phím cơ gaming Razer BlackWidow V3, Green Switch"/>
+            <column name="price" valueNumeric="3490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Corsair K70 RGB"/>
+            <column name="description" value="Bàn phím cơ Corsair K70 RGB, Cherry MX Red"/>
+            <column name="price" valueNumeric="3990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1601445638532-3c6f6c3aa1d6?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Akko 3098B"/>
+            <column name="description" value="Bàn phím cơ Akko 3098B, Bluetooth, 98 phím"/>
+            <column name="price" valueNumeric="1790000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1560762484-813fc97650a0?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="SteelSeries Apex Pro"/>
+            <column name="description" value="Bàn phím cơ gaming SteelSeries Apex Pro, OmniPoint Switch"/>
+            <column name="price" valueNumeric="4990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="HyperX Alloy Origins"/>
+            <column name="description" value="Bàn phím cơ HyperX Alloy Origins, HyperX Red Switch"/>
+            <column name="price" valueNumeric="2790000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Ducky One 3"/>
+            <column name="description" value="Bàn phím cơ Ducky One 3, Cherry MX Brown"/>
+            <column name="price" valueNumeric="3290000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1595044426077-d36d9236d54a?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Royal Kludge RK61"/>
+            <column name="description" value="Bàn phím cơ Royal Kludge RK61, 60%, Bluetooth"/>
+            <column name="price" valueNumeric="990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Bàn phím' LIMIT 1)"/>
+        </insert>
+
+        <!-- Insert Products - Ổ cứng (5 products) -->
+        <insert tableName="products">
+            <column name="name" value="Samsung 990 Pro 1TB"/>
+            <column name="description" value="SSD NVMe Samsung 990 Pro 1TB, PCIe 4.0"/>
+            <column name="price" valueNumeric="3490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Ổ cứng' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="WD Black SN850X 2TB"/>
+            <column name="description" value="SSD NVMe WD Black SN850X 2TB, PCIe 4.0"/>
+            <column name="price" valueNumeric="5990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Ổ cứng' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Seagate Barracuda 2TB"/>
+            <column name="description" value="Ổ cứng HDD Seagate Barracuda 2TB, 7200RPM"/>
+            <column name="price" valueNumeric="1490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1624705002806-5d72df19c3ad?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Ổ cứng' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Kingston NV2 500GB"/>
+            <column name="description" value="SSD NVMe Kingston NV2 500GB, PCIe 4.0"/>
+            <column name="price" valueNumeric="1190000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Ổ cứng' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Crucial P3 Plus 1TB"/>
+            <column name="description" value="SSD NVMe Crucial P3 Plus 1TB, PCIe 4.0"/>
+            <column name="price" valueNumeric="2290000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1619981140368-b6d3dd3e3b7a?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Ổ cứng' LIMIT 1)"/>
+        </insert>
+
+        <!-- Insert Products - Chuột máy tính (3 products) -->
+        <insert tableName="products">
+            <column name="name" value="Logitech MX Master 3S"/>
+            <column name="description" value="Chuột không dây Logitech MX Master 3S, 8000 DPI"/>
+            <column name="price" valueNumeric="2490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Chuột máy tính' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Razer DeathAdder V3"/>
+            <column name="description" value="Chuột gaming Razer DeathAdder V3, 30000 DPI"/>
+            <column name="price" valueNumeric="1990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Chuột máy tính' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Logitech G502 X"/>
+            <column name="description" value="Chuột gaming Logitech G502 X, RGB, 25600 DPI"/>
+            <column name="price" valueNumeric="1790000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1586920740099-e5e5e7c5f2e0?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Chuột máy tính' LIMIT 1)"/>
+        </insert>
+
+        <!-- Insert Products - Tai nghe (2 products) -->
+        <insert tableName="products">
+            <column name="name" value="AirPods Pro 2"/>
+            <column name="description" value="Tai nghe Apple AirPods Pro 2, chống ồn chủ động"/>
+            <column name="price" valueNumeric="6490000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Tai nghe' LIMIT 1)"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="name" value="Sony WH-1000XM5"/>
+            <column name="description" value="Tai nghe Sony WH-1000XM5, chống ồn hàng đầu"/>
+            <column name="price" valueNumeric="8990000"/>
+            <column name="image_url" value="https://images.unsplash.com/photo-1545127398-14699f92334b?w=600&amp;h=600&amp;fit=crop"/>
+            <column name="category_id" valueComputed="(SELECT id FROM categories WHERE name = 'Tai nghe' LIMIT 1)"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

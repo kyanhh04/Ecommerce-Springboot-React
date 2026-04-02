@@ -55,7 +55,10 @@ useEffect(() => {
             setCanLoadMoreReviews(total > reviewsPageSize);
 
             const countRes = await ApiService.getWishlistCount(productId);
-            setWishlistCount(parseInt(countRes.message) || 0);
+            console.log('Wishlist count response:', countRes);
+            const count = parseInt(countRes.message) || 0;
+            console.log('Parsed wishlist count:', count);
+            setWishlistCount(count);
 
             if (ApiService.isAuthenticated()) {
                 const wishRes = await ApiService.getWishlist();
@@ -251,7 +254,10 @@ return (
                             {averageRating.toFixed(1)} / 5
                         </span>
                         <span className="review-count">
-                            ({reviews.length} reviews)
+                            ({totalReviews} reviews)
+                        </span>
+                        <span className="wishlist-info">
+                            ❤️ {wishlistCount} lượt yêu thích
                         </span>
                     </div>
                     <button className="view-reviews-btn" onClick={scrollToReviews}>

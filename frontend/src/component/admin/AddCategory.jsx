@@ -13,11 +13,9 @@ const AddCategory = () => {
         try {
             const response = await ApiService.createCategory({name});
             if (response.status === 200) {
-                setMessage(response.message);
-                setTimeout(()=>{
-                    setMessage('');
-                    navigate("/admin/categories")
-                }, 3000)
+                navigate("/admin/categories", { 
+                    state: { message: response.message || 'Tạo danh mục thành công' } 
+                });
             }
         } catch (error) {
             setMessage(error.response?.data?.message || error.message || "Failed to save a category")

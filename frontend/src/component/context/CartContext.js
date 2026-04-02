@@ -1,5 +1,23 @@
 import React,{createContext,useReducer,useContext,useEffect} from "react";
 const CartContext=createContext();
+
+// Helper function to get user-specific cart key
+const getCartKey = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        return "cart_guest"; // Guest cart
+    }
+    // Decode token to get user info (simple base64 decode)
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.sub || payload.userId || payload.email;
+        return `cart_user_${userId}`;
+    } catch (error) {
+        console.error("Error decoding token:", error);
+        return "cart_guest";
+    }
+};
+
 const cartReducer=(state,action)=>{
     switch(action.type){
         case "ADD_ITEM":
@@ -52,17 +70,46 @@ const cartReducer=(state,action)=>{
                 ...state,
                 cart:[]
             };
+        case "LOAD_CART":
+            return{
+                ...state,
+                cart:action.payload
+            };
         default:
             return state;
     }
 };
+
 export const CartProvider=({children})=>{
+    const cartKey = getCartKey();
     const[state,dispatch]=useReducer(cartReducer,{
-        cart:JSON.parse(localStorage.getItem("cart"))||[]
+        cart:JSON.parse(localStorage.getItem(cartKey))||[]
     });
+    
     useEffect(()=>{
-        localStorage.setItem("cart",JSON.stringify(state.cart));
+        const currentCartKey = getCartKey();
+        localStorage.setItem(currentCartKey,JSON.stringify(state.cart));
     },[state.cart]);
+
+    // Listen for storage changes (when user logs in/out in another tab)
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const currentCartKey = getCartKey();
+            const newCart = JSON.parse(localStorage.getItem(currentCartKey)) || [];
+            dispatch({ type: "LOAD_CART", payload: newCart });
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Also listen for custom login/logout events
+        window.addEventListener('userChanged', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('userChanged', handleStorageChange);
+        };
+    }, []);
+
     return(
         <CartContext.Provider value={{cart:state.cart,dispatch}}>
             {children}

@@ -12,4 +12,5 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     Optional<Discount> findByCode(String code);
     List<Discount> findByIsActiveTrue();
     boolean existsByCode(String code);
+    List<Discount> findByAutoAssignNewUserTrue();
 }

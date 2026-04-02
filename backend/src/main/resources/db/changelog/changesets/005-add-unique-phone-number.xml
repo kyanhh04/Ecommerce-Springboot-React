@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-add-unique-phone-number" author="system">
+        <comment>Add unique constraint to phone_number column in users table</comment>
+        
+        <!-- First, update any duplicate phone numbers to NULL (except the first occurrence) -->
+        <sql>
+            UPDATE users u1
+            SET phone_number = NULL
+            WHERE phone_number IS NOT NULL
+            AND phone_number != ''
+            AND id NOT IN (
+                SELECT MIN(id)
+                FROM (SELECT id, phone_number FROM users) u2
+                WHERE u2.phone_number = u1.phone_number
+                GROUP BY u2.phone_number
+            );
+        </sql>
+        
+        <!-- Add unique constraint -->
+        <addUniqueConstraint
+                tableName="users"
+                columnNames="phone_number"
+                constraintName="uk_users_phone_number"/>
+    </changeSet>
+
+</databaseChangeLog>

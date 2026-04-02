@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepo.save(category);
         return Response.builder()
                 .status(200)
-                .message("Category created successfully")
+                .message("Tạo danh mục thành công")
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepo.save(category);
         return Response.builder()
                 .status(200)
-                .message("category updated successfully")
+                .message("Cập nhật danh mục thành công")
                 .build();
     }
 

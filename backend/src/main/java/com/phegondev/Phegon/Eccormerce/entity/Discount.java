@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -34,6 +35,12 @@ public class Discount {
     @Column(nullable = false)
     private BigDecimal discountValue;
 
+    @Column(name = "min_order_amount")
+    private BigDecimal minOrderAmount; // Số tiền tối thiểu để áp dụng mã
+
+    @Column(name = "max_discount_amount")
+    private BigDecimal maxDiscountAmount; // Số tiền giảm tối đa (cho PERCENTAGE)
+
     @Column(nullable = false)
     private Integer usageLimit;
 
@@ -48,6 +55,19 @@ public class Discount {
 
     @Column
     private Boolean isActive = true;
+
+    // Danh sách category áp dụng (null = áp dụng cho tất cả)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "discount_categories",
+        joinColumns = @JoinColumn(name = "discount_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> applicableCategories;
+
+    // Mã tự động cấp cho user mới
+    @Column(name = "auto_assign_new_user")
+    private Boolean autoAssignNewUser = false;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

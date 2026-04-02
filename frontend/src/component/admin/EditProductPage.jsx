@@ -55,11 +55,9 @@ const EditProductPage = () => {
 
             const response = await ApiService.updateProduct(formData);
             if (response.status === 200) {
-                setMessage(response.message)
-                setTimeout(() => {
-                    setMessage('')
-                    navigate('/admin/products')
-                }, 3000);
+                navigate('/admin/products', { 
+                    state: { message: response.message || 'Cập nhật sản phẩm thành công' } 
+                });
             }
 
         } catch (error) {
@@ -70,33 +68,33 @@ const EditProductPage = () => {
     return(
         <form onSubmit={handleSubmit} className="product-form">
             <button type="button" className="back-btn" onClick={() => navigate('/admin/products')}>← Quay lại</button>
-            <h2>Edit Product</h2>
+            <h2>Chỉnh Sửa Sản Phẩm</h2>
             {message && <div className="message">{message}</div>}
             <input type="file" onChange={handleImageChange}/>
             {imageUrl && <img src={imageUrl} alt={name} />}
             <select value={categoryId} onChange={(e)=> setCategoryId(e.target.value)}>
-                <option value="">Select Category</option>
+                <option value="">Chọn danh mục</option>
                 {categories.map((cat)=>(
                     <option value={cat.id} key={cat.id}>{cat.name}</option>
                 ))}
             </select>
 
             <input type="text" 
-                placeholder="Product name"
+                placeholder="Tên sản phẩm"
                 value={name}
                 onChange={(e)=> setName(e.target.value)} />
 
                 <textarea 
-                placeholder="Description"
+                placeholder="Mô tả"
                 value={description}
                 onChange={(e)=> setDescription(e.target.value)}/>
 
                 <input type="number" 
-                placeholder="Price"
+                placeholder="Giá"
                 value={price}
                 onChange={(e)=> setPrice(e.target.value)} />
 
-                <button type="submit">Update</button>
+                <button type="submit">Cập Nhật</button>
         </form>
     );
 }

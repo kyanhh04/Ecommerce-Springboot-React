@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import Toast from "../common/Toast";
 import "../../style/profile.css";
 
 const ProfilePage = () => {
@@ -12,7 +13,7 @@ const ProfilePage = () => {
     email: "",
     phoneNumber: ""
   });
-  const [message, setMessage] = useState("");
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +47,6 @@ const ProfilePage = () => {
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    setMessage("");
     if (!isEditing) {
       setFormData({
         name: userInfo.name || "",
@@ -68,19 +68,17 @@ const ProfilePage = () => {
       const response = await ApiService.updateUser(updateData);
       
       if (response.status === 200) {
-        setMessage("Cập nhật thông tin thành công!");
+        setToast({ message: "Cập nhật thông tin thành công!", type: "success" });
         setIsEditing(false);
         fetchUserInfo();
-        setTimeout(() => setMessage(""), 3000);
       } else {
-        setMessage(response.message || "Cập nhật thất bại");
+        setToast({ message: response.message || "Cập nhật thất bại", type: "error" });
       }
     } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.message ||
-          "Lỗi khi cập nhật thông tin"
-      );
+      setToast({
+        message: error.response?.data?.message || error.message || "Lỗi khi cập nhật thông tin",
+        type: "error"
+      });
     }
   };
 
@@ -98,9 +96,16 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page">
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      
       <h2>Xin chào, {userInfo.name}</h2>
 
-      {message && <p className="profile-message">{message}</p>}
       {error ? (
         <p className="error-message">{error}</p>
       ) : (

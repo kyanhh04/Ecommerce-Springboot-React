@@ -111,8 +111,11 @@ const RegisterPasswordPage = () => {
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
         
+        // Trigger cart reload for user-specific cart
+        window.dispatchEvent(new Event('userChanged'));
+        
         setTimeout(() => {
-          navigate("/");
+          navigate("/", { replace: true });
         }, 1500);
       }
     } catch (error) {

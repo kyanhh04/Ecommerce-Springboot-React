@@ -37,13 +37,13 @@ public class OAuth2ServiceImpl {
         try {
             // Verify Google token
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(), 
+                    new NetHttpTransport(),
                     GsonFactory.getDefaultInstance())
                     .setAudience(Collections.singletonList(googleClientId))
                     .build();
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
-            
+
             if (idToken == null) {
                 return Response.builder()
                         .status(401)
@@ -82,7 +82,7 @@ public class OAuth2ServiceImpl {
                                 .providerId(googleId)
                                 .createdAt(LocalDateTime.now())
                                 .build();
-                        
+
                         log.info("Linking Google account to user: {}", email);
                         return userCredentialRepo.save(newCredential);
                     });

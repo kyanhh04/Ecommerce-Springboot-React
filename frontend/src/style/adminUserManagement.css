@@ -39,13 +39,118 @@
 }
 
 .message {
-    padding: var(--space-md);
-    margin-bottom: var(--space-lg);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    padding: 12px 16px;
     border-radius: 8px;
-    background: rgba(3, 105, 161, 0.1);
-    color: var(--color-primary);
-    border: 1px solid rgba(3, 105, 161, 0.2);
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInRight 0.4s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.message::before {
+    content: "ℹ";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: #166534;
+    border: 1px solid #86efac;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInRight 0.4s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.success-message::before {
+    content: "✓";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInRight 0.4s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.error-message::before {
+    content: "✕";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .filters {
@@ -133,7 +238,82 @@
     color: var(--color-primary);
 }
 
-.btn-edit, .btn-delete {
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+/* Icon buttons - no transform on hover */
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 200ms ease, box-shadow 200ms ease;
+    position: relative;
+}
+
+.btn-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-icon.btn-edit {
+    background: var(--color-cta);
+    color: white;
+}
+
+.btn-icon.btn-edit:hover {
+    background: #025a8a;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-icon.btn-discount {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.btn-icon.btn-discount:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Tooltip on hover */
+.btn-icon:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.btn-icon:hover::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--color-primary);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.btn-edit, .btn-delete, .btn-discount {
     padding: var(--space-sm) var(--space-md);
     margin-right: var(--space-sm);
     border: none;
@@ -151,7 +331,21 @@
 
 .btn-edit:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
+}
+
+.btn-discount {
+    background: linear-gradient(135deg, var(--color-cta) 0%, #0b4f75 100%);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-discount:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.btn-discount:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.25), var(--shadow-md);
 }
 
 .btn-delete {
@@ -302,4 +496,206 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* Delete button in modal */
+.btn-delete-modal {
+    background: #dc2626;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 200ms ease;
+    margin-left: auto;
+}
+
+.btn-delete-modal:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.btn-delete-modal:active {
+    transform: translateY(0);
+}
+
+/* Update modal actions layout to separate delete button */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+}
+
+.modal-actions .btn-submit,
+.modal-actions .btn-cancel {
+    margin-left: 0;
+}
+
+/* Confirmation Modal */
+.modal-confirm {
+    text-align: center;
+    max-width: 480px;
+}
+
+.confirm-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-lg);
+}
+
+.confirm-icon svg {
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-confirm h3 {
+    margin-bottom: var(--space-md);
+    color: var(--color-primary);
+    font-size: 22px;
+}
+
+.confirm-message {
+    color: var(--color-secondary);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: var(--space-xl);
+}
+
+.modal-actions-center {
+    justify-content: center;
+}
+
+.btn-delete-confirm {
+    background: #dc2626;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 200ms ease;
+}
+
+.btn-delete-confirm:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-delete-confirm:active {
+    transform: translateY(0);
+}
+
+/* Discount Checkbox List */
+.discount-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    transition: border-color 200ms ease;
+}
+
+.discount-search-input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.discount-checkbox-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.discount-checkbox-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.discount-checkbox-list::-webkit-scrollbar-track {
+    background: #F8FAFC;
+    border-radius: 4px;
+}
+
+.discount-checkbox-list::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+}
+
+.discount-checkbox-list::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+.discount-checkbox-item {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 200ms ease;
+    margin-bottom: 4px;
+}
+
+.discount-checkbox-item:hover {
+    background: #F8FAFC;
+}
+
+.discount-checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+    order: 1;
+}
+
+.discount-checkbox-label {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    order: 2;
+}
+
+.discount-checkbox-label strong {
+    color: var(--color-cta);
+    font-weight: 700;
+}
+
+.discount-value {
+    color: var(--color-secondary);
+    font-size: 13px;
+}
+
+.no-discounts {
+    text-align: center;
+    padding: 24px;
+    color: var(--color-secondary);
+}
+
+.btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

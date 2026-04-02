@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../style/register.css";
 
@@ -12,6 +12,27 @@ const LoginPage = () => {
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromResetPassword = location.state?.fromResetPassword;
+
+  // Ngăn user back về các trang reset password sau khi đã reset password thành công
+  useEffect(() => {
+    if (fromResetPassword) {
+      const handlePopState = (e) => {
+        e.preventDefault();
+        // Push lại state để không cho back
+        window.history.pushState(null, '', '/login');
+      };
+
+      // Push initial state
+      window.history.pushState(null, '', '/login');
+      window.addEventListener('popstate', handlePopState);
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }
+  }, [fromResetPassword]);
 
   const handleGoogleResponse = useCallback(async (response) => {
     try {
@@ -21,9 +42,13 @@ const LoginPage = () => {
         setIsError(false);
         localStorage.setItem("token", result.token);
         localStorage.setItem("role", result.role);
+        
+        // Trigger cart reload for user-specific cart
+        window.dispatchEvent(new Event('userChanged'));
+        
         setTimeout(() => {
-          navigate("/");
-        }, 1500);
+          navigate("/", { replace: true });
+        }, 500);
       }
     } catch (error) {
       setMessage(
@@ -82,9 +107,7 @@ const LoginPage = () => {
     };
   }, [handleGoogleResponse]);
 
-  const handleFacebookLogin = () => {
-    alert("Tính năng đăng nhập bằng Facebook đang được phát triển");
-  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,16 +124,25 @@ const LoginPage = () => {
         setIsError(false);
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
+        
+        // Trigger cart reload for user-specific cart
+        window.dispatchEvent(new Event('userChanged'));
+        
         setTimeout(() => {
-          navigate("/");
-        }, 2000);
+          navigate("/", { replace: true });
+        }, 800);
+      } else {
+        // Xử lý trường hợp response có status khác 200
+        setMessage(response.message || "Đăng nhập thất bại");
+        setIsError(true);
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
       }
     } catch (error) {
-      setMessage(
-        error.response?.data.message ||
-          error.message ||
-          "unable to Login a user",
-      );
+      // Hiển thị message từ backend
+      const errorMessage = error.response?.data?.message || error.message || "Đăng nhập thất bại";
+      setMessage(errorMessage);
       setIsError(true);
       setTimeout(() => {
         setMessage(null);
@@ -158,13 +190,6 @@ const LoginPage = () => {
           </div>
 
           <div id="googleSignInDiv" style={{ marginBottom: '12px' }}></div>
-
-          <button type="button" className="method-btn facebook-btn" onClick={handleFacebookLogin}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1877F2">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            <span>Continue with Facebook</span>
-          </button>
 
           <p className="register-link">
             Chưa có tài khoản? <a href="/register">Đăng ký</a>

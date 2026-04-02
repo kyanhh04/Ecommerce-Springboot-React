@@ -156,14 +156,16 @@
 
 .bar-chart-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
 }
 
 .bar-chart {
     display: flex;
     align-items: flex-end;
     gap: 6px;
-    height: 220px;
+    height: 280px;
     padding-bottom: 28px;
+    padding-top: 10px;
     min-width: 400px;
 }
 
@@ -178,11 +180,13 @@
 
 .bar-col:hover .bar-tooltip {
     opacity: 1;
+    visibility: visible;
 }
 
 .bar-tooltip {
     position: absolute;
-    top: -32px;
+    bottom: 100%;
+    margin-bottom: 8px;
     background: #1f2937;
     color: white;
     font-size: 11px;
@@ -190,9 +194,10 @@
     border-radius: 6px;
     white-space: nowrap;
     opacity: 0;
-    transition: opacity 0.2s;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
     pointer-events: none;
-    z-index: 10;
+    z-index: 100;
 }
 
 .bar {

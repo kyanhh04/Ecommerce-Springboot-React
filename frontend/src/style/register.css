@@ -350,3 +350,57 @@
     color: #6b7280 !important;
     transform: none !important;
 }
+
+/* OTP Timer */
+.otp-timer {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.otp-timer p {
+    font-size: 14px;
+    color: #334155;
+    margin: 0;
+}
+
+.otp-timer strong {
+    color: #0369A1;
+    font-weight: 700;
+}
+
+.otp-timer .expired {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* Resend Container */
+.resend-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.resend-button {
+    width: auto !important;
+    padding: 10px 24px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    color: #0369A1 !important;
+    border: 1px solid #0369A1 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.resend-button:hover {
+    background: #0369A1 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+}
+
+.resend-info {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}

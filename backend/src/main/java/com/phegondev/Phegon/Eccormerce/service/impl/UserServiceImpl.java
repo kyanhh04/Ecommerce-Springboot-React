@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final EntityDtoMapper entityDtoMapper;
+    private final com.phegondev.Phegon.Eccormerce.service.interf.UserDiscountService userDiscountService;
 
 
     @Override
@@ -97,6 +98,9 @@ public class UserServiceImpl implements UserService {
 
         userCredentialRepo.save(credential);
 
+        // Tự động cấp mã giảm giá cho user mới
+        userDiscountService.autoAssignDiscountsToNewUser(savedUser.getId());
+
         UserDto userDto = entityDtoMapper.mapUserToDtoBasic(savedUser);
         return Response.builder()
                 .status(200)
@@ -115,9 +119,30 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Email not found"));
         log.info("DB query time: {}ms", System.currentTimeMillis() - dbStart);
 
-        // Tìm credential LOCAL
-        UserCredential credential = userCredentialRepo.findByProviderAndProviderId("LOCAL", loginRequest.getEmail())
-                .orElseThrow(() -> new NotFoundException("Tài khoản chưa được đăng ký"));
+        // Kiểm tra xem user có credential LOCAL không
+        Optional<UserCredential> localCredentialOpt = userCredentialRepo.findByProviderAndProviderId("LOCAL", loginRequest.getEmail());
+        
+        if (localCredentialOpt.isEmpty()) {
+            // Không có LOCAL credential, kiểm tra có provider nào khác không
+            List<UserCredential> userCredentials = userCredentialRepo.findByUserId(user.getId());
+            
+            if (!userCredentials.isEmpty()) {
+                UserCredential firstCredential = userCredentials.get(0);
+                String provider = firstCredential.getProvider();
+                
+                String providerName = switch (provider) {
+                    case "GOOGLE" -> "Google";
+                    case "FACEBOOK" -> "Facebook";
+                    default -> provider;
+                };
+                
+                throw new InvalidCredentialsException("Tài khoản này được đăng nhập bằng " + providerName + ". Vui lòng sử dụng Đăng nhập với " + providerName + ".");
+            }
+            
+            throw new NotFoundException("Tài khoản chưa được đăng ký");
+        }
+        
+        UserCredential credential = localCredentialOpt.get();
 
         long bcryptStart = System.currentTimeMillis();
         if (!passwordEncoder.matches(loginRequest.getPassword(), credential.getPassword())) {
@@ -246,7 +271,21 @@ public class UserServiceImpl implements UserService {
             }
 
             if (updateUserDto.getPhoneNumber() != null && !updateUserDto.getPhoneNumber().trim().isEmpty()) {
-                user.setPhoneNumber(updateUserDto.getPhoneNumber());
+                String newPhoneNumber = updateUserDto.getPhoneNumber().trim();
+                
+                // Kiểm tra nếu số điện thoại thay đổi
+                if (!newPhoneNumber.equals(user.getPhoneNumber())) {
+                    // Kiểm tra số điện thoại đã được sử dụng bởi user khác chưa
+                    Optional<User> existingUserWithPhone = userRepo.findByPhoneNumber(newPhoneNumber);
+                    if (existingUserWithPhone.isPresent() && !existingUserWithPhone.get().getId().equals(user.getId())) {
+                        return Response.builder()
+                                .status(400)
+                                .message("Số điện thoại này đã được sử dụng")
+                                .build();
+                    }
+                }
+                
+                user.setPhoneNumber(newPhoneNumber);
             }
 
             if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().trim().isEmpty()) {
@@ -381,7 +420,21 @@ public class UserServiceImpl implements UserService {
             }
 
             if (updateUserDto.getPhoneNumber() != null && !updateUserDto.getPhoneNumber().trim().isEmpty()) {
-                user.setPhoneNumber(updateUserDto.getPhoneNumber());
+                String newPhoneNumber = updateUserDto.getPhoneNumber().trim();
+                
+                // Kiểm tra nếu số điện thoại thay đổi
+                if (!newPhoneNumber.equals(user.getPhoneNumber())) {
+                    // Kiểm tra số điện thoại đã được sử dụng bởi user khác chưa
+                    Optional<User> existingUserWithPhone = userRepo.findByPhoneNumber(newPhoneNumber);
+                    if (existingUserWithPhone.isPresent() && !existingUserWithPhone.get().getId().equals(user.getId())) {
+                        return Response.builder()
+                                .status(400)
+                                .message("Số điện thoại này đã được sử dụng")
+                                .build();
+                    }
+                }
+                
+                user.setPhoneNumber(newPhoneNumber);
             }
 
             if (updateUserDto.getPassword() != null && !updateUserDto.getPassword().trim().isEmpty()) {
@@ -497,9 +550,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Response resetPassword(String email, String newPassword, String otpCode) {
         try {
+            log.info("Reset password attempt for email: {}", email);
+            
             // Verify OTP first
             var otpOptional = otpRepository.findByEmailAndCodeAndIsUsedFalse(email, otpCode);
             if (otpOptional.isEmpty()) {
+                log.warn("Invalid or used OTP for email: {}", email);
                 return Response.builder()
                         .status(400)
                         .message("Mã OTP không hợp lệ hoặc đã được sử dụng")
@@ -508,6 +564,7 @@ public class UserServiceImpl implements UserService {
 
             OTP otp = otpOptional.get();
             if (LocalDateTime.now().isAfter(otp.getExpiresAt())) {
+                log.warn("Expired OTP for email: {}", email);
                 return Response.builder()
                         .status(400)
                         .message("Mã OTP đã hết hạn")
@@ -517,10 +574,14 @@ public class UserServiceImpl implements UserService {
             // Find user
             User user = userRepo.findByEmail(email)
                     .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+            
+            log.info("Found user with id: {}", user.getId());
 
             // Find LOCAL credential
             UserCredential credential = userCredentialRepo.findByProviderAndProviderId("LOCAL", email)
                     .orElseThrow(() -> new NotFoundException("Tài khoản không hỗ trợ đặt lại mật khẩu"));
+            
+            log.info("Found LOCAL credential with id: {}", credential.getId());
 
             // Validate password
             if (newPassword.length() < 6) {
@@ -531,13 +592,19 @@ public class UserServiceImpl implements UserService {
             }
 
             // Update password
-            credential.setPassword(passwordEncoder.encode(newPassword));
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            credential.setPassword(encodedPassword);
+            credential.setLastUsedAt(LocalDateTime.now());
             userCredentialRepo.save(credential);
+            
+            log.info("Password updated successfully for email: {}", email);
 
             // Mark OTP as used
             otp.setIsUsed(true);
             otp.setUsedAt(LocalDateTime.now());
             otpRepository.save(otp);
+            
+            log.info("OTP marked as used for email: {}", email);
 
             return Response.builder()
                     .status(200)
@@ -545,11 +612,13 @@ public class UserServiceImpl implements UserService {
                     .build();
 
         } catch (NotFoundException e) {
+            log.error("Not found error during password reset: {}", e.getMessage());
             return Response.builder()
                     .status(404)
                     .message(e.getMessage())
                     .build();
         } catch (Exception e) {
+            log.error("Error during password reset", e);
             return Response.builder()
                     .status(500)
                     .message("Lỗi khi đặt lại mật khẩu: " + e.getMessage())

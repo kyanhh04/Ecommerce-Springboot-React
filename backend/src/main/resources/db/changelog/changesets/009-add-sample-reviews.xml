@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="009-add-sample-reviews" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM reviews WHERE comment LIKE 'Sản phẩm%'</sqlCheck>
+        </preConditions>
+
+        <sqlFile path="db/changelog/sql/009-insert-reviews.sql" 
+                 encoding="UTF-8"
+                 splitStatements="true"
+                 stripComments="true"/>
+
+    </changeSet>
+
+</databaseChangeLog>

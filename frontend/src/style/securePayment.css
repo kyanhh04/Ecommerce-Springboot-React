@@ -1,6 +1,6 @@
 .secure-payment-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f5f7fa;
   padding: 40px 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -32,7 +32,7 @@
 
 /* Credit Card Display */
 .credit-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   border-radius: 20px;
   padding: 30px;
   color: white;
@@ -48,7 +48,7 @@
 .card-chip {
   width: 50px;
   height: 40px;
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  background: #ffd700;
   border-radius: 8px;
   position: relative;
 }
@@ -213,7 +213,7 @@
 .btn-payment {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   border: none;
   border-radius: 12px;
@@ -226,6 +226,7 @@
 }
 
 .btn-payment:hover:not(:disabled) {
+  background: #5568d3;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
@@ -432,7 +433,7 @@
   display: flex;
   gap: 15px;
   padding: 15px;
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  background: #e8f5e9;
   border-radius: 10px;
   margin-bottom: 25px;
 }

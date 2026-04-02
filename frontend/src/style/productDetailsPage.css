@@ -111,8 +111,7 @@
 
 .wishlist-count {
     font-size: 14px;
-    font-weight: 500;
-    color: #64748b;
+    color: #666;
 }
 
 /* SHARE SECTION */
@@ -220,6 +219,7 @@
     display:flex;
     align-items:center;
     gap:10px;
+    flex-wrap:nowrap;
 }
 
 .stars{
@@ -229,11 +229,20 @@
 
 .rating-text{
     font-weight:600;
+    white-space:nowrap;
 }
 
 .review-count{
     color:#777;
     font-size:14px;
+    white-space:nowrap;
+}
+
+.wishlist-info {
+    color:#e11d48;
+    font-size:14px;
+    margin-left:8px;
+    white-space:nowrap;
 }
 
 .view-reviews-btn {

@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap');
+
+.discount-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.discount-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.discount-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.discount-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-primary, #0F172A);
+  font-family: 'Rubik', sans-serif;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #1f2937;
+}
+
+.discount-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px 24px;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.error-state {
+  color: #ef4444;
+}
+
+.discounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.discount-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 100px;
+}
+
+.discount-item:hover:not(.disabled) {
+  border-color: var(--color-cta, #0369A1);
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.12);
+}
+
+.discount-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.discount-item-left {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.discount-badge {
+  background: #0369A1;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 90px;
+  text-align: center;
+  line-height: 1;
+}
+
+.discount-item-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.discount-item-right h4 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary, #0F172A);
+  line-height: 1.3;
+}
+
+.discount-item-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.discount-item-status {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(3, 105, 161, 0.12);
+  color: var(--color-cta, #0369A1);
+}
+
+.discount-item-status.inactive {
+  background: rgba(100, 116, 139, 0.12);
+  color: #475569;
+}
+
+.discount-code {
+  font-size: 14px;
+  color: #667eea;
+  font-weight: 600;
+  margin: 4px 0;
+  font-family: 'Nunito Sans', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.discount-condition,
+.discount-max {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 3px 0;
+  line-height: 1.4;
+}
+
+.discount-save {
+  font-size: 14px;
+  color: #10b981;
+  font-weight: 600;
+  margin: 6px 0 0 0;
+}
+
+.discount-unavailable {
+  font-size: 13px;
+  color: #ef4444;
+  margin: 6px 0 0 0;
+  font-weight: 500;
+}
+
+.discount-item-action {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.use-button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.use-button:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .discount-modal {
+    max-width: 100%;
+    max-height: 90vh;
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .discount-modal-header {
+    padding: 16px 20px;
+  }
+
+  .discount-modal-header h3 {
+    font-size: 18px;
+  }
+
+  .discount-modal-body {
+    padding: 12px 20px 20px;
+  }
+
+  .discount-item {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px;
+    min-height: auto;
+  }
+
+  .discount-item-left {
+    width: 100%;
+  }
+
+  .discount-badge {
+    font-size: 18px;
+    padding: 14px 18px;
+    min-width: 100%;
+  }
+
+  .discount-item-right {
+    width: 100%;
+  }
+
+  .discount-item-action {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .use-button {
+    width: 100%;
+    padding: 12px 24px;
+  }
+}

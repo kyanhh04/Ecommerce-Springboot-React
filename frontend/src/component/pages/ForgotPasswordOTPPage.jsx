@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../style/register.css";
@@ -12,8 +12,11 @@ const ForgotPasswordOTPPage = () => {
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
   
   const inputRefs = useRef([]);
+  const timerRef = useRef(null);
 
   // Redirect nếu không có email
   React.useEffect(() => {
@@ -21,6 +24,23 @@ const ForgotPasswordOTPPage = () => {
       navigate("/forgot-password");
     }
   }, [email, navigate]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (countdown > 0) {
+      timerRef.current = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    } else {
+      setCanResend(true);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [countdown]);
 
   const handleOtpChange = (index, value) => {
     // Chỉ cho phép số
@@ -88,9 +108,9 @@ const ForgotPasswordOTPPage = () => {
         setIsError(false);
         
         setTimeout(() => {
-          // Chuyển đến trang nhập mật khẩu mới
-          navigate("/forgot-password/reset", { state: { email, otpCode } });
-        }, 1500);
+          // Chuyển đến trang nhập mật khẩu mới, replace để không cho back về OTP
+          navigate("/forgot-password/reset", { state: { email, otpCode }, replace: true });
+        }, 800);
       } else {
         setMessage(response.message || "Mã OTP không đúng");
         setIsError(true);
@@ -122,6 +142,35 @@ const ForgotPasswordOTPPage = () => {
     }
 
     verifyOTP(otpCode);
+  };
+
+  const handleResendOTP = async () => {
+    if (!canResend) return;
+
+    try {
+      setCanResend(false);
+      setCountdown(60);
+      
+      const response = await ApiService.sendForgotPasswordOTP(email);
+      
+      if (response.status === 200) {
+        setMessage("Đã gửi lại mã OTP mới");
+        setIsError(false);
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+        setTimeout(() => setMessage(null), 3000);
+      } else {
+        setMessage(response.message || "Không thể gửi lại mã OTP");
+        setIsError(true);
+        setCanResend(true);
+        setTimeout(() => setMessage(null), 3000);
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Không thể gửi lại mã OTP");
+      setIsError(true);
+      setCanResend(true);
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
 
   if (!email) return null;
@@ -167,6 +216,26 @@ const ForgotPasswordOTPPage = () => {
                 disabled={isVerifying}
               />
             ))}
+          </div>
+
+          <div className="otp-timer">
+            <p>Mã OTP có hiệu lực trong <strong>{countdown}s</strong></p>
+          </div>
+
+          <div className="resend-container">
+            {canResend ? (
+              <button
+                type="button"
+                className="resend-button"
+                onClick={handleResendOTP}
+              >
+                Gửi lại mã OTP
+              </button>
+            ) : (
+              <p className="resend-info">
+                Bạn có thể gửi lại mã sau {countdown}s
+              </p>
+            )}
           </div>
         </form>
       </div>
