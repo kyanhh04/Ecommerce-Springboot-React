@@ -14,6 +14,5 @@
     <include file="db/changelog/changesets/007-add-sample-products.xml"/>
     <include file="db/changelog/changesets/008-add-welcome-discount.xml"/>
     <include file="db/changelog/changesets/009-add-sample-reviews.xml"/>
-    <include file="db/changelog/changesets/010-add-updated-at-to-review-replies.xml"/>
-
+    <include file="db/changelog/changesets/010-add-review-replies-updated-at.xml"/>
 </databaseChangeLog>

@@ -52,7 +52,7 @@ const RegisterEmailPage = () => {
                 setTimeout(() => {
                     // Chuyển đến trang nhập OTP
                     navigate("/register/otp", { state: { email } });
-                }, 1500);
+                }, 500);
             } else {
                 setMessage(otpResponse.message || "Không thể gửi mã OTP");
                 setIsError(true);

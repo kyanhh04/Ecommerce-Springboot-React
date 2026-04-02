@@ -13,31 +13,13 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const userMenuRef = useRef();
   const navigate = useNavigate();
-  const { cart } = useCart();
-  const cartItemCount = cart.length;
 
   const isAdmin = ApiService.isAdmin();
   const isAuthenticated = ApiService.isAuthenticated();
-
-  // Lấy số lượng wishlist khi mount
-  useEffect(() => {
-    const fetchWishlistCount = async () => {
-      if (isAuthenticated) {
-        try {
-          const response = await ApiService.getLoggedInUserInfo();
-          setWishlistCount(response.user.wishlist?.length || 0);
-        } catch (error) {
-          setWishlistCount(0);
-        }
-      }
-    };
-    fetchWishlistCount();
-  }, [isAuthenticated]);
 
   // Search product
   const handleSearchChange = async (e) => {
@@ -152,16 +134,10 @@ const Navbar = () => {
       <div className="icons">
         <NavLink to="/wishlist" className="wishlist">
           <FaHeart />
-          {wishlistCount > 0 && (
-            <span className="wishlist-count">{wishlistCount}</span>
-          )}
         </NavLink>
 
         <NavLink to="/cart" className="cart">
           <FaShoppingCart />
-          {cartItemCount > 0 && (
-            <span className="cart-count">{cartItemCount}</span>
-          )}
         </NavLink>
 
         {isAdmin && <NavLink to="/admin"><RiAdminFill /></NavLink>}

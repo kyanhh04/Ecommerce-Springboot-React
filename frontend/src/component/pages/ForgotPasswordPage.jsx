@@ -22,7 +22,7 @@ const ForgotPasswordPage = () => {
         
         setTimeout(() => {
           navigate("/forgot-password/otp", { state: { email } });
-        }, 800);
+        }, 500);
       } else {
         setMessage(response.message || "Không thể gửi mã OTP");
         setIsError(true);

@@ -92,6 +92,55 @@
     box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1) !important;
 }
 
+.otp-info {
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.otp-validity {
+    color: #64748B;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.resend-container {
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.resend-btn {
+    background: transparent;
+    color: #0369A1;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.resend-btn:hover {
+    background: rgba(3, 105, 161, 0.1);
+    transform: translateY(-1px);
+}
+
+.countdown-text {
+    color: #94A3B8;
+    font-size: 13px;
+    margin: 0;
+    font-weight: 400;
+}
+
+.countdown-number {
+    color: #0369A1;
+    font-weight: 700;
+}
+
 .register-page label {
     display: block;
     font-size: 14px;

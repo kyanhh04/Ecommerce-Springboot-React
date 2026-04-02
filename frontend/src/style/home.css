@@ -29,32 +29,36 @@
 
 /* Success Notification - Glassmorphism */
 .success-notification {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: var(--space-lg);
-  animation: fadeIn 200ms ease;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  padding: 24px !important;
+  animation: fadeIn 200ms ease !important;
+  overflow-y: auto !important;
 }
 
 .success-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: var(--space-xl);
-  max-width: 500px;
-  width: 90%;
-  position: relative;
-  box-shadow: var(--shadow-xl);
-  animation: slideUp 300ms ease;
+  background: #ffffff !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 40px 32px !important;
+  max-width: 480px !important;
+  width: 100% !important;
+  position: relative !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  animation: slideUp 300ms ease !important;
+  margin: auto !important;
 }
 
 .close-btn {
@@ -78,69 +82,77 @@
 }
 
 .success-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--space-lg);
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 64px;
+  font-size: 80px;
   color: #22c55e;
+  animation: scaleIn 400ms ease;
 }
 
 .success-card h3 {
   font-family: 'Rubik', sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0 0 var(--space-sm) 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px 0;
   text-align: center;
 }
 
 .success-message {
-  font-size: 14px;
-  color: var(--color-secondary);
-  margin: 0 0 var(--space-lg) 0;
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 28px 0;
   text-align: center;
   line-height: 1.6;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .order-info {
-  background: rgba(15, 23, 42, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  border-radius: 12px;
-  padding: var(--space-md);
-  margin-bottom: var(--space-md);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) 0;
+  padding: 12px 0;
 }
 
 .info-row:not(:last-child) {
-  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .info-row .label {
-  font-size: 14px;
-  color: var(--color-secondary);
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .info-row .value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .payment-note {
-  font-size: 13px;
-  color: var(--color-secondary);
+  font-size: 14px;
+  color: #64748b;
   text-align: center;
   margin: 0;
+  padding: 12px;
+  background: #f1f5f9;
+  border-radius: 12px;
 }
 
 /* Hero Section - Glassmorphism */
@@ -394,6 +406,20 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

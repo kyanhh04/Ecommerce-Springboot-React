@@ -26,7 +26,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             helper.setTo(email);
-            helper.setSubject("Mã OTP đăng ký tài khoản - Ecommerce");
+            helper.setSubject("Mã OTP đăng ký tài khoản");
             
             String html = buildRegistrationOTPEmailHtml(email, otp);
             helper.setText(html, true);
@@ -212,7 +212,7 @@ public class EmailServiceImpl implements EmailService {
             html.append("</div>");
         }
         
-        html.append("<p class='signature'>Trân trọng,<br><strong>Đội ngũ hỗ trợ Ecommerce</strong></p>");
+        html.append("<p class='signature'>Trân trọng,<br><strong>Đội ngũ hỗ trợ</strong></p>");
         html.append("</div>");
         html.append("<div class='footer'>© 2026 Ecommerce. All rights reserved.</div>");
         html.append("</div>");
@@ -275,7 +275,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             helper.setTo(email);
-            helper.setSubject("Mã OTP khôi phục mật khẩu - Ecommerce");
+            helper.setSubject("Mã OTP khôi phục mật khẩu");
             
             String html = buildForgotPasswordOTPEmailHtml(email, otp);
             helper.setText(html, true);

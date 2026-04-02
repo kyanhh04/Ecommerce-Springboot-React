@@ -178,9 +178,6 @@ const Home = () => {
             </div>
             
             <h3>Đặt hàng thành công!</h3>
-            <p className="success-message">
-              Cảm ơn bạn đã tin tưởng. Đơn hàng đang được xử lý.
-            </p>
             
             <div className="order-info">
               <div className="info-row">
@@ -190,6 +187,10 @@ const Home = () => {
               <div className="info-row">
                 <span className="label">Tổng tiền</span>
                 <span className="value">{orderSuccessData.amount?.toLocaleString()}đ</span>
+              </div>
+              <div className="info-row">
+                <span className="label">Trạng thái</span>
+                <span className="value status-processing">Đang xử lý</span>
               </div>
             </div>
 

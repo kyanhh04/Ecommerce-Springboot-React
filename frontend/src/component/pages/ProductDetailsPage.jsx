@@ -12,6 +12,40 @@ if (!document.querySelector('link[href*="Inter"]')) {
     document.head.appendChild(fontLink);
 }
 
+// Star Rating Component
+const StarRating = ({ rating, size = 18 }) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const decimal = rating - fullStars;
+    
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+        stars.push(<span key={`full-${i}`} className="star star-full">★</span>);
+    }
+
+    // Partial star (if decimal > 0)
+    if (decimal > 0 && fullStars < 5) {
+        const percentage = Math.round(decimal * 100);
+        stars.push(
+            <span 
+                key="partial" 
+                className="star star-partial" 
+                style={{ '--fill-percentage': `${percentage}%` }}
+            >
+                ★
+            </span>
+        );
+    }
+
+    // Empty stars
+    const emptyStars = 5 - fullStars - (decimal > 0 ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+        stars.push(<span key={`empty-${i}`} className="star star-empty">★</span>);
+    }
+
+    return <span className="star-rating" style={{ fontSize: `${size}px` }}>{stars}</span>;
+};
+
 const ProductDetailsPage = () => {
 
 const { productId } = useParams();
@@ -247,17 +281,12 @@ return (
 
                 <div className="rating-review-bar">
                     <div className="rating">
-                        <span className="stars">
-                            {"⭐".repeat(Math.round(averageRating))}
-                        </span>
+                        <StarRating rating={averageRating} size={20} />
                         <span className="rating-text">
                             {averageRating.toFixed(1)} / 5
                         </span>
                         <span className="review-count">
                             ({totalReviews} reviews)
-                        </span>
-                        <span className="wishlist-info">
-                            ❤️ {wishlistCount} lượt yêu thích
                         </span>
                     </div>
                     <button className="view-reviews-btn" onClick={scrollToReviews}>
@@ -372,7 +401,7 @@ return (
                         >
 
                             <div className="review-stars">
-                                {"⭐".repeat(review.rating)}
+                                <StarRating rating={review.rating} size={18} />
                             </div>
 
                             <p className="review-content">{review.content}</p>

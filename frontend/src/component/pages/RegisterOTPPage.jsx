@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../style/register.css";
@@ -12,15 +12,27 @@ const RegisterOTPPage = () => {
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
   
   const inputRefs = useRef([]);
 
   // Redirect nếu không có email
-  React.useEffect(() => {
+  useEffect(() => {
     if (!email) {
       navigate("/register/email");
     }
   }, [email, navigate]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setCanResend(true);
+    }
+  }, [countdown]);
 
   const handleOtpChange = (index, value) => {
     // Chỉ cho phép số
@@ -90,7 +102,7 @@ const RegisterOTPPage = () => {
         setTimeout(() => {
           // Chuyển đến trang nhập mật khẩu
           navigate("/register/password", { state: { email, otpCode } });
-        }, 1500);
+        }, 500);
       } else {
         setMessage(response.message || "Mã OTP không đúng");
         setIsError(true);
@@ -122,6 +134,36 @@ const RegisterOTPPage = () => {
     }
 
     verifyOTP(otpCode);
+  };
+
+  const handleResendOTP = async () => {
+    if (!canResend) return;
+
+    try {
+      setMessage("Đang gửi lại mã OTP...");
+      setIsError(false);
+      
+      const response = await ApiService.sendRegistrationOTP(email);
+      
+      if (response.status === 200) {
+        setMessage("Mã OTP mới đã được gửi đến email của bạn!");
+        setIsError(false);
+        setCountdown(60);
+        setCanResend(false);
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+        
+        setTimeout(() => setMessage(null), 3000);
+      } else {
+        setMessage(response.message || "Không thể gửi lại mã OTP");
+        setIsError(true);
+        setTimeout(() => setMessage(null), 3000);
+      }
+    } catch (error) {
+      setMessage(error.response?.data.message || "Không thể gửi lại mã OTP");
+      setIsError(true);
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
 
   if (!email) return null;
@@ -167,6 +209,28 @@ const RegisterOTPPage = () => {
                 disabled={isVerifying}
               />
             ))}
+          </div>
+
+          <div className="otp-info">
+            <p className="otp-validity">
+              Mã OTP có hiệu lực trong <span className="countdown-number">{countdown}s</span>
+            </p>
+          </div>
+
+          <div className="resend-container">
+            {canResend ? (
+              <button
+                type="button"
+                className="resend-btn"
+                onClick={handleResendOTP}
+              >
+                Gửi lại mã OTP
+              </button>
+            ) : (
+              <p className="countdown-text">
+                Bạn có thể gửi lại mã sau <span className="countdown-number">{countdown}s</span>
+              </p>
+            )}
           </div>
         </form>
       </div>
