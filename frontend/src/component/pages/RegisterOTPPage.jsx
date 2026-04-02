@@ -14,6 +14,7 @@ const RegisterOTPPage = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [expiryTime, setExpiryTime] = useState(null);
   
   const inputRefs = useRef([]);
 
@@ -21,18 +22,28 @@ const RegisterOTPPage = () => {
   useEffect(() => {
     if (!email) {
       navigate("/register/email");
+    } else {
+      // Set expiry time khi mount
+      setExpiryTime(Date.now() + 60000); // 60 seconds from now
     }
   }, [email, navigate]);
 
-  // Countdown timer
+  // Countdown timer dựa trên timestamp thực tế
   useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setCanResend(true);
-    }
-  }, [countdown]);
+    if (!expiryTime) return;
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((expiryTime - Date.now()) / 1000));
+      setCountdown(remaining);
+      
+      if (remaining === 0) {
+        setCanResend(true);
+        clearInterval(interval);
+      }
+    }, 100); // Check every 100ms for accuracy
+
+    return () => clearInterval(interval);
+  }, [expiryTime]);
 
   const handleOtpChange = (index, value) => {
     // Chỉ cho phép số
@@ -148,7 +159,7 @@ const RegisterOTPPage = () => {
       if (response.status === 200) {
         setMessage("Mã OTP mới đã được gửi đến email của bạn!");
         setIsError(false);
-        setCountdown(60);
+        setExpiryTime(Date.now() + 60000); // Reset to 60 seconds from now
         setCanResend(false);
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();

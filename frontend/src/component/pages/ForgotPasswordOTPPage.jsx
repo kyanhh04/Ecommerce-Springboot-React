@@ -14,33 +14,36 @@ const ForgotPasswordOTPPage = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [expiryTime, setExpiryTime] = useState(null);
   
   const inputRefs = useRef([]);
-  const timerRef = useRef(null);
 
   // Redirect nếu không có email
-  React.useEffect(() => {
+  useEffect(() => {
     if (!email) {
       navigate("/forgot-password");
+    } else {
+      // Set expiry time khi mount
+      setExpiryTime(Date.now() + 60000); // 60 seconds from now
     }
   }, [email, navigate]);
 
-  // Countdown timer
+  // Countdown timer dựa trên timestamp thực tế
   useEffect(() => {
-    if (countdown > 0) {
-      timerRef.current = setTimeout(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
-    } else {
-      setCanResend(true);
-    }
+    if (!expiryTime) return;
 
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((expiryTime - Date.now()) / 1000));
+      setCountdown(remaining);
+      
+      if (remaining === 0) {
+        setCanResend(true);
+        clearInterval(interval);
       }
-    };
-  }, [countdown]);
+    }, 100); // Check every 100ms for accuracy
+
+    return () => clearInterval(interval);
+  }, [expiryTime]);
 
   const handleOtpChange = (index, value) => {
     // Chỉ cho phép số
@@ -148,27 +151,27 @@ const ForgotPasswordOTPPage = () => {
     if (!canResend) return;
 
     try {
-      setCanResend(false);
-      setCountdown(60);
+      setMessage("Đang gửi lại mã OTP...");
+      setIsError(false);
       
       const response = await ApiService.sendForgotPasswordOTP(email);
       
       if (response.status === 200) {
-        setMessage("Đã gửi lại mã OTP mới");
+        setMessage("Mã OTP mới đã được gửi đến email của bạn!");
         setIsError(false);
+        setExpiryTime(Date.now() + 60000); // Reset to 60 seconds from now
+        setCanResend(false);
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
         setTimeout(() => setMessage(null), 3000);
       } else {
         setMessage(response.message || "Không thể gửi lại mã OTP");
         setIsError(true);
-        setCanResend(true);
         setTimeout(() => setMessage(null), 3000);
       }
     } catch (error) {
       setMessage(error.response?.data?.message || "Không thể gửi lại mã OTP");
       setIsError(true);
-      setCanResend(true);
       setTimeout(() => setMessage(null), 3000);
     }
   };
@@ -218,22 +221,24 @@ const ForgotPasswordOTPPage = () => {
             ))}
           </div>
 
-          <div className="otp-timer">
-            <p>Mã OTP có hiệu lực trong <strong>{countdown}s</strong></p>
+          <div className="otp-info">
+            <p className="otp-validity">
+              Mã OTP có hiệu lực trong <span className="countdown-number">{countdown}s</span>
+            </p>
           </div>
 
           <div className="resend-container">
             {canResend ? (
               <button
                 type="button"
-                className="resend-button"
+                className="resend-btn"
                 onClick={handleResendOTP}
               >
                 Gửi lại mã OTP
               </button>
             ) : (
-              <p className="resend-info">
-                Bạn có thể gửi lại mã sau {countdown}s
+              <p className="countdown-text">
+                Bạn có thể gửi lại mã sau <span className="countdown-number">{countdown}s</span>
               </p>
             )}
           </div>

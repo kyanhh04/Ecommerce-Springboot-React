@@ -1,7 +1,6 @@
 -- Insert 100 sample reviews distributed across products
 -- First create fake users for reviews
 
--- Insert fake users (without password in users table)
 INSERT INTO users (name, email, phone_number, role) VALUES
 ('Nguyễn Văn A', 'nguyenvana@example.com', '0901234567', 'USER'),
 ('Trần Thị B', 'tranthib@example.com', '0901234568', 'USER'),
