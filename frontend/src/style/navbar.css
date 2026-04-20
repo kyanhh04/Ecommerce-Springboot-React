@@ -555,6 +555,28 @@
   }
 }
 
+/* Admin Icon Wrapper */
+.admin-icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-icon {
+  color: white;
+  font-size: 24px;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.admin-icon:hover {
+  color: #0ea5e9;
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* User Menu - Enhanced */
 .user-menu {
   position: relative;
@@ -590,19 +612,30 @@
   background: #0ea5e9;
 }
 
-/* User Dropdown - Enhanced */
+/* User Dropdown - Dropdown ngay dưới hamburger */
 .user-dropdown {
   position: absolute;
-  top: 50px;
+  top: calc(100% + 8px);
   right: 0;
   background: white;
-  width: 200px;
+  min-width: 220px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   overflow: hidden;
   z-index: 999;
-  animation: slideDown 0.3s ease;
+  animation: slideDownNormal 0.3s ease;
   border: 1px solid rgba(3, 105, 161, 0.1);
+}
+
+@keyframes slideDownNormal {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .user-dropdown div {

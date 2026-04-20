@@ -140,7 +140,13 @@ const Navbar = () => {
           <FaShoppingCart />
         </NavLink>
 
-        {isAdmin && <NavLink to="/admin"><RiAdminFill /></NavLink>}
+        {isAdmin && (
+          <div className="admin-icon-wrapper">
+            <NavLink to="/admin" className="admin-icon">
+              <RiAdminFill />
+            </NavLink>
+          </div>
+        )}
 
         {isAuthenticated ? (
           <div className="user-menu" ref={userMenuRef}>
