@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/wishlist.css";
 
 const WishlistPage = () => {
+  useDocumentTitle("Yêu Thích");
+  
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

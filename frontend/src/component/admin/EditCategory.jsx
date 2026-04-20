@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ApiService from "../../service/ApiService";
 import { useNavigate, useParams } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/addCategory.css'
 
 const EditCategory = () => {
+    useDocumentTitle("Chỉnh Sửa Danh Mục");
     const { categoryId } = useParams();
     const [name, setName] = useState('')
     const [message, setMessage] = useState('');

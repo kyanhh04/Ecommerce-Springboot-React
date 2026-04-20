@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SlideService from '../../service/SlideService';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import '../../style/adminSlideManagement.css';
 
 const AdminSlideManagement = () => {
+    useDocumentTitle("Quản Lý Slide");
     const [slides, setSlides] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);

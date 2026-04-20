@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/register.css";
 
 const ResetPasswordPage = () => {
+  useDocumentTitle("Đặt Lại Mật Khẩu");
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;

@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ApiService from '../../service/ApiService';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import '../../style/myDiscounts.css';
 
 const MyDiscountsPage = () => {
+  useDocumentTitle("Mã Giảm Giá");
+  
   const [discounts, setDiscounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

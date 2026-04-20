@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/adminReview.css';
 import ApiService from "../../service/ApiService";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 const AdminReviewPage = () => {
+    useDocumentTitle("Quản Lý Đánh Giá");
     const [reviews, setReviews] = useState([]);
     const [newReplyText, setNewReplyText] = useState({});
     const [editingReply, setEditingReply] = useState({});

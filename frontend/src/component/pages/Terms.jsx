@@ -1,7 +1,9 @@
 import React from "react";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/terms.css";
 
 const Terms = () => {
+  useDocumentTitle("Điều Khoản & Điều Kiện");
   return (
     <div className="terms-wrapper">
 

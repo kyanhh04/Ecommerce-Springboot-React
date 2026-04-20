@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/adminRevenueReport.css";
 
 const MONTHS = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
@@ -9,6 +10,7 @@ const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
 const AdminRevenueReport = () => {
+    useDocumentTitle("Báo Cáo Doanh Thu");
     const [orders, setOrders] = useState([]);
     const [filterType, setFilterType] = useState("month"); // month | year | range
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // 0-indexed

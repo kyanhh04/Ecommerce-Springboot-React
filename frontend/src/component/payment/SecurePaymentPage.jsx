@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ApiService from '../../service/ApiService';
 import { useCart } from '../context/CartContext';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import '../../style/securePayment.css';
 
 const SecurePaymentPage = () => {
+  useDocumentTitle("Thanh Toán");
   const location = useLocation();
   const navigate = useNavigate();
   const { dispatch } = useCart();

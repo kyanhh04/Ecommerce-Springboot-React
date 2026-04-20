@@ -5,12 +5,15 @@ import Pagination from "../common/Pagination";
 import SlideShow from "../common/SlideShow";
 import SlideService from "../../service/SlideService";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import { FaLaptop, FaKeyboard, FaHeadphones, FaHdd, FaCheckCircle } from "react-icons/fa";
 import { BsMouse } from "react-icons/bs";
 import { HiX } from "react-icons/hi";
 import "../../style/home.css";
 
 const Home = () => {
+  useDocumentTitle("Trang Chủ");
+  
   const location = useLocation();
   const navigate = useNavigate();
 

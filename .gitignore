@@ -1,5 +1,11 @@
 target/
 
+# Sensitive configuration files
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-prod.properties
+*.env
+.env.*
+
 # Compiled class file
 *.class
 

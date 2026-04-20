@@ -3,8 +3,12 @@ import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import { useCart } from "../context/CartContext";
 import DiscountModal from "../common/DiscountModal";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/cart.css";
+
 const CartPage = () => {
+  useDocumentTitle("Giỏ Hàng");
+  
   const { cart, dispatch } = useCart();
   // Đã bỏ message/thông báo
   const [discountCode, setDiscountCode] = useState("");

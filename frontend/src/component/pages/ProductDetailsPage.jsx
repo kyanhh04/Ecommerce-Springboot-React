@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/productDetailsPage.css";
 
 // Import Google Font
@@ -47,6 +48,7 @@ const StarRating = ({ rating, size = 18 }) => {
 };
 
 const ProductDetailsPage = () => {
+useDocumentTitle("Chi Tiết Sản Phẩm");
 
 const { productId } = useParams();
 const navigate = useNavigate();

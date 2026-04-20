@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/categoryListPage.css";
 
 const CategoryListPage = () => {
+    useDocumentTitle("Danh Mục");
 
     const [cateList, setCateList] = useState([]);
     const [cateError, setCateError] = useState(null);

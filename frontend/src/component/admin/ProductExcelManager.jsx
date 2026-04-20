@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import ApiService from '../../service/ApiService';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import '../../style/productExcelManager.css';
 
 const ProductExcelManager = () => {
+    useDocumentTitle("Quản Lý Excel");
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');

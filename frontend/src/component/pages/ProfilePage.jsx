@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import Toast from "../common/Toast";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/profile.css";
 
 const ProfilePage = () => {
+  useDocumentTitle("Tài Khoản");
+  
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);

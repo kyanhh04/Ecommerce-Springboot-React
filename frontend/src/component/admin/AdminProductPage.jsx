@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/adminProduct.css'
 import Pagination from "../common/Pagination";
 import ConfirmDialog from "../common/ConfirmDialog";
 import ApiService from "../../service/ApiService";
 
 const AdminProductPage = () => {
+    useDocumentTitle("Quản Lý Sản Phẩm");
+    
     const navigate = useNavigate();
     const location = useLocation();
     const [products, setProducts] = useState([]);

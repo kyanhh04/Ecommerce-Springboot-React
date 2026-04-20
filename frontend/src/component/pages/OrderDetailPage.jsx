@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/orderDetail.css";
 
 const OrderDetailPage = () => {
+  useDocumentTitle("Chi Tiết Đơn Hàng");
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);

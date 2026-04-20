@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/register.css";
 
 const LoginPage = () => {
+  useDocumentTitle("Đăng Nhập");
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",

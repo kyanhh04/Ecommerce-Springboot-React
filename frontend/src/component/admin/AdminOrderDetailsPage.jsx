@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/adminOrderDetails.css'
 import ApiService from "../../service/ApiService";
 
 const OrderStatus = ["PENDING", "CONFIRMED", "SHIPPED", "CANCELLED", "RETURNED"];
 
 const AdminOrderDetailsPage = () => {
+    useDocumentTitle("Chi Tiết Đơn Hàng");
     const { itemId } = useParams();
     const navigate = useNavigate();
     const [orderItems, setOrderItems] = useState([]);

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/address.css';
 
 const AddressPage = () => {
+    useDocumentTitle("Địa Chỉ");
 
     const [address, setAddress] = useState({
         street: '',

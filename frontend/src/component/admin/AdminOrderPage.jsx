@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/adminOrderPage.css'
 import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
 
 const AdminOrdersPage = () => {
+    useDocumentTitle("Quản Lý Đơn Hàng");
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [searchStatus, setSearchStatus] = useState('');

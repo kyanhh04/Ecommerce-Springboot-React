@@ -1,7 +1,9 @@
 import React from "react";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/about.css";
 
 const About = () => {
+  useDocumentTitle("Về Chúng Tôi");
   return (
     <section className="about-wrapper">
 

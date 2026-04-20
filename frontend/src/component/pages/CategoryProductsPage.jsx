@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
 import '../../style/home.css'
 
 const CategoryProductsPage = () => {
+    useDocumentTitle("Danh Mục Sản Phẩm");
 
     const { categoryId } = useParams();
     const location = useLocation();

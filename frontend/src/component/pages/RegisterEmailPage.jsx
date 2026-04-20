@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import '../../style/register.css'
 
 
 const RegisterEmailPage = () => {
+    useDocumentTitle("Đăng Ký Email");
 
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState(null);

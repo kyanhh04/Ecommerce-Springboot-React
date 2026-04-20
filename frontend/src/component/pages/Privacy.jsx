@@ -1,7 +1,9 @@
 import React from "react";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/privacy.css";
 
 const Privacy = () => {
+  useDocumentTitle("Chính Sách Bảo Mật");
   return (
       <div className="pri-wrapper">
     <div className="privacy-container">

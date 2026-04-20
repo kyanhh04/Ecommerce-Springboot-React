@@ -1,6 +1,8 @@
 import React,{useState} from "react"
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/faqs.css"
 const Faqs=()=>{
+useDocumentTitle("Câu Hỏi Thường Gặp");
 const[activeIndex,setActiveIndex]=useState(null)
 const faqs=[
 {question:"Laptop có phải hàng chính hãng không?",answer:"Tất cả sản phẩm tại Laptop Mart đều là hàng chính hãng 100%, có đầy đủ hóa đơn và bảo hành từ nhà sản xuất."},

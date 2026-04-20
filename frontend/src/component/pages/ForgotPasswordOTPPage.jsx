@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/register.css";
 
 const ForgotPasswordOTPPage = () => {
+  useDocumentTitle("Xác Nhận OTP");
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;

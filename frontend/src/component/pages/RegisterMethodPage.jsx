@@ -1,9 +1,11 @@
 import React, { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/registerMethod.css";
 
 const RegisterMethodPage = () => {
+  useDocumentTitle("Đăng Ký");
   const navigate = useNavigate();
 
   const handleGoogleResponse = useCallback(async (response) => {

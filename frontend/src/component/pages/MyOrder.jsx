@@ -3,9 +3,12 @@ import ApiService from "../../service/ApiService";
 import Pagination from "../common/Pagination";
 import ReviewModal from "../common/ReviewModal";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import "../../style/myOrder.css";
 
 const MyOrdersPage = () => {
+  useDocumentTitle("Đơn Hàng Của Tôi");
+  
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
