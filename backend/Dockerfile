@@ -1,25 +1,20 @@
 # Multi-stage build for Render deployment
 # Stage 1: Build the application
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
 
 WORKDIR /app
 
 # Copy pom.xml and download dependencies first (for caching)
 COPY pom.xml .
-COPY mvnw .
-COPY mvnw.cmd .
 
-# Make mvnw executable
-RUN chmod +x mvnw
-
-# Download dependencies without .mvn folder (use Maven wrapper embedded)
-RUN ./mvnw dependency:resolve
+# Download dependencies
+RUN mvn dependency:go-offline -B
 
 # Copy source code
 COPY src ./src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Stage 2: Create the runtime image
 FROM eclipse-temurin:17-jre-alpine
