@@ -1,19 +1,22 @@
-# Multi-stage build
+# Multi-stage build for Render deployment
 # Stage 1: Build the application
 FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
+# Copy pom.xml and download dependencies first (for caching)
 COPY pom.xml .
+COPY mvnw .
+COPY mvnw.cmd .
 
-# Download dependencies (this layer will be cached)
-RUN chmod +x ./mvnw && ./mvnw dependency:go-offline -B
+# Make mvnw executable
+RUN chmod +x mvnw
+
+# Download dependencies without .mvn folder (use Maven wrapper embedded)
+RUN ./mvnw dependency:resolve
 
 # Copy source code
-COPY src src
+COPY src ./src
 
 # Build the application
 RUN ./mvnw clean package -DskipTests
@@ -26,7 +29,8 @@ WORKDIR /app
 # Copy JAR from build stage
 COPY --from=build /app/target/*.jar app.jar
 
+# Expose port (Render will override this with PORT env variable)
 EXPOSE 9800
 
-# Use environment variable for port
-CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -Dspring.profiles.active=prod -jar app.jar"]
+# Run the application with dynamic port support for Render
+CMD ["sh", "-c", "java -Dserver.port=${PORT:-9800} -jar app.jar"]
