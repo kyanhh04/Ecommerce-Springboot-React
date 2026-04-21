@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default class ApiService {
 
-    static BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://laptop-ecommerce-8ved.onrender.com";
+    static BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     static getHeader() {
         const token = localStorage.getItem("token");
@@ -87,11 +87,6 @@ export default class ApiService {
                 "Content-Type": "multipart/form-data"
             }
         });
-        return response.data;
-    }
-
-    static async getAllProducts() {
-        const response = await axios.get(`${this.BASE_URL}/product/get-all`)
         return response.data;
     }
 

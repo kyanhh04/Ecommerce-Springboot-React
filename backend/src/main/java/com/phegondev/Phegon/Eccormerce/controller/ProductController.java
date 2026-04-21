@@ -62,11 +62,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(productId));
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<Response> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
-    }
-
     @GetMapping("/list")
     public ResponseEntity<Response> getProducts(
             @RequestParam(defaultValue = "0") int page,
