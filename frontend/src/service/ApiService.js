@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default class ApiService {
 
-    static BASE_URL = "http://localhost:9800";
+    static BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://laptop-ecommerce-8ved.onrender.com";
 
     static getHeader() {
         const token = localStorage.getItem("token");
@@ -92,6 +92,15 @@ export default class ApiService {
 
     static async getAllProducts() {
         const response = await axios.get(`${this.BASE_URL}/product/get-all`)
+        return response.data;
+    }
+
+    static async getProducts(page = 0, size = 8, search = "") {
+        const params = { page, size };
+        if (search && search.trim()) {
+            params.search = search.trim();
+        }
+        const response = await axios.get(`${this.BASE_URL}/product/list`, { params });
         return response.data;
     }
 

@@ -12,6 +12,7 @@ public interface ProductService {
     Response deleteProduct(Long productId);
     Response getProductById(Long productId);
     Response getAllProducts();
+    Response getProducts(int page, int size, String searchValue);
     Response getProductsByCategory(Long categoryId);
     Response searchProduct(String searchValue);
     byte[] exportProductsToExcel();

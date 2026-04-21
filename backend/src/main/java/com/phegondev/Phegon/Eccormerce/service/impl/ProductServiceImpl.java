@@ -12,6 +12,9 @@ import com.phegondev.Phegon.Eccormerce.repository.ProductRepository;
 import com.phegondev.Phegon.Eccormerce.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -197,6 +200,30 @@ public class ProductServiceImpl implements ProductService {
         return Response.builder()
                 .status(200)
                 .productList(productList)
+                .build();
+    }
+
+    @Override
+    public Response getProducts(int page, int size, String searchValue) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+        Page<Product> productPage;
+
+        if (searchValue != null && !searchValue.trim().isEmpty()) {
+            productPage = productRepository.findByNameContainingIgnoreCase(searchValue.trim(), pageable);
+        } else {
+            productPage = productRepository.findAll(pageable);
+        }
+
+        List<ProductDto> productDtoList = productPage.getContent()
+                .stream()
+                .map(entityDtoMapper::mapProductToDtoBasic)
+                .collect(Collectors.toList());
+
+        return Response.builder()
+                .status(200)
+                .productList(productDtoList)
+                .totalPage(productPage.getTotalPages())
+                .totalElement(productPage.getTotalElements())
                 .build();
     }
 

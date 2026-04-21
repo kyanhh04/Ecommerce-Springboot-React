@@ -71,26 +71,16 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let allProducts = [];
         const queryParams = new URLSearchParams(location.search);
         const searchItem = queryParams.get("search");
+        const [featuredResponse, productsResponse] = await Promise.all([
+          ApiService.getProducts(0, 4),
+          ApiService.getProducts(currentPage - 1, itemsPerPage, searchItem || ""),
+        ]);
 
-        if (searchItem) {
-          const response = await ApiService.searchProducts(searchItem);
-          allProducts = response.productList || [];
-        } else {
-          const response = await ApiService.getAllProducts();
-          allProducts = response.productList || [];
-        }
-
-        setFeaturedProducts(allProducts.slice(0, 4));
-        setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-        setProducts(
-          allProducts.slice(
-            (currentPage - 1) * itemsPerPage,
-            currentPage * itemsPerPage,
-          ),
-        );
+        setFeaturedProducts(featuredResponse.productList || []);
+        setTotalPages(productsResponse.totalPage || 0);
+        setProducts(productsResponse.productList || []);
       } catch (error) {
         setError(
           error.response?.data?.message ||

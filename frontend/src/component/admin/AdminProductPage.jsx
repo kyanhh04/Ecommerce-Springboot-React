@@ -34,10 +34,9 @@ const AdminProductPage = () => {
     const fetchProducts = async() => {
         setLoading(true);
         try {
-            const response = await ApiService.getAllProducts();
-            const productList = response.productList || [];
-            setProducts(productList);
-            setTotalPages(Math.ceil(productList.length / itemsPerPage));
+            const response = await ApiService.getProducts(currentPage - 1, itemsPerPage);
+            setProducts(response.productList || []);
+            setTotalPages(response.totalPage || 0);
             setError(null);
         } catch (error) {
             setError(error.response?.data?.message || error.message || 'unable to fetch products')
@@ -48,13 +47,9 @@ const AdminProductPage = () => {
 
     useEffect(()=>{
         fetchProducts();
-    }, []);
+    }, [currentPage]);
 
     // Tính toán products hiển thị dựa trên currentPage
-    const displayedProducts = products.slice(
-        (currentPage - 1) * itemsPerPage, 
-        currentPage * itemsPerPage
-    );
 
     const handleEdit = async (id) => {
         navigate(`/admin/edit-product/${id}`)
@@ -96,7 +91,7 @@ const AdminProductPage = () => {
                 ) : (
                     <>
                         <ul>
-                            {displayedProducts.map((product)=>(
+                            {products.map((product)=>(
                                 <li key={product.id}>
                                     <span>{product.name}</span>
                                     <button className="product-btn" onClick={()=> handleEdit(product.id)}>Sửa</button>

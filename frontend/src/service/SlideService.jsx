@@ -2,7 +2,7 @@ import axios from "axios";
 import ApiService from "./ApiService";
 
 export default class SlideService {
-    static BASE_URL = "http://localhost:9800";
+    static BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://laptop-ecommerce-8ved.onrender.com";
 
     static async createSlide(formData, token) {
         const response = await axios.post(`${this.BASE_URL}/slides/create`, formData, {
