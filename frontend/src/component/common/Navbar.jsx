@@ -17,9 +17,11 @@ const Navbar = () => {
 
   const userMenuRef = useRef();
   const navigate = useNavigate();
+  const { cart } = useCart();
 
   const isAdmin = ApiService.isAdmin();
   const isAuthenticated = ApiService.isAuthenticated();
+  const cartItemCount = cart.length;
 
   // Search product
   const handleSearchChange = async (e) => {
@@ -138,6 +140,9 @@ const Navbar = () => {
 
         <NavLink to="/cart" className="cart">
           <FaShoppingCart />
+          {cartItemCount > 0 && (
+            <span className="cart-count">{cartItemCount}</span>
+          )}
         </NavLink>
 
         {isAdmin && (
