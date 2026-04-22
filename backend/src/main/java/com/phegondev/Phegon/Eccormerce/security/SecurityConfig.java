@@ -1,6 +1,7 @@
 package com.phegondev.Phegon.Eccormerce.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +25,9 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    @Value("${security.password.bcrypt-strength}")
+    private int bcryptStrength;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
@@ -38,8 +42,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-    
-        return new BCryptPasswordEncoder(8);
+        return new BCryptPasswordEncoder(bcryptStrength);
     }
 
     @Bean
