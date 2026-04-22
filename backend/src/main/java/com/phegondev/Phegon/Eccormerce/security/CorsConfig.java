@@ -15,7 +15,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                        .allowedOrigins("*")
+                        .allowedOrigins("https://laptopstore-91166.web.app", "http://localhost:3000")
                         .allowedHeaders("*");
             }
         };
